@@ -92,6 +92,71 @@ paths:
                     example: 200
                   data:
                     $ref: '#/components/schemas/Device'
+    delete:
+      tags:
+        - devices
+      summary: デバイスを削除
+      description: デバイスIDに基づいて指定されたデバイスの記録を削除する
+      operationId: deleteDevice
+      responses:
+        "200":
+          description: デバイスの削除に成功しました。返却内容はありません。
+        "404":
+          description: デバイスが存在しません
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "デバイスが存在しません"
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "サーバー内部エラー"
+  /devices/export:
+    get:
+      tags:
+        - devices
+      summary: デバイス情報をエクスポート
+      description: すべてのデバイス情報をExcelファイルにエクスポートする
+      operationId: exportDevices
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: query
+          required: false
+          schema:
+            type: string
+            description: フィルター条件：ユーザー社員番号
+            example: "USR001"
+      responses:
+        "200":
+          description: デバイスリストのエクスポートに成功しました
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "サーバー内部エラー"
+
 components:
   schemas:
   # 機器エンティティ
