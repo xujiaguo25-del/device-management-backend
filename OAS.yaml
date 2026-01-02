@@ -236,17 +236,6 @@ paths:
                   error:
                     type: string
                     example: "サーバー内部エラー"
-
-
-  /devices/{deviceId}:
-    parameters:
-      - name: id
-        in: path
-        description: 設備ID
-        required: true
-        schema:
-          type: string
-          example: HYRON-221129 PC-DC-089
     put:
       tags:
         - devices
