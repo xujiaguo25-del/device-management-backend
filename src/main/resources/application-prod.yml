@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/device_management_db
+    url: jdbc:postgresql://localhost:5432/device_mangent_db
     username: postgres
     password: 123456
 

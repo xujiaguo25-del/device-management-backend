@@ -16,17 +16,17 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "USERS")
+@Table(name = "users")
 public class User {
 
     @Id
-    @Column(name = "USER_ID", length = 20)
+    @Column(name = "user_id")
     private String userId;
 
-    @Column(name = "USER_NAME", length = 100, nullable = false)
+    @Column(name = "name")
     private String userName;
 
-    @Column(name = "DEPARTMENT_CODE", length = 20, nullable = false)
+    @Column(name = "DEPARTMENT_CODE")
     private String departmentCode;
 
     @Column(name = "USER_LEVEL", length = 20, nullable = false)

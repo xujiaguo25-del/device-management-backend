@@ -1,0 +1,293 @@
+openapi: 3.0.1
+info:
+  title: セキュリティ検査API
+  description: セキュリティ検査セクションのAPI詳細定義
+  version: 1.0.0
+tags: []
+paths:
+  /security-checks?size=10:
+    get:
+      summary: セキュリティ検査リストの取得
+      deprecated: false
+      description: すべてのセキュリティ検査記録を取得します
+      tags: []
+      parameters:
+        - name: page
+          in: query
+          description: ページ番号
+          required: true
+          example: 1
+          schema:
+            type: integer
+            default: 1
+        - name: size
+          in: query
+          description: 1ページあたりのデータ数
+          required: false
+          example: 10
+          schema:
+            type: integer
+            default: 10
+        - name: device_Id
+          in: query
+          description: デバイスID
+          required: false
+          example: デバイス001
+          schema:
+            type: string
+        - name: user_id
+          in: query
+          description: ユーザーID
+          required: false
+          example: ユーザー001
+          schema:
+            type: string
+        - name: Content-Type
+          in: header
+          description: リクエストボディのデータ形式をJSONに指定
+          required: false
+          example: application/json
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: 認証トークン
+          required: false
+          example: ''
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SampleCheckDTO'
+          headers: {}
+      security: []
+  /security-checks:
+    post:
+      summary: 新規作成
+      deprecated: false
+      description: 新しいセキュリティ検査項目を追加します
+      tags: []
+      parameters:
+        - name: Content-Type
+          in: header
+          description: ''
+          required: false
+          example: application/json
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: ''
+          required: false
+          example: ''
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SampleCheckDTO'
+            example:
+              user_id: EMP00123
+              device_id: DEV2024001
+              name: 山田 太郎
+              report_id: SEC20240115001
+              update_date: '2024-01-15'
+              installed_software: true
+              disposal_measures: 未認可のソフトウェアをアンインストールし、システムを再起動しました
+              screen_saver_pwd: true
+              usb_interface: false
+              security_patch: true
+              antivirus_protection: true
+              boot_authentication: true
+        required: true
+      responses:
+        '200':
+          description: '追加成功'
+          headers: {}
+      security: []
+  /security-checks/{sampling_id}:
+    get:
+      summary: セキュリティ検査情報の詳細取得
+      deprecated: false
+      description: セキュリティ検査情報の詳細を取得します
+      operationId: query-checks-by-id
+      tags: []
+      parameters:
+        - name: sampling_id
+          in: path
+          description: 'セキュリティ検査記録ID'
+          example: 'record001'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SampleCheckDTO'
+          headers: {}
+        '404':
+          description: 対象が存在しません
+          headers: {}
+      security: []
+  /security-checks/export:
+    get:
+      summary: レポート出力
+      deprecated: false
+      description: ''
+      tags: []
+      parameters:
+        - name: reportCode
+          in: query
+          description: レポート番号（レポート番号でフィルタリング）
+          required: true
+          example: ISMSFM1601-1
+          schema:
+            type: string
+        - name: format
+          in: query
+          description: レポートのファイル形式
+          required: false
+          example: xlsx
+          schema:
+            type: string
+            default: xlsx
+      responses:
+        '200':
+          description: レポートファイルを返却します。ファイル名はバックエンドで動的に生成されます
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+                properties: {}
+          headers: {}
+      security: []
+  /sampling-checks/{sampling_id}:
+    put:
+      summary: 更新
+      deprecated: false
+      description: 'セキュリティ検査記録を更新します'
+      tags: []
+      parameters:
+        - name: sampling_id
+          in: path
+          description: 'セキュリティ検査記録ID'
+          required: true
+          example: 'record001'
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SampleCheckDTO'
+            examples: {}
+        required: true
+      responses:
+        '200':
+          description: 更新成功
+          headers: {}
+      security: []
+    delete:
+      summary: 削除
+      deprecated: false
+      description: 'セキュリティ検査記録を1件削除します'
+      tags: []
+      parameters:
+        - name: sampling_id
+          in: path
+          description: 'セキュリティ検査記録ID'
+          required: true
+          example: 'record001'
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 削除成功
+          headers: {}
+      security: []
+components:
+  schemas:
+    SampleCheckDTO:
+      title: SampleCheckDTO
+      type: object
+      required:
+        - sampling_id
+        - user_id
+        - device_id
+        - name
+        - report_id
+        - update_date
+        - create_time
+        - update_time
+      properties:
+        sampling_id:
+          type: string
+          maxLength: 50
+        user_id:
+          type: string
+          maxLength: 50
+        device_id:
+          type: string
+          maxLength: 50
+        installed_software:
+          type: boolean
+          nullable: true
+        disposal_measures:
+          type: string
+          maxLength: 65535
+          nullable: true
+        name:
+          type: string
+          maxLength: 100
+        report_id:
+          type: string
+          maxLength: 50
+        update_date:
+          type: string
+          format: date
+        screen_saver_pwd:
+          type: boolean
+          nullable: true
+        usb_interface:
+          type: boolean
+          nullable: true
+        security_patch:
+          type: boolean
+          nullable: true
+        antivirus_protection:
+          type: boolean
+          nullable: true
+        boot_authentication:
+          type: boolean
+          nullable: true
+        create_time:
+          type: string
+          default: CURRENT_TIMESTAMP
+        creater:
+          type: string
+          maxLength: 100
+          nullable: true
+        update_time:
+          type: string
+          default: CURRENT_TIMESTAMP
+        updater:
+          type: string
+          maxLength: 100
+          nullable: true
+  responses: {}
+  securitySchemes: {}
+servers:
+  - url: http://localhost:8080/api
+    description: 開発環境
+security: []

@@ -32,6 +32,7 @@ public class AuthService {
      * 用户登录
      */
     public LoginResponse login(LoginRequest loginRequest) {
+        log.warn(loginRequest.toString());
         User user = userRepository.findByUserId(loginRequest.getUserId())
                 .orElseThrow(() -> new UnauthorizedException("用户名或密码不正确"));
 

@@ -13,3 +13,8 @@ logging:
   level:
     root: INFO
     com.device: DEBUG
+
+jwt:
+  secret: 124124
+  expiration: 86400000
+
