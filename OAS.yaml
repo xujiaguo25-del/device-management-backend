@@ -65,12 +65,37 @@ paths:
                   size:
                     type: integer
                     example: 10
+
         '400':
           description: パラメータ検証エラー
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "パラメータ検証エラー"
         '401':
           description: 認証失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "認証失敗"
         '500':
-          description: サーバー内部エラー
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "サーバー内部エラー"
   /devices/{id}:
     parameters:
       - name: id
@@ -97,7 +122,60 @@ paths:
                     type: integer
                     example: 200
                   data:
-                    $ref: '#/components/schemas/Device'
+                    type: object
+                    properties:
+                      deviceInfo:
+                        $ref: '#/components/schemas/Device'
+                      ipInfoList:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/deviceIp'
+                      monitorInfoList:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/monitorInfo'
+
+        '400':
+          description: パラメータ検証エラー
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "パラメータ検証エラー"
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "認証失敗"
+        '404':
+          description: リソースが見つかりません
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "リソースが見つかりません"
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "サーバー内部エラー"
+        
     delete:
       tags:
         - devices
