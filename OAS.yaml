@@ -200,11 +200,11 @@ paths:
                       ipInfoList:
                         type: array
                         items:
-                          $ref: '#/components/schemas/deviceIp'
+                          $ref: '#/components/schemas/DeviceIp'
                       monitorInfoList:
                         type: array
                         items:
-                          $ref: '#/components/schemas/monitorInfo'
+                          $ref: '#/components/schemas/MonitorInfo'
         '400':
           description: パラメータ検証エラー
           content:
@@ -475,7 +475,7 @@ components:
           example: JS0014
 
   # 機器IP情報エンティティ
-    deviceIp:
+    DeviceIp:
       type: object
       description: 機器のIP情報
       properties:
@@ -511,7 +511,7 @@ components:
           example: JS0014
 
   # 機器モニター情報エンティティ
-    monitorInfo:
+    MonitorInfo:
       type: object
       description: モニター情報
       properties:
