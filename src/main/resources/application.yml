@@ -15,6 +15,6 @@ logging:
     com.device: DEBUG
 
 jwt:
-  secret: 124124
+  secret: my-super-secret-key-which-is-at-least-32-bytes!
   expiration: 86400000
 

@@ -1,60 +1,35 @@
 package com.device.management.entity;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
-/**
- * <p>
- * サンプリングチェックテーブル（サンプリングチェック詳細を保存）
- * </p>
- *
- * @author baomidou
- * @since 2026-01-04
- */
-@Getter
-@Setter
-@ToString
-@TableName("sampling_check")
-public class SamplingCheck {
-
-    @TableId("sampling_id")
+@Entity
+@Table(name = "sampling_check", schema = "public")
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class SamplingCheck extends BaseAudit {
+    @Id
     private String samplingId;
 
-    private String userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    private String deviceId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "device_id")
+    private DeviceInfo deviceInfo;
 
     private Boolean installedSoftware;
-
     private String disposalMeasures;
-
     private String name;
-
     private String reportId;
-
     private LocalDate updateDate;
-
     private Boolean screenSaverPwd;
-
     private Boolean usbInterface;
-
     private Boolean securityPatch;
-
     private Boolean antivirusProtection;
-
     private Boolean bootAuthentication;
-
-    private LocalDateTime createTime;
-
-    private String creater;
-
-    private LocalDateTime updateTime;
-
-    private String updater;
 }

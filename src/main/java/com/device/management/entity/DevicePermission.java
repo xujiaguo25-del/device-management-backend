@@ -1,60 +1,47 @@
 package com.device.management.entity;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
-/**
- * <p>
- * 機器使用権限テーブル（機器のドメイン、USB等の権限を保存：機器単位管理）
- * </p>
- *
- * @author baomidou
- * @since 2026-01-04
- */
-@Getter
-@Setter
-@ToString
-@TableName("device_permission")
-public class DevicePermission {
-
-    @TableId("permission_id")
+@Entity
+@Table(name = "device_permission", schema = "public")
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class DevicePermission extends BaseAudit {
+    @Id
     private String permissionId;
 
-    private String deviceId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "device_id")
+    private DeviceInfo deviceInfo;
 
-    private Long domainStatusId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "domain_status_id")
+    private Dict domainStatus;
 
     private String domainGroup;
-
     private String noDomainReason;
 
-    private Long smartitStatusId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "smartit_status_id")
+    private Dict smartItStatus;
 
     private String noSmartitReason;
 
-    private Long usbStatusId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usb_status_id")
+    private Dict usbStatus;
 
     private String usbReason;
-
     private LocalDate usbExpireDate;
 
-    private Long antivirusStatusId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "antivirus_status_id")
+    private Dict antivirusStatus;
 
     private String noSymantecReason;
-
     private String remark;
-
-    private LocalDateTime createTime;
-
-    private String creater;
-
-    private LocalDateTime updateTime;
-
-    private String updater;
 }

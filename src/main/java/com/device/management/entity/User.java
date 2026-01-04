@@ -1,46 +1,23 @@
 package com.device.management.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import lombok.EqualsAndHashCode;
 
-import java.time.LocalDateTime;
-
-/**
- * 用户实体类
- */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
-@Table(name = "users")
-public class User {
-
+@Table(name = "users", schema = "public")
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class User extends BaseAudit {
     @Id
-    @Column(name = "user_id")
     private String userId;
 
-    @Column(name = "name")
-    private String userName;
+    private String deptId;
+    private String name;
+    private String password;
 
-    @Column(name = "DEPARTMENT_CODE")
-    private String departmentCode;
-
-    @Column(name = "USER_LEVEL", length = 20, nullable = false)
-    private String userLevel;
-
-    @Column(name = "PASSWORD_HASH", length = 200, nullable = false)
-    private String passwordHash;
-
-    @CreationTimestamp
-    @Column(name = "CREATED_DATE")
-    private LocalDateTime createdDate;
-
-    @UpdateTimestamp
-    @Column(name = "UPDATED_DATE")
-    private LocalDateTime updatedDate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_type_id")
+    private Dict userType;
 
 }

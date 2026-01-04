@@ -1,39 +1,21 @@
 package com.device.management.entity;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import java.time.LocalDateTime;
-
-/**
- * <p>
- * 機器IPテーブル（機器に関連するIPアドレスを保存）
- * </p>
- *
- * @author baomidou
- * @since 2026-01-04
- */
-@Getter
-@Setter
-@ToString
-@TableName("device_ip")
-public class DeviceIp {
-
-    @TableId("ip_id")
+@Entity
+@Table(name = "device_ip", schema = "public")
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class DeviceIp extends BaseAudit {
+    @Id
     private Integer ipId;
 
-    private String deviceId;
-
+    @Column(unique = true)
     private String ipAddress;
 
-    private LocalDateTime createTime;
-
-    private String creater;
-
-    private LocalDateTime updateTime;
-
-    private String updater;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "device_id")
+    private DeviceInfo deviceInfo;
 }

@@ -1,59 +1,45 @@
 package com.device.management.entity;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import java.time.LocalDateTime;
-
-/**
- * <p>
- * 機器情報テーブル（機器ハードウェア構成を保存）
- * </p>
- *
- * @author baomidou
- * @since 2026-01-04
- */
-@Getter
-@Setter
-@ToString
-@TableName("device_info")
-public class DeviceInfo {
-
-    @TableId("device_id")
+@Entity
+@Table(name = "device_info", schema = "public")
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class DeviceInfo extends BaseAudit {
+    @Id
     private String deviceId;
 
     private String deviceModel;
-
     private String computerName;
-
     private String loginUsername;
-
     private String project;
-
     private String devRoom;
-
-    private String userId;
-
     private String remark;
 
-    private Long selfConfirmId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    private Long osId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "os_id")
+    private Dict os;
 
-    private Long memoryId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "memory_id")
+    private Dict memory;
 
-    private Long ssdId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ssd_id")
+    private Dict ssd;
 
-    private Long hddId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hdd_id")
+    private Dict hdd;
 
-    private LocalDateTime createTime;
-
-    private String creater;
-
-    private LocalDateTime updateTime;
-
-    private String updater;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "self_confirm_id")
+    private Dict selfConfirmStatus;
 }
