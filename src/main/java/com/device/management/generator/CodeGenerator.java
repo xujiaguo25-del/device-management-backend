@@ -9,11 +9,11 @@ import java.util.Collections;
 
 public class CodeGenerator {
     public static void main(String[] args) {
-        FastAutoGenerator.create("jdbc:postgresql://localhost:5432/device_mangent_db", "postgres", "2003")
+        FastAutoGenerator.create("jdbc:postgresql://nj-postgres-nmonaij3.sql.tencentcdb.com:24533/postgres", "root", "10235As//")
                 .globalConfig(builder -> {
                     builder.author("xiaos") // 设置作者
                             .enableSwagger() // 开启 swagger 模式
-                            .outputDir("C:\\Projects\\device-management-backend\\src\\main\\java"); // 指定输出目录
+                            .outputDir("E:\\Project\\device-management-backend\\src\\main\\java"); // 指定输出目录
                 })
                 .packageConfig(builder -> builder
                         .parent("com.device.management")
