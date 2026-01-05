@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginRequest {
-    @NotBlank(message = "用户ID不能为空")
+    @NotBlank(message = "社員番号は必要です。")
     private String userId;
 
-    @NotBlank(message = "密码不能为空")
+    @NotBlank(message = "パスワードは必要です")
     private String password;
 }
