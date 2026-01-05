@@ -11,12 +11,15 @@ import com.deviceManagement.exception.BusinessException;
 import com.deviceManagement.service.AuthService;
 import com.deviceManagement.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import java.util.Objects;
 
 
 @Slf4j
@@ -112,10 +115,6 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
-    @Override
-    public Result<ChangePasswordResponse> changePassword(ChangePasswordRequest req, String authHeader) {
-        return null;
-    }
 
     /**
      * リクエストヘッダーからトークンを抽出
@@ -155,5 +154,58 @@ public class AuthServiceImpl implements AuthService {
         } catch (Exception e) {
             log.warn("セキュリティコンテキストのクリーンアップ中にエラーが発生: {}", e.getMessage());
         }
+    }
+
+    /**
+     *
+     * @param req
+     * @param authHeader
+     * @return
+     */
+    @Override
+    @Transactional
+    public Result<ChangePasswordResponse> changePassword(ChangePasswordRequest req,
+                                                         String authHeader) {
+        // 1. 解析并验证 JWT
+        String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
+        if (!jwtUtil.validateToken(token)) {
+            return Result.error(ResultCode.TOKEN_INVALID);
+        }
+        String tokenUserId = jwtUtil.getUserIdFromToken(token);
+        Long tokenUserType = jwtUtil.getUserTypeIdFromToken(token);
+
+        // 2. 角色鉴权：普通用户只能改自己；管理员可改所有人
+        boolean isAdmin = Objects.equals(tokenUserType, 11L);
+        if (!isAdmin && !tokenUserId.equals(req.getUserId())) {
+            return Result.error(ResultCode.FORBIDDEN, "无权修改他人密码");
+        }
+
+        // 3. 校验旧密码（管理员跳过）
+        User user = userRepository.findByUserId(req.getUserId())
+                .orElseThrow(() -> new BusinessException(ResultCode.USER_NOT_FOUND));
+
+        if (!isAdmin && !passwordEncoder.matches(req.getCurrentPassword(), user.getPassword())) {
+            return Result.error(ResultCode.WRONG_CURRENT_PASSWORD);
+        }
+
+        // 4. 新旧不能相同
+        if (passwordEncoder.matches(req.getNewPassword(), user.getPassword())) {
+            return Result.error(ResultCode.PASSWORD_SAME_AS_OLD);
+        }
+
+        // 5. 强度二次保护
+        if (!req.getNewPassword().matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")) {
+            return Result.error(ResultCode.WEAK_NEW_PASSWORD);
+        }
+
+        // 6. 更新密码
+        user.setPassword(passwordEncoder.encode(req.getNewPassword()));
+        userRepository.save(user);
+
+        // 7. 返回
+        ChangePasswordResponse resp = new ChangePasswordResponse();
+        resp.setCode(ResultCode.PASSWORD_CHANGED_SUCCESS.getCode());
+        resp.setMsg(ResultCode.PASSWORD_CHANGED_SUCCESS.getMessage());
+        return Result.passwordChangedSuccess(resp);
     }
 }
