@@ -1,11 +1,10 @@
 package com.device.management.service;
 
 import com.device.management.dto.ApiResponse;
-import com.device.management.dto.DeviceDTO;
+
 import com.device.management.dto.PermissionsDTO;
 import com.device.management.entity.DeviceInfo;
 import com.device.management.entity.DevicePermission;
-import com.device.management.entity.Dict;
 import com.device.management.entity.User;
 import com.device.management.exception.BusinessException;
 import com.device.management.repository.DevicePermissionRepository;
@@ -13,20 +12,12 @@ import com.device.management.repository.DeviceRepository;
 import com.device.management.repository.DictRepository;
 import com.device.management.security.JwtTokenProvider;
 import jakarta.annotation.Resource;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.UUID;
+import java.time.Instant;
+import java.util.List;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.UUID;
 
 @Service
 public class DevicePermissionService {
@@ -93,10 +84,6 @@ public class DevicePermissionService {
     }
 
     public ApiResponse<Void> deletePermissions(String id) {
-        return null;
-    }
-
-    public ApiResponse<Void> exportPermissions(Integer page, Integer size, User user, DeviceInfo deviceInfo, String permissionInfo) {
         return null;
     }
 }
