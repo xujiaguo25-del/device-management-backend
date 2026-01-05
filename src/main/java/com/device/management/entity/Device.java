@@ -43,17 +43,21 @@ public class Device {
     @Column(name = "self_confirm_id", columnDefinition = "bigint")
     private String selfConfirmId; //本人確認ID
 
-    @Column(name = "os_id", columnDefinition = "bigint")
-    private Long osId; //OSID
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "os_id", referencedColumnName = "dict_id")
+    private Dict osDict; // os辞書
 
-    @Column(name = "memory_id", columnDefinition = "bigint")
-    private Long memoryId; //メモリID
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "memory_id", referencedColumnName = "dict_id")
+    private Dict memoryDict; //memory辞書
 
-    @Column(name = "ssd_id", columnDefinition = "bigint")
-    private Long ssdId; //SSDID
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ssd_id", referencedColumnName = "dict_id")
+    private Dict ssdDict; // SSD辞書
 
-    @Column(name = "hdd_id", columnDefinition = "bigint")
-    private Long hddId; //HDDID
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hdd_id", referencedColumnName = "dict_id")
+    private Dict hddDict; // HDD辞書
 
     @Column(name = "create_time", columnDefinition = "timestamp")
     private LocalDateTime createTime; //作成日時
