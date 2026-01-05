@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com</groupId>
-    <artifactId>JWT</artifactId>
+    <artifactId>DeviceManagement</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>JWT</name>
-    <description>JWT</description>
+    <name>DeviceManagement</name>
+    <description>DeviceManagement</description>
     <url/>
     <licenses>
         <license/>
