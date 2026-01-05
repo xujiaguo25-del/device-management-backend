@@ -1,12 +1,15 @@
 package com.deviceManagement.controller;
 
+import com.deviceManagement.common.ResultCode;
 import com.deviceManagement.dto.ChangePasswordRequest;
 import com.deviceManagement.dto.ChangePasswordResponse;
 import com.deviceManagement.dto.LoginRequest;
 import com.deviceManagement.dto.LoginResponse;
 import com.deviceManagement.common.Result;
 import com.deviceManagement.dto.LogoutResponse;
+import com.deviceManagement.exception.BusinessException;
 import com.deviceManagement.service.AuthService;
+import com.deviceManagement.utils.CryptoUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import jakarta.validation.Valid;
@@ -22,16 +25,54 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    /** 共通解密工具 */
+    private void decryptPasswordFields(Object dto) {
+        try {
+            if (dto instanceof LoginRequest req) {
+                req.setPassword(CryptoUtil.decrypt(req.getPassword()));
+            }
+            if (dto instanceof ChangePasswordRequest req) {
+                req.setCurrentPassword(CryptoUtil.decrypt(req.getCurrentPassword()));
+                req.setNewPassword(CryptoUtil.decrypt(req.getNewPassword()));
+            }
+        } catch (Exception e) {
+            log.error("暗号化解除失敗", e);
+            throw new BusinessException(ResultCode.PARAM_ERROR, "暗号化パスワードが無効です");
+        }
+    }
+
+    /* 1. ログイン（密文） */
+    @PostMapping("/login")
+    public Result<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+        decryptPasswordFields(loginRequest);
+        return authService.login(loginRequest);
+    }
+
+    /* 2. パスワード変更（密文） */
+    @PostMapping("/change-password")
+    public Result<ChangePasswordResponse> changePassword(
+            @Valid @RequestBody ChangePasswordRequest req,
+            @RequestHeader("Authorization") String authHeader) {
+        decryptPasswordFields(req);
+        return authService.changePassword(req, authHeader);
+    }
+
+    /* 3. ログアウト（パスワード不要 → そのまま） */
+    @PostMapping("/logout")
+    public Result<Void> logout() {
+        return authService.logout();
+    }
+
 
     /**
      * ユーザーログインインターフェース
      * @param loginRequest ログインリクエストパラメータ（従業員番号+パスワード）
      * @return Result<String>：成功時はTokenを返し、失敗時はエラーメッセージを返す
      */
-    @PostMapping("/login")
-    public Result<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
-        return authService.login(loginRequest);
-    }
+//    @PostMapping("/login")
+//    public Result<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+//        return authService.login(loginRequest);
+//    }
 
     /**
      * パスワード変更（ログイン後）
@@ -39,20 +80,20 @@ public class AuthController {
      * @param authHeader
      * @return
      */
-    @PostMapping("/change-password")
-    public Result<ChangePasswordResponse> changePassword(
-            @Valid @RequestBody ChangePasswordRequest req,
-            @RequestHeader("Authorization") String authHeader) {
-
-        return authService.changePassword(req, authHeader);
-    }
+//    @PostMapping("/change-password")
+//    public Result<ChangePasswordResponse> changePassword(
+//            @Valid @RequestBody ChangePasswordRequest req,
+//            @RequestHeader("Authorization") String authHeader) {
+//        return authService.changePassword(req, authHeader);
+//    }
 
     /**
      * ユーザーログアウトインターフェース
      * @return Result<Void>：ログアウト結果
      */
-    @PostMapping("/logout")
-    public Result<Void> logout() {
-        return authService.logout();
-    }
+//    @PostMapping("/logout")
+//    public Result<Void> logout() {
+//        return authService.logout();
+//    }
+//
 }

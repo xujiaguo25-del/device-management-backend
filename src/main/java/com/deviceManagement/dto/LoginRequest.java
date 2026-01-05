@@ -11,10 +11,17 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+//public class LoginRequest {
+//    @NotBlank(message = "社員番号は必要です。")
+//    private String userId;
+//
+//    @NotBlank(message = "パスワードは必要です")
+//    private String password;
+//}
 public class LoginRequest {
-    @NotBlank(message = "社員番号は必要です。")
-    private String userId;
+    @NotBlank(message = "社員番号は必須です。")
+    private String userId;          // 明文
 
-    @NotBlank(message = "パスワードは必要です")
-    private String password;
+    @NotBlank(message = "パスワード（暗号化）は必須です")
+    private String password;        // 密文
 }
