@@ -67,7 +67,9 @@ public class Result<T> {
     }
 
     /**
-     * 修改密码成功响应（专用 20000）
+     * パスワード変更成功レスポンス
+     * @param data
+     * @return
      */
     public static Result<ChangePasswordResponse> passwordChangedSuccess(ChangePasswordResponse data) {
         return new Result<>(

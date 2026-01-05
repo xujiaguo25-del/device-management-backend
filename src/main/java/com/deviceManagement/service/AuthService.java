@@ -13,5 +13,13 @@ public interface AuthService {
      * @return
      */
     Result<LoginResponse> login(LoginRequest loginRequest);
+
+
+    /**
+     * パスワード変更機能
+     * @param req
+     * @param authHeader
+     * @return
+     */
     Result<ChangePasswordResponse> changePassword(ChangePasswordRequest req, String authHeader);
 }

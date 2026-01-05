@@ -6,14 +6,14 @@ import lombok.Data;
 
 @Data
 public class ChangePasswordRequest {
-    @NotBlank(message = "userId不能为空")
+    @NotBlank(message = "userIdは必須です")
     private String userId;
 
-    @NotBlank(message = "当前密码不能为空")
+    @NotBlank(message = "現在のパスワードは必須です")
     private String currentPassword;
 
-    @NotBlank(message = "新密码不能为空")
+    @NotBlank(message = "新しいパスワードは必須です")
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
-            message = "新密码必须8位以上且含字母、数字、特殊字符")
+            message = "新しいパスワードは8文字以上で、英字・数字・特殊文字（@$!%*?&）をそれぞれ1文字以上含める必要があります。")
     private String newPassword;
 }

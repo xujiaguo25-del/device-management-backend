@@ -31,8 +31,12 @@ public class AuthController {
     public Result<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         return authService.login(loginRequest);
     }
+
     /**
-     * 修改密码（登录后）
+     * パスワード変更（ログイン後）
+     * @param req
+     * @param authHeader
+     * @return
      */
     @PostMapping("/change-password")
     public Result<ChangePasswordResponse> changePassword(
