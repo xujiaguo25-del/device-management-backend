@@ -11,34 +11,34 @@ import java.time.LocalDateTime;
 public class Dict {
     @Id
     @Column(name = "dict_id")
-    private Long dictId; // 主键
+    private Long dictId; // 主キー
 
     @Column(name = "dict_type_code", nullable = false)
-    private String dictTypeCode; // 字典类型编码
+    private String dictTypeCode; // 辞書タイプコード
 
     @Column(name = "dict_type_name", nullable = false)
-    private String dictTypeName; // 字典类型名称
+    private String dictTypeName; // 辞書タイプ名
 
     @Column(name = "dict_type_description")
-    private String dictTypeDescription; // 字典类型描述
+    private String dictTypeDescription; // 辞書タイプ説明
 
     @Column(name = "dict_item_name", nullable = false)
-    private String dictItemName; // 字典项目名
+    private String dictItemName; // 辞書項目名
 
     @Column(name = "sort", columnDefinition = "int4 default 1")
-    private Integer sort; // 排序号
+    private Integer sort; // ソート番号
 
     @Column(name = "is_enabled", nullable = false, columnDefinition = "int2 default 1")
-    private Short isEnabled; // 有效标志
+    private Short isEnabled; // 有効フラグ
 
     @Column(name = "create_time", nullable = false, columnDefinition = "timestamp(6) default CURRENT_TIMESTAMP")
-    private LocalDateTime createTime; // 创建时间
+    private LocalDateTime createTime; // 作成時間
 
     @Column(name = "creater")
-    private String creater; // 创建者
+    private String creater; // 作成者
 
     @Column(name = "update_time", nullable = false, columnDefinition = "timestamp(6) default CURRENT_TIMESTAMP")
-    private LocalDateTime updateTime; // 更新时间
+    private LocalDateTime updateTime; // 更新時間
 
     @Column(name = "updater")
     private String updater; // 更新者

@@ -19,14 +19,14 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- * Spring Security 配置
+ * Spring Security 設定
  */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     /**
-     * 密码编码器
+     * パスワードエンコーダー
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -34,7 +34,7 @@ public class SecurityConfig {
     }
 
     /**
-     * 认证管理器
+     * 認証マネージャー
      */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
@@ -42,7 +42,7 @@ public class SecurityConfig {
     }
 
     /**
-     * JWT 认证过滤器
+     * JWT 認証フィルター
      */
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
@@ -50,7 +50,7 @@ public class SecurityConfig {
     }
 
     /**
-     * 安全过滤链
+     * セキュリティフィルターチェーン
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -71,14 +71,14 @@ public class SecurityConfig {
     }
 
     /**
-     * 配置Redis连接工厂
+     * Redis接続ファクトリー設定
      */
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         return new LettuceConnectionFactory();
     }
     /**
-     * 配置RedisTemplate
+     * RedisTemplate設定
      */
     @Bean
     public RedisTemplate<String, String> redisTemplate() {

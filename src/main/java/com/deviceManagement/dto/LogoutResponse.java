@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 登出响应DTO
+ * ログアウトレスポンスDTO
  */
 @Data
 @NoArgsConstructor
@@ -13,12 +13,12 @@ import lombok.NoArgsConstructor;
 public class LogoutResponse {
 
     /**
-     * 状态码
+     * ステータスコード
      */
     private Integer code;
 
     /**
-     * 响应消息
+     * レスポンスメッセージ
      */
     private String message;
 }

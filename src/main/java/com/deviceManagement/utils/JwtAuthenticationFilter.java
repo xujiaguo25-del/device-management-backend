@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * JWT 认证过滤器
+ * JWT 認証フィルター
  */
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -49,7 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     /**
-     * 从请求头中获取 JWT Token
+     * リクエストヘッダーから JWT トークンを取得
      */
     private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");

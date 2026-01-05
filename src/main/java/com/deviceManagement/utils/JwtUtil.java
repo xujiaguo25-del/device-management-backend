@@ -23,19 +23,19 @@ public class JwtUtil {
     private final RedisTemplate<String, String> redisTemplate;
 
     @Value("${jwt.secret}")
-    private String secretKey; // 假设该密钥是URL安全Base64编码格式
+    private String secretKey;
 
     @Value("${jwt.expiration-time}")
     private long expirationTime;
 
-    // Redis黑名单key前缀
+    // Redisブラックリストキープレフィックス
     private static final String TOKEN_BLACKLIST_PREFIX = "jwt:blacklist:";
 
-    // 缓存SecretKey
+    // SecretKeyをキャッシュ
     private SecretKey cachedSecretKey;
 
     /**
-     * 生成SecretKey对象：处理URL安全Base64编码的密钥
+     * SecretKeyオブジェクトを生成：URL安全なBase64エンコードされた鍵を処理
      */
     private SecretKey getSigningKey() {
         if (cachedSecretKey == null) {
@@ -44,12 +44,12 @@ public class JwtUtil {
                     try {
                         byte[] keyBytes = Decoders.BASE64URL.decode(secretKey);
                         if (keyBytes.length < 32) {
-                            throw new IllegalStateException("密钥长度不足，HS256算法要求至少32字节");
+                            throw new IllegalStateException("鍵の長さが不足しています。HS256アルゴリズムは少なくとも32バイト必要です");
                         }
                         cachedSecretKey = Keys.hmacShaKeyFor(keyBytes);
                     } catch (Exception e) {
-                        log.error("JWT密钥初始化失败", e);
-                        throw new RuntimeException("JWT配置错误", e);
+                        log.error("JWT鍵の初期化に失敗しました", e);
+                        throw new RuntimeException("JWT設定エラー", e);
                     }
                 }
             }
@@ -58,17 +58,17 @@ public class JwtUtil {
     }
 
     /**
-     * 生成Token：使用SecretKey签名，避免Base64解码异常
+     * Tokenを生成：SecretKeyで署名し、Base64デコード例外を回避
      */
     public String generateToken(String userId, Long userTypeId) {
         if (userId == null || userId.trim().isEmpty()) {
-            throw new IllegalArgumentException("员工编号不能为空");
+            throw new IllegalArgumentException("従業員番号は空にできません");
         }
         if (userTypeId == null) {
-            throw new IllegalArgumentException("用户类型ID不能为空");
+            throw new IllegalArgumentException("ユーザータイプIDは空にできません");
         }
         if (expirationTime <= 0) {
-            throw new IllegalStateException("Token过期时间必须大于0");
+            throw new IllegalStateException("Tokenの有効期限は0より大きくなければなりません");
         }
 
         Date now = new Date();
@@ -79,23 +79,23 @@ public class JwtUtil {
                 .claim("userType", userTypeId)
                 .setIssuedAt(now)
                 .setExpiration(expirationDate)
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256) // 使用SecretKey签名
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256) // SecretKeyで署名
                 .compact();
     }
 
     /**
-     * 解析Token（私有方法）
+     * Tokenを解析（プライベートメソッド）
      */
     private Claims parseToken(String token) throws JwtException {
         if (token == null || token.trim().isEmpty()) {
-            throw new IllegalArgumentException("Token不能为空");
+            throw new IllegalArgumentException("Tokenは空にできません");
         }
 
         token = token.trim();
 
-        // 检查是否在黑名单中
+        // ブラックリストに含まれているかチェック
         if (isTokenBlacklisted(token)) {
-            throw new JwtException("令牌已被撤销");
+            throw new JwtException("トークンは既に取り消されています");
         }
 
         return Jwts.parserBuilder()
@@ -106,45 +106,45 @@ public class JwtUtil {
     }
 
     /**
-     * 获取员工编号
+     * 従業員番号を取得
      */
     public String getUserIdFromToken(String token) {
         return parseToken(token).getSubject();
     }
 
     /**
-     * 获取用户类型ID
+     * ユーザータイプIDを取得
      */
     public Long getUserTypeIdFromToken(String token) {
         return parseToken(token).get("userType", Long.class);
     }
 
     /**
-     * 验证Token（增强异常日志）
+     * Tokenを検証（例外ログを強化）
      */
     public boolean validateToken(String token) {
         try {
             parseToken(token);
             return true;
         } catch (ExpiredJwtException e) {
-            log.warn("Token已过期：{}", e.getMessage());
+            log.warn("Tokenの有効期限が切れています：{}", e.getMessage());
             return false;
         } catch (SignatureException e) {
-            log.warn("Token签名无效：{}", e.getMessage());
+            log.warn("Tokenの署名が無効です：{}", e.getMessage());
             return false;
         } catch (IllegalArgumentException e) {
-            log.warn("Token格式错误：{}", e.getMessage());
+            log.warn("Tokenフォーマットエラー：{}", e.getMessage());
             return false;
         } catch (JwtException e) {
-            log.warn("Token验证失败：{}", e.getMessage());
+            log.warn("Token検証に失敗しました：{}", e.getMessage());
             return false;
         }
     }
 
-    // ==================== Redis黑名单功能 ====================
+    // ==================== Redisブラックリスト機能 ====================
     /**
-     * 使令牌失效（加入黑名单）
-     * 在用户登出或需要强制令牌失效时调用
+     * トークンを無効化（ブラックリストに追加）
+     * ユーザーログアウト時やトークンの強制無効化が必要なときに呼び出します
      */
     public void invalidateToken(String token) {
         try {
@@ -152,19 +152,19 @@ public class JwtUtil {
             Date expiration = claims.getExpiration();
             long ttl = expiration.getTime() - System.currentTimeMillis();
 
-            // 只对未过期的令牌加入黑名单
+            // 有効期限が切れていないトークンのみブラックリストに追加
             if (ttl > 0) {
                 addToBlacklist(token, ttl);
-                log.debug("令牌已加入黑名单，剩余有效期: {}秒", ttl / 1000);
+                log.debug("トークンがブラックリストに追加されました、残り有効期間: {}秒", ttl / 1000);
             }
         } catch (JwtException e) {
-            log.warn("令牌失效操作失败，令牌可能已过期或无效: {}", e.getMessage());
-            // 如果令牌已过期或无效，无需加入黑名单
+            log.warn("トークン無効化操作に失敗しました、トークンは既に期限切れまたは無効の可能性があります: {}", e.getMessage());
+            // トークンが既に期限切れまたは無効の場合は、ブラックリストに追加する必要はありません
         }
     }
 
     /**
-     * 将令牌加入黑名单（私有方法）
+     * トークンをブラックリストに追加（プライベートメソッド）
      */
     private void addToBlacklist(String token, long ttlMillis) {
         String tokenHash = generateTokenHash(token);
@@ -172,14 +172,14 @@ public class JwtUtil {
 
         redisTemplate.opsForValue().set(
                 redisKey,
-                "1",  // 值不重要，只需要key存在即可
+                "1",  // 値は重要ではなく、キーが存在するだけで十分です
                 ttlMillis,
                 TimeUnit.MILLISECONDS
         );
     }
 
     /**
-     * 检查令牌是否在黑名单中
+     * トークンがブラックリストに含まれているかチェック
      */
     private boolean isTokenBlacklisted(String token) {
         String tokenHash = generateTokenHash(token);
@@ -191,23 +191,23 @@ public class JwtUtil {
 
 
     /**
-     * 获取令牌剩余有效期（单位：秒）
-     * 新增的实用方法
+     * トークンの残り有効期間を取得（単位：秒）
+     * 新しく追加された実用的なメソッド
      */
     public long getTokenTTL(String token) {
         try {
             Claims claims = parseToken(token);
             Date expiration = claims.getExpiration();
             long remaining = expiration.getTime() - System.currentTimeMillis();
-            return Math.max(0, remaining / 1000); // 返回剩余秒数，不小于0
+            return Math.max(0, remaining / 1000); // 残り秒数を返します。0未満にはなりません
         } catch (Exception e) {
-            return 0; // 如果令牌无效，返回0
+            return 0; // トークンが無効の場合は0を返します
         }
     }
 
     /**
-     * 生成令牌哈希（简单实现，避免存储原始token）
-     * 生产环境可以考虑使用更安全的哈希算法
+     * トークンハッシュを生成（シンプルな実装、元のtokenの保存を回避）
+     * 本番環境ではより安全なハッシュアルゴリズムの使用を検討できます
      */
     private String generateTokenHash(String token) {
         return Integer.toHexString(token.hashCode());

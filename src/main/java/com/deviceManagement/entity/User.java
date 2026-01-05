@@ -13,28 +13,28 @@ import java.time.LocalDateTime;
 public class User {
     @Id
     @Column(name = "user_id")
-    private String userId; // 工号
+    private String userId; // 従業員番号
 
     @Column(name = "dept_id")
-    private String deptId; // 部门
+    private String deptId; // 部門
 
     @Column(name = "name")
-    private String name; // 姓名
+    private String name; // 氏名
 
     @Column(name = "user_type_id")
-    private Long userTypeId; // 用户类型ID（关联dict表）
+    private Long userTypeId; // ユーザータイプID（dictテーブルと関連）
 
     @Column(name = "password")
-    private String password; // 加密后的密码
+    private String password; // 暗号化後のパスワード
 
     @Column(name = "create_time")
-    private LocalDateTime createTime; // 创建时间
+    private LocalDateTime createTime; // 作成時間
 
     @Column(name = "creater")
-    private String creater; // 创建者
+    private String creater; // 作成者
 
     @Column(name = "update_time")
-    private LocalDateTime updateTime; // 更新时间
+    private LocalDateTime updateTime; // 更新時間
 
     @Column(name = "updater")
     private String updater; // 更新者

@@ -12,5 +12,5 @@ public class UserInfo {
     private String userId;
     private String deptId;
     private String name;
-    private String userTypeName; // 用户类型名称
+    private String userTypeName;
 }

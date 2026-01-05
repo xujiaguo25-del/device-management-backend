@@ -13,7 +13,7 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * 认证授权Controller：处理登录、用户信息查询接口
+ * 認証Controller：ログイン、ユーザー情報インターフェースを処理する
  */
 @Slf4j
 @RestController
@@ -24,9 +24,9 @@ public class AuthController {
     private final AuthService authService;
 
     /**
-     * 用户登录接口
-     * @param loginRequest 登录请求参数（员工编号+密码）
-     * @return Result<String>：成功返回Token，失败返回错误信息
+     * ユーザーログインインターフェース
+     * @param loginRequest ログインリクエストパラメータ（従業員番号+パスワード）
+     * @return Result<String>：成功時はTokenを返し、失敗時はエラーメッセージを返す
      */
     @PostMapping("/login")
     public Result<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
@@ -48,8 +48,8 @@ public class AuthController {
     }
 
     /**
-     * 用户登出接口
-     * @return Result<Void>：登出结果
+     * ユーザーログアウトインターフェース
+     * @return Result<Void>：ログアウト結果
      */
     @PostMapping("/logout")
     public Result<Void> logout() {

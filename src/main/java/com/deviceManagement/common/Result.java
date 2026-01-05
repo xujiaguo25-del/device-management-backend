@@ -13,11 +13,10 @@ import lombok.Data;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Result<T> {
-    private int code;       // HTTP状态码（直接取自ResultCode）
-    private String message; // 响应消息（直接取自ResultCode）
-    private T data;         // 响应数据（仅成功带数据时存在）
+    private int code;
+    private String message;
+    private T data;
 
-    // 私有构造：强制通过静态工厂方法创建，避免硬编码code/message
     private Result(int code, String message, T data) {
         this.code = code;
         this.message = message;
@@ -25,8 +24,8 @@ public class Result<T> {
     }
 
     /**
-     * 登录成功响应（匹配API的LoginResponse）
-     * @param loginData 登录成功数据（含token+userInfo）
+     * ログイン成功レスポンス（APIのLoginResponseに一致）
+     * @param loginData ログイン成功データ（token+userInfoを含む）
      * @return Result<LoginData>
      */
     public static Result<LoginResponse> loginSuccess(LoginResponse loginData) {
@@ -38,7 +37,7 @@ public class Result<T> {
     }
 
     /**
-     * 登出成功响应（匹配API的LogoutResponse）
+     * ログアウト成功レスポンス（APIのLogoutResponseに一致）
      * @return Result<Void>
      */
     public static Result<Void> logoutSuccess() {
@@ -50,9 +49,9 @@ public class Result<T> {
     }
 
     /**
-     * 错误响应（支持泛型，适配任意返回类型）
-     * @param resultCode 错误枚举
-     * @return Result<T>：指定泛型的错误结果
+     * エラーレスポンス（ジェネリック対応、任意の戻り値タイプに適合）
+     * @param resultCode エラー列挙型
+     * @return Result<T>：指定されたジェネリックのエラー結果
      */
     public static <T> Result<T> error(ResultCode resultCode) {
         return new Result<>(
@@ -61,7 +60,7 @@ public class Result<T> {
                 null
         );
     }
-    //重载方法
+    //オーバーロードメソッド
     public static <T> Result<T> error(ResultCode resultCode, String customMessage) {
         return new Result<>(resultCode.getCode(), customMessage, null);
     }

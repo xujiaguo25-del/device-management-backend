@@ -9,15 +9,15 @@ import com.deviceManagement.dto.LogoutResponse;
 
 public interface AuthService {
     /**
-     * 登录功能
+     * ログイン機能
      * @param loginRequest
      * @return
      */
     Result<LoginResponse> login(LoginRequest loginRequest);
 
     /**
-     * 用户登出
-     * @return Result<Void>：登出结果
+     * ユーザーログアウト
+     * @return Result<Void>：ログアウト結果
      */
     Result<Void> logout();
 
