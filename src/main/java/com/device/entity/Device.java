@@ -1,48 +1,81 @@
-package com.device.entity;
+package com.device.management.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-@Entity
-@Table(name = "devices")
+/**
+ * 機器オブジェクト
+ */
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Entity
+@Table(name = "device_info") // table name
 public class Device {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "device_id", unique = true, nullable = false)
+    private String deviceId; //機器番号
 
-    @Column(nullable = false, unique = true)
-    private String deviceCode;
+    @Column(name = "device_model")
+    private String deviceModel; //ホストモデル
 
-    @Column(nullable = false)
-    private String deviceName;
+    @Column(name = "computer_name")
+    private String computerName; //コンピュータ名
 
-    private String deviceType;
+    @Column(name = "login_username")
+    private String loginUsername; //ログインユーザ名
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
+    @Column(name = "project")
+    private String project; //所属プロジェクト
 
-    private String status;  // online, offline, maintenance
+    @Column(name = "dev_room")
+    private String devRoom; //所属開発室
 
-    private String location;
+    @Column(name = "user_id")
+    private String userId; //従業員番号
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "remark", columnDefinition = "text")
+    private String remark; //備考
 
-    private LocalDateTime updatedAt;
+    @Column(name = "self_confirm_id", columnDefinition = "bigint")
+    private String selfConfirmId; //本人確認ID
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
+    @Column(name = "os_id", columnDefinition = "bigint")
+    private Long osId; //OSID
 
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
+    @Column(name = "memory_id", columnDefinition = "bigint")
+    private Long memoryId; //メモリID
+
+    @Column(name = "ssd_id", columnDefinition = "bigint")
+    private Long ssdId; //SSDID
+
+    @Column(name = "hdd_id", columnDefinition = "bigint")
+    private Long hddId; //HDDID
+
+    @Column(name = "create_time", columnDefinition = "timestamp")
+    private LocalDateTime createTime; //作成日時
+
+    @Column(name = "creater")
+    private String creater; //作成者
+
+    @Column(name = "update_time", columnDefinition = "timestamp")
+    private LocalDateTime updateTime; //更新日時
+
+    @Column(name = "updater")
+    private String updater; //更新者
+
+    // device:monitor（1:n）
+    @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<Monitor> monitors = new ArrayList<>();
+
+    // device:ip（1：n）
+    @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<DeviceIp> deviceIps = new ArrayList<>();
 }
