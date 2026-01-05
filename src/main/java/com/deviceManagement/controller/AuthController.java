@@ -1,5 +1,7 @@
 package com.deviceManagement.controller;
 
+import com.deviceManagement.dto.ChangePasswordRequest;
+import com.deviceManagement.dto.ChangePasswordResponse;
 import com.deviceManagement.dto.LoginRequest;
 import com.deviceManagement.dto.LoginResponse;
 import com.deviceManagement.common.Result;
@@ -28,5 +30,15 @@ public class AuthController {
     @PostMapping("/login")
     public Result<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         return authService.login(loginRequest);
+    }
+    /**
+     * 修改密码（登录后）
+     */
+    @PostMapping("/change-password")
+    public Result<ChangePasswordResponse> changePassword(
+            @Valid @RequestBody ChangePasswordRequest req,
+            @RequestHeader("Authorization") String authHeader) {
+
+        return authService.changePassword(req, authHeader);
     }
 }

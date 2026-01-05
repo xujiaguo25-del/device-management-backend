@@ -64,4 +64,8 @@ public class Result<T> {
     public static <T> Result<T> error(ResultCode resultCode, String customMessage) {
         return new Result<>(resultCode.getCode(), customMessage, null);
     }
+
+    public static <T> Result<T> success(T data) {
+        return new Result<>(200, "success", data);
+    }
 }

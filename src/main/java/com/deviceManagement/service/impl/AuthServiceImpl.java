@@ -1,8 +1,6 @@
 package com.deviceManagement.service.impl;
 
-import com.deviceManagement.dto.LoginRequest;
-import com.deviceManagement.dto.LoginResponse;
-import com.deviceManagement.dto.UserInfo;
+import com.deviceManagement.dto.*;
 import com.deviceManagement.repository.DictRepository;
 import com.deviceManagement.repository.UserRepository;
 import com.deviceManagement.common.Result;
@@ -12,6 +10,7 @@ import com.deviceManagement.entity.User;
 import com.deviceManagement.exception.BusinessException;
 import com.deviceManagement.service.AuthService;
 import com.deviceManagement.utils.JwtUtil;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -62,5 +61,44 @@ public class AuthServiceImpl implements AuthService {
 
         // 6. 返回登录成功结果（使用Result的loginSuccess静态工厂方法）
         return Result.loginSuccess(loginResponse);
+    }
+    @Override
+    @Transactional
+    public Result<ChangePasswordResponse> changePassword(ChangePasswordRequest req,
+                                                         String authHeader) {
+        // 1. 解析并验证 JWT
+        String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
+        if (!jwtUtil.validateToken(token)) {
+            return Result.error(ResultCode.TOKEN_INVALID);
+        }
+        String tokenUserId = jwtUtil.getUserIdFromToken(token);
+
+        // 2. 只能改自己的密码
+        if (!tokenUserId.equals(req.getUserId())) {
+            return Result.error(ResultCode.PARAM_ERROR, "只能修改当前登录账号的密码");
+        }
+
+        // 3. 校验旧密码
+        User user = userRepository.findByUserId(req.getUserId())
+                .orElseThrow(() -> new BusinessException(ResultCode.USER_NOT_FOUND));
+
+        if (!passwordEncoder.matches(req.getCurrentPassword(), user.getPassword())) {
+            return Result.error(ResultCode.PASSWORD_ERROR, "当前密码输入错误");
+        }
+
+        // 4. 新旧密码不能相同
+        if (passwordEncoder.matches(req.getNewPassword(), user.getPassword())) {
+            return Result.error(ResultCode.FAIL, "新密码不能与旧密码相同");
+        }
+
+        // 5. 更新密码
+        user.setPassword(passwordEncoder.encode(req.getNewPassword()));
+        userRepository.save(user);
+
+        // 6. 组装返回
+        ChangePasswordResponse resp = new ChangePasswordResponse();
+        resp.setCode(0);
+        resp.setMsg("パスワードが更新されました。再度ログインしてください。");
+        return Result.success(resp);
     }
 }

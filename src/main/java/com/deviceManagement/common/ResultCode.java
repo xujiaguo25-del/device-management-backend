@@ -9,6 +9,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ResultCode {
+
+    PASSWORD_SAME_AS_OLD(40003, "新しいパスワードは古いパスワードと同じにすることはできません"),
+    WEAK_NEW_PASSWORD(40002, "新しいパスワードが強度要件を満たしていません"),
     // -------------------------- 成功状态码 --------------------------
     LOGIN_SUCCESS(200, "ログイン成功"),       // 匹配API登录成功响应
     LOGOUT_SUCCESS(200, "ログアウト成功"),     // 匹配API登出成功响应
