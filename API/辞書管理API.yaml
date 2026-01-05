@@ -1,18 +1,25 @@
 openapi: '3.0.3'
 info:
-  title:  辞書管理　API
+  title: 辞書管理　API
   version: '1.0'
 
 paths:
-  /api/dict/items:
+  /dict/items:
     get:
       summary: 辞書項目の取得
-      description: 登録されている辞書項目を取得します。
+      description: 登録されている辞書項目を取得します（sortフィールドで昇順ソート済）。
       tags:
-        - Ⅾict
+        - Dict
+      security:
+        - bearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/PageParam'
-        - $ref: '#/components/parameters/SizeParam'
+        - name: dictTypeCode
+          in: query
+          required: true
+          schema:
+            type: string
+          description: 辞書タイプコードでフィルタリング
+          example: "USB_STATUS"
       responses:
         '200':
           description: 辞書項目の取得に成功しました
@@ -22,16 +29,16 @@ paths:
                 $ref: '#/components/schemas/DictItemsResponse'
               examples:
                 successExample:
-                  $ref: '#/components/examples/DictPageSuccessExample'
+                  $ref: '#/components/examples/DictSuccessExample'
         '400':
-          description: 分页パラメータ不正
+          description: パラメータ不正
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/DictItemsResponse'
               examples:
                 paramErrorExample:
-                  $ref: '#/components/examples/DictPageParamErrorExample'
+                  $ref: '#/components/examples/DictParamErrorExample'
         '500':
           description: サーバー内部エラー
           content:
@@ -43,69 +50,28 @@ paths:
                   $ref: '#/components/examples/DictServerErrorExample'
 
 components:
- 
-  parameters:
-    PageParam:
-      name: page
-      in: query
-      required: false
-      schema:
-        type: integer
-        minimum: 1
-        default: 1
-      description: ページ番号
-      example: 1
-    SizeParam:
-      name: size
-      in: query
-      required: false
-      schema:
-        type: integer
-        minimum: 1
-        maximum: 100
-        default: 20
-      description: 1ページの件数
-      example: 20
 
   examples:
-
-    DictPageSuccessExample:
-      summary: 分页取得成功例
+    DictSuccessExample:
+      summary: 取得成功例
       value:
         code: 200
         message: "成功"
         data:
           - dictId: 1
-            dictTypeCode: "USB_STATUS"
-            dictTypeName: "USB使用状態"
-            dictTypeDescription: "USBポートの使用権限状態を管理"
             dictItemName: "使用可"
             sort: 1
-            createTime: "2025-12-31 14:50:27.402795"
-            creater: "admin"
-            updateTime: "2025-12-31 14:50:27.402795"
-            updater: "admin"
           - dictId: 2
-            dictTypeCode: "DOMAIN_STATUS"
-            dictTypeName: "ドメイン状態"
-            dictTypeDescription: "機器のドメイン参加状態を管理"
-            dictItemName: "参加済"
-            sort: 1
-            createTime: "2025-12-31 14:50:27.402795"
-            creater: "admin"
-            updateTime: "2025-12-31 14:50:27.402795"
-            updater: "admin"
-        total: 20
-        page: 1
-        size: 10
+            dictItemName: "使用不可"
+            sort: 2
 
-    DictPageParamErrorExample:
-      summary: 分页パラメータ不正例
-      value: { code: 40001, message: "pageは1以上の数値を指定してください", data: null, total: null, page: null, size: null }
+    DictParamErrorExample:
+      summary: パラメータ不正例
+      value: { code: 40001, message: "dictTypeCodeは文字列で指定してください", data: null }
 
     DictServerErrorExample:
       summary: サーバー内部エラー例
-      value: { code: 50000, message: "システムエラーが発生しました", data: null, total: null, page: null, size: null }
+      value: { code: 50000, message: "システムエラーが発生しました", data: null }
 
   securitySchemes:
     bearerAuth:
@@ -115,7 +81,7 @@ components:
       description: "Authorization: Bearer <token>"
 
   schemas:
-     DictItemsResponse:
+    DictItemsResponse:
       type: object
       properties:
         code:
@@ -127,77 +93,26 @@ components:
           description: 処理メッセージ
           example: "成功"
         data:
-          type: object
+          type: array
           nullable: true
-          description: 辞書全量データ
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/DictItem'
-        total:
-          type: integer
-          format: int64
-          nullable: false
-          description: 辞書総件数
-          example: 10
-        page:
-          type: integer
-          nullable: false
-          description: 当前ページ番号
-          example: 1
-        size:
-          type: integer
-          nullable: false
-          description: 1ページの件数
-          example: 20
-     
-     DictItem:
+          description: 辞書データ、sort フィールドで昇順ソート済、dictId=value、dictItemName=label
+          items:
+            $ref: '#/components/schemas/DictItem'
+
+    DictItem:
       type: object
-      description: 統合辞書テーブルの全量データ
+      description: 統合辞書テーブルのデータ（下拉框用：dictId=value、dictItemName=label）
       properties:
         dictId:
           type: integer
           format: int64
-          description: 辞書ID
+          description: 辞書ID（下拉框value値）
           example: 1
-        dictTypeCode:
-          type: string
-          description: 辞書タイプコード
-          example: "USB_STATUS"
-        dictTypeName:
-          type: string
-          description: 辞書タイプ名
-          example: "USB使用状態"
-        dictTypeDescription:
-          type: string
-          nullable: true
-          description: 辞書タイプ説明
-          example: "USBポートの使用権限状態を管理"
         dictItemName:
           type: string
-          description: 辞書項目名
+          description: 辞書項目名（下拉框label値）
           example: "使用可"
         sort:
           type: integer
-          description: ソート番号
+          description: ソート番号（昇順でソート済）
           example: 1
-        createTime:
-          type: string
-          format: date-time
-          description: 作成日時
-          example: "2025-12-31 14:50:27.402795"
-        creater:
-          type: string
-          nullable: true
-          description: 作成者
-          example: "admin"
-        updateTime:
-          type: string
-          format: date-time
-          description: 更新日時
-          example: "2025-12-31 14:50:27.402795"
-        updater:
-          type: string
-          nullable: true
-          description: 更新者
-          example: "admin"

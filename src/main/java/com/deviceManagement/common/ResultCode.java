@@ -20,6 +20,7 @@ public enum ResultCode {
     FORBIDDEN(403, "操作に対する権限がありません"),
 
     // --------------------------成功状態コード--------------------------
+    SUCCESS(200, "成功"),
     LOGIN_SUCCESS(200, "ログイン成功"),
     LOGOUT_SUCCESS(200, "ログアウト成功"),
 
@@ -33,7 +34,10 @@ public enum ResultCode {
 
     // -------------------------- 業務エラー --------------------------
     PARAM_ERROR(400, "パラメータエラー"),
-    FAIL(500, "システムエラー");
+    FAIL(500, "システムエラー"),
+
+    SYSTEM_ERROR(50000, "システムエラーが発生しました"),
+    DICT_PARAM_ERROR(40001, "dictTypeCodeは文字列で指定してください");
 
     private final int code;       // HTTPステータスコード
     private final String message; // レスポンスメッセージ

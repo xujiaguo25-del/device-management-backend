@@ -24,6 +24,20 @@ public class Result<T> {
     }
 
     /**
+     * 通用成功响应
+     * @param data 响应数据
+     * @return Result<T>
+     */
+    public static <T> Result<T> success(T data) {
+        return new Result<>(
+            ResultCode.SUCCESS.getCode(),
+            ResultCode.SUCCESS.getMessage(),
+            data
+        );
+    }
+
+
+    /**
      * ログイン成功レスポンス（APIのLoginResponseに一致）
      * @param loginData ログイン成功データ（token+userInfoを含む）
      * @return Result<LoginData>
