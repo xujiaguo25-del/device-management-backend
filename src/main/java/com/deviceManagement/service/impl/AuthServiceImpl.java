@@ -58,14 +58,14 @@ public class AuthServiceImpl implements AuthService {
         ).orElseThrow(() -> new BusinessException(ResultCode.FAIL));
 
 
-        UserInfo userInfo = new UserInfo();
-        userInfo.setUserId(user.getUserId());
-        userInfo.setDeptId(user.getDeptId());
-        userInfo.setName(user.getName());
-        userInfo.setUserTypeName(userType.getDictItemName());
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUserId(user.getUserId());
+        userDTO.setDeptId(user.getDeptId());
+        userDTO.setName(user.getName());
+        userDTO.setUserTypeName(userType.getDictItemName());
 
         // 5. LoginResponseを組み立て
-        LoginResponse loginResponse = new LoginResponse(token, userInfo);
+        LoginResponse loginResponse = new LoginResponse(token, userDTO);
 
         // 6. ログイン成功結果を返す（ResultのloginSuccess静的ファクトリメソッドを使用）
         return Result.loginSuccess(loginResponse);

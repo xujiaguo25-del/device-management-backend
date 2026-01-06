@@ -43,7 +43,7 @@ public class AuthController {
 
     /* 1. ログイン（密文） */
     @PostMapping("/login")
-    public Result<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+    public Result<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
         decryptPasswordFields(loginRequest);
         return authService.login(loginRequest);
     }
@@ -51,7 +51,7 @@ public class AuthController {
     /* 2. パスワード変更（密文） */
     @PostMapping("/change-password")
     public Result<ChangePasswordResponse> changePassword(
-            @Valid @RequestBody ChangePasswordRequest req,
+            @RequestBody ChangePasswordRequest req,
             @RequestHeader("Authorization") String authHeader) {
         decryptPasswordFields(req);
         return authService.changePassword(req, authHeader);
