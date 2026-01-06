@@ -22,46 +22,29 @@ public interface DevicePermissionRepository
     DevicePermission findDevicePermissionsByDevice(DeviceInfo device);
 
     @Query(value = "SELECT NEW com.device.management.dto.DevicePermissionExcelVo(" +
-            // 占位符（number字段查询后手动赋值）
-            "null, " +
-            // 设备信息
-            "d.deviceId, " +
-            "d.computerName, " +
-            // 聚合IP：修复关联字段ip.device → ip.deviceId
-            "(SELECT STRING_AGG(ip.ipAddress, ',') FROM DeviceIp ip WHERE ip.deviceId = d.deviceId), " +
-            // 使用者信息
-            "u.jobNumber, " +
-            "u.name, " +
-            "u.deptId, " +
-            "d.loginUsername, " +
-            // 域信息：只查编码（p.domainStatus），不查字典名称
-            "p.domainStatus, " +  // 原domainDict.dictItemName → 改为数字编码
-            "p.domainGroup, " +
-            "p.noDomainReason, " +
-            // SmartIT信息：只查编码（p.smartitStatus）
-            "p.smartitStatus, " + // 原smartitDict.dictItemName → 改为数字编码
-            "p.noSmartitReason, " +
-            // USB信息：只查编码（p.usbStatus）
-            "p.usbStatus, " +     // 原usbDict.dictItemName → 改为数字编码
-            "p.usbReason, " +
-            "p.usbExpireDate, " +
-            // 其他
-            "'正常', " + // 连接状态（示例固定值）
-            "p.noSymantecReason, " +
-            "p.remark, " +
-            // 聚合显示器：修复关联字段m.device → m.deviceId
-            "(SELECT STRING_AGG(m.monitorName, ',') FROM MonitorInfo m WHERE m.device = d.deviceId)" +
-            ") " +
-            "FROM DeviceInfo d " +
-            // 关联用户表
-            "LEFT JOIN User u ON d.jobNumber = u.jobNumber " +
-            // 关联设备权限表：修复p.device → p.deviceId
-            "LEFT JOIN DevicePermission p ON d.deviceId = p.device " +
-            // 删掉所有Dict表的LEFT JOIN（后续手动映射字典）
-            // 分组：去掉字典相关字段，只保留核心字段
-            "GROUP BY d.deviceId, d.computerName, u.jobNumber, u.name, u.deptId, d.loginUsername, " +
-            "p.domainStatus, p.domainGroup, p.noDomainReason, p.smartitStatus, " +
-            "p.noSmartitReason, p.usbStatus, p.usbReason,  p.usbExpireDate, p.noSymantecReason, p.remark")
+            "1L," +
+            "d.deviceId," +
+            "(SELECT STRING_AGG(m.monitorName, CHR(10)) FROM MonitorInfo m WHERE m.device.deviceId = d.deviceId)," +
+            "d.computerName," +
+            " (SELECT STRING_AGG(ip.ipAddress, CHR(10)) FROM DeviceIp ip where ip.device.deviceId = d.deviceId)," +
+            "u.jobNumber," +
+            "u.name,"+
+            "u.deptId," +
+            "d.loginUsername," +
+            "dp.domainStatus.id," +
+            "dp.domainGroup," +
+            "dp.noDomainReason," +
+            "dp.smartitStatus.id," +
+            "dp.noSmartitReason," +
+            "dp.usbStatus.id," +
+            "dp.usbReason," +
+            "dp.usbExpireDate," +
+            "dp.antivirusStatus.id," +
+            "dp.noSymantecReason," +
+            "dp.remark" +
+            ")" +
+            "from  User u right join DeviceInfo d on u.jobNumber = d.jobNumber.jobNumber " +
+            "left  join DevicePermission dp on   d.deviceId = dp.device.deviceId")
     List<DevicePermissionExcelVo> findAllDevicePermissionExcel();
 
     //todo:查询语句
@@ -73,7 +56,13 @@ public interface DevicePermissionRepository
 //    from users u right join device d on u.job_number = device.job_number
 //              left  join device_permission dp on   d.device_id = dp.device_id
 //
-//    )
+//    ==================================================================================================
+//    select null,d.device_id,d.computer_name,'ip',u.job_number,u.dept_id,d.login_username,
+//dp.domain_status_id,dp.domain_group,dp.no_domain_reason,dp.smartit_status_id,dp.no_smartit_reason,
+//dp.usb_status_id,dp.usb_reason,dp.usb_expire_date,dp.antivirus_status_id,dp.no_symantec_reason,dp.remark
+//from  users u right join device_info d on u.job_number = d.job_number
+//          left  join device_permission dp on   d.device_id = dp.device_id
+//    ==================================================================================================
 
 }
 
@@ -86,10 +75,11 @@ public interface DevicePermissionRepository
 /*
 public class DevicePermissionExcelVo {
     // 设备信息
-    private Integer number;           // 编号
+    private Long number;           // 编号
     private String deviceNumber;      // 设备编号（带显示器信息）
     private String computerName;      // 电脑名
     private String ipAddress;         // IP地址（可能有多个）
+    private String monitorName;     // 显示器
 
     // 使用者信息
     private String employeeId;        // 工号
@@ -98,24 +88,27 @@ public class DevicePermissionExcelVo {
     private String loginUsername;     // 登录用户名
 
     // 域信息
-    private String domain;            // 域名
+    private Long domain;            // 域名
     private String domainGroup;       // 域内组名
     private String noDomainReason;    // 不加域理由
 
     // SmartIT信息
-    private String smartitStatus;     // SmartIT状态
+    private Long smartitStatus;     // SmartIT状态
     private String noSmartitReason;   // 不安装SmartIT理由
 
     // USB信息
-    private String usbStatus;         // USB状态
+    private Long usbStatus;         // USB状态
     private String usbOpenReason;     // USB开通理由
     private Date useDeadline;         // 使用截止日期
 
     // 其他
-    private String connectionStatus;  // 连接状态
+    private Long connectionStatus;  // 连接状态
     private String noSymantecReason;  // 无Symantec理由
     private String remark;            // 备注
 
-    // 多显示器情况
-    private String monitorInfo;       // 显示器信息（可能多个）
+[java.lang.Long, java.lang.String, java.lang.String, java.lang.String,
+ java.lang.String, java.lang.String, java.lang.String, java.lang.Long,
+ java.lang.String, java.lang.String, java.lang.Long, java.lang.String,
+ java.lang.Long, java.lang.String, java.time.LocalDate, java.lang.Long,
+ java.lang.String, java.lang.String]
 }*/
