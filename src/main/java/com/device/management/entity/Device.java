@@ -40,8 +40,10 @@ public class Device {
     @Column(name = "remark", columnDefinition = "text")
     private String remark; //備考
 
-    @Column(name = "self_confirm_id", columnDefinition = "bigint")
-    private String selfConfirmId; //本人確認ID
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "self_confirm_id", referencedColumnName = "dict_id")
+    //@Column(name = "self_confirm_id", columnDefinition = "bigint")
+    private Dict selfConfirmId; //本人確認ID
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "os_id", referencedColumnName = "dict_id")
@@ -157,16 +159,16 @@ public class Device {
      * ディクショナリ項目のタイプが正しいか検証する
      */
     public void validateDictTypes() {
-        if (osDict != null && !osDict.isType(Dict.DictType.OS)) {
+        if (osDict != null && !osDict.isType(Dict.DictType.OS_TYPE)) {
             throw new IllegalArgumentException("OS字典项类型不正确");
         }
-        if (memoryDict != null && !memoryDict.isType(Dict.DictType.MEMORY)) {
+        if (memoryDict != null && !memoryDict.isType(Dict.DictType.MEMORY_SIZE)) {
             throw new IllegalArgumentException("内存字典项类型不正确");
         }
-        if (ssdDict != null && !ssdDict.isType(Dict.DictType.SSD)) {
+        if (ssdDict != null && !ssdDict.isType(Dict.DictType.SSD_SIZE)) {
             throw new IllegalArgumentException("SSD字典项类型不正确");
         }
-        if (hddDict != null && !hddDict.isType(Dict.DictType.HDD)) {
+        if (hddDict != null && !hddDict.isType(Dict.DictType.HDD_SIZE)) {
             throw new IllegalArgumentException("HDD字典项类型不正确");
         }
     }

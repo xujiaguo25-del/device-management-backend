@@ -23,7 +23,7 @@ public class DictDTO {
     @Schema(description = "字典ID", example = "1")
     private Long dictId;
 
-    @Schema(description = "字典类型代码", example = "OS")
+    @Schema(description = "字典类型代码", example = "OS_TYPE")
     private String dictTypeCode;
 
     @Schema(description = "字典类型名称", example = "操作系统")

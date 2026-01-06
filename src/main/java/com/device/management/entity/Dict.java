@@ -53,10 +53,11 @@ public class Dict {
      */
     @Getter
     public enum DictType {
-        OS("OS", "操作系统"),
-        MEMORY("MEMORY", "内存"),
-        SSD("SSD", "固态硬盘"),
-        HDD("HDD", "机械硬盘");
+        CONFIRM_STATUS("CONFIRM_STATUS", "本人确认"),
+        OS_TYPE("OS_TYPE", "操作系统"),
+        MEMORY_SIZE("MEMORY_SIZE", "内存"),
+        SSD_SIZE("SSD_SIZE", "固态硬盘"),
+        HDD_SIZE("HDD_SIZE", "机械硬盘");
 
         private final String code;
         private final String name;
