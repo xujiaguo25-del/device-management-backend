@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 /**
  * 用户实体类
  */
@@ -15,6 +18,33 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "USERS")
+public class User {
+    @Id
+    @Column(name = "USER_ID", length = 20)
+    private String userId;
+
+    @Column(name = "USER_NAME", length = 100, nullable = false)
+    private String userName;
+
+    @Column(name = "DEPARTMENT_CODE", length = 20, nullable = false)
+    private String departmentCode;
+
+    @Column(name = "USER_LEVEL", length = 20, nullable = false)
+    private String userLevel;
+
+    @Column(name = "PASSWORD_HASH", length = 200, nullable = false)
+    private String passwordHash;
+
+    @CreationTimestamp
+    @Column(name = "CREATED_DATE")
+    private LocalDateTime createdDate;
+
+    @UpdateTimestamp
+    @Column(name = "UPDATED_DATE")
+    private LocalDateTime updatedDate;
+
+}
+/**
 public class User {
 
     @Id
@@ -34,16 +64,16 @@ public class User {
     @Column(name = "password")
     private String password; // パスワード（暗号化保存）
 
-    @Column(name = "created_time", columnDefinition = "timestamp")
+    @Column(name = "create_time", columnDefinition = "timestamp")
     private LocalDateTime createTime; //作成日時
 
     @Column(name = "creater")
     private String creater; //作成者
 
-    @Column(name = "updated_time", columnDefinition = "timestamp")
+    @Column(name = "update_time", columnDefinition = "timestamp")
     private LocalDateTime updateTime; //更新日時
 
     @Column(name = "updater")
     private String updater; //更新者
-
 }
+ */

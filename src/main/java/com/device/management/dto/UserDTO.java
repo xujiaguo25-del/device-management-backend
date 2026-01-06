@@ -13,6 +13,15 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDTO {
+    private String userId;
+    private String userName;
+    private String departmentCode;
+    private String userLevel;
+    private LocalDateTime createdDate;
+    private LocalDateTime updatedDate;
+
+    /** 
+
     private String userId; //ユーザID
     private String deptId; //部署番号
     private String name; //氏名
@@ -21,4 +30,5 @@ public class UserDTO {
     private String creater; //作成者
     private LocalDateTime updateTime; //更新日時
     private String updater; //更新者
+    */
 }
