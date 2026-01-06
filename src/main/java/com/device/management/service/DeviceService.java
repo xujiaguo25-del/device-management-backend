@@ -21,6 +21,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+/**
+ * デバイスサービスクラス
+ * デバイス関連のビジネスロジックを処理
+ */
 @Slf4j
 @Service
 public class DeviceService {
@@ -30,11 +34,18 @@ public class DeviceService {
     private static final DateTimeFormatter DATE_FORMATTER =
             DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
 
+    /**
+     * コンストラクタ
+     * @param deviceRepository デバイスリポジトリ
+     */
     public DeviceService(DeviceRepository deviceRepository) {
         this.deviceRepository = deviceRepository;
     }
 
-    // Device删除 - 改为String类型
+    /**
+     * デバイス削除
+     * @param deviceId デバイスID
+     */
     public void deleteDevice(String deviceId) {
         log.info("Delete device with id: {}", deviceId);
 
@@ -45,7 +56,10 @@ public class DeviceService {
         log.info("Device deleted successfully: {}", deviceId);
     }
 
-    // Device的excel　表导出
+    /**
+     * デバイス情報をExcel形式でエクスポート
+     * @param response HTTPレスポンス
+     */
     public void exportDevicesToExcel(HttpServletResponse response) {
         List<Device> devices = deviceRepository.findAll();
         log.info("Exporting {} devices to Excel", devices.size());
@@ -53,25 +67,25 @@ public class DeviceService {
         String timestamp = LocalDateTime.now().format(DATE_FORMATTER);
         String fileName = "devices_export_" + timestamp + ".xlsx";
 
-        // 对文件名进行URL编码，避免中文乱码等问题
+        // ファイル名をURLエンコードして、中文の文字化けなどの問題を防ぐ
         try {
             fileName = URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", "%20");
         } catch (UnsupportedEncodingException e) {
             log.warn("文件名编码失败，使用原始文件名", e);
         }
 
-        // 设置响应头
+        // レスポンスヘッダーを設定する
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader("Content-Disposition", "attachment; filename*=UTF-8''" + fileName);
 
-        // 使用try-with-resources确保工作簿被关闭
+        // try-with-resourcesを使用してワークブックが閉じられることを確認する
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("设备清单");
 
-            // 创建表头
+            // ヘッダーを作成する
             createExcelHeader(sheet);
 
-            // 填充数据
+            // データを入力する
             if (!devices.isEmpty()) {
                 fillExcelData(sheet, devices);
             } else {
@@ -79,10 +93,10 @@ public class DeviceService {
                 row.createCell(0).setCellValue("暂无数据");
             }
 
-            // 自动调整列宽
+            // 列の幅を自動調整
             autoSizeColumns(sheet);
 
-            // 写入响应流
+            // レスポンスストリームに書き込む
             workbook.write(response.getOutputStream());
 
             log.info("Excel导出成功，共导出 {} 条记录", devices.size());
@@ -92,6 +106,10 @@ public class DeviceService {
         }
     }
 
+    /**
+     * Excelヘッダーを作成
+     * @param sheet シートオブジェクト
+     */
     private void createExcelHeader(Sheet sheet) {
         Row headerRow = sheet.createRow(0);
         String[] headers = {
@@ -107,6 +125,11 @@ public class DeviceService {
         }
     }
 
+    /**
+     * Excelデータを埋め込む
+     * @param sheet シートオブジェクト
+     * @param devices デバイスリスト
+     */
     private void fillExcelData(Sheet sheet, List<Device> devices) {
         int rowNum = 1;
         for (Device device : devices) {
@@ -135,13 +158,22 @@ public class DeviceService {
         }
     }
 
-    // 辅助方法：安全设置单元格值
+    /**
+     * セルに安全に値を設定
+     * @param row 行オブジェクト
+     * @param cellNum セル番号
+     * @param value 設定値
+     */
     private void safeSetCellValue(Row row, int cellNum, String value) {
         Cell cell = row.createCell(cellNum);
         cell.setCellValue(value != null ? value : "");
     }
 
-    // 辅助方法：获取所有显示器名称（逗号分隔）
+    /**
+     * すべてのモニター名を取得（カンマ区切り）
+     * @param device デバイスエンティティ
+     * @return モニター名文字列
+     */
     private String getAllMonitorNames(Device device) {
         if (device.getMonitorInfos() != null && !device.getMonitorInfos().isEmpty()) {
             StringBuilder monitorNames = new StringBuilder();
@@ -158,7 +190,11 @@ public class DeviceService {
         return "";
     }
 
-    // 辅助方法：获取所有显示器编号（逗号分隔）
+    /**
+     * すべてのモニターIDを取得（カンマ区切り）
+     * @param device デバイスエンティティ
+     * @return モニターID文字列
+     */
     private String getAllMonitorIds(Device device) {
         if (device.getMonitorInfos() != null && !device.getMonitorInfos().isEmpty()) {
             StringBuilder monitorIds = new StringBuilder();
@@ -175,7 +211,11 @@ public class DeviceService {
         return "";
     }
 
-    // 辅助方法：获取第一个显示器ID
+    /**
+     * 最初のモニターIDを取得
+     * @param device デバイスエンティティ
+     * @return 最初のモニターID
+     */
     private String getFirstMonitorId(Device device) {
         if (device.getMonitorInfos() != null && !device.getMonitorInfos().isEmpty()) {
             Monitor monitor = device.getMonitorInfos().get(0);
@@ -185,7 +225,11 @@ public class DeviceService {
         return "";
     }
 
-    // 辅助方法：获取所有IP地址（逗号分隔）
+    /**
+     * すべてのIPアドレスを取得（カンマ区切り）
+     * @param device デバイスエンティティ
+     * @return IPアドレス文字列
+     */
     private String getAllIpAddresses(Device device) {
         if (device.getDeviceIps() != null && !device.getDeviceIps().isEmpty()) {
             StringBuilder ipAddresses = new StringBuilder();
@@ -202,7 +246,11 @@ public class DeviceService {
         return "";
     }
 
-    // 辅助方法：获取第一个IP地址
+    /**
+     * 最初のIPアドレスを取得
+     * @param device デバイスエンティティ
+     * @return 最初のIPアドレス
+     */
     private String getFirstIpAddress(Device device) {
         if (device.getDeviceIps() != null && !device.getDeviceIps().isEmpty()) {
             DeviceIp ip = device.getDeviceIps().get(0);
@@ -211,12 +259,20 @@ public class DeviceService {
         return "";
     }
 
-    // 辅助方法：获取字典项名称
+    /**
+     * 辞書項目名を取得
+     * @param dict 辞書エンティティ
+     * @return 辞書項目名
+     */
     private String getDictItemName(com.device.management.entity.Dict dict) {
         return dict != null && dict.getDictItemName() != null ?
                 dict.getDictItemName() : "";
     }
 
+    /**
+     * 列幅を自動調整
+     * @param sheet シートオブジェクト
+     */
     private void autoSizeColumns(Sheet sheet) {
         if (sheet.getRow(0) != null) {
             int columnCount = sheet.getRow(0).getLastCellNum();

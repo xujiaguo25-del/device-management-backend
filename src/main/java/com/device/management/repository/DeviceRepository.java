@@ -13,13 +13,13 @@ import java.util.List;
 * */
 @Repository
 public interface  DeviceRepository extends JpaRepository<Device, String> {
-    // 根据用户ID查找设备
+    // ユーザーIDに基づいてデバイスを検索する
     List<Device> findByUserId(String userId);
 
-    // 根据开发室查找设备
+    // 開発室に基づいてデバイスを検索する
     List<Device> findByDevRoom(String devRoom);
 
-    // 根据项目名称查找设备
+    // プロジェクト名で機器を検索する
     List<Device> findByProject(String project);
 
 }

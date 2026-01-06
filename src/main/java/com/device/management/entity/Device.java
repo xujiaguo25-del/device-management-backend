@@ -84,12 +84,11 @@ public class Device {
     @EqualsAndHashCode.Exclude
     private List<DeviceIp> deviceIps = new ArrayList<>();*/
 
-    // ============= 关联关系 =============
+    // ============= 関連関係 =============
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
     private User user;
-
 
     @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DeviceIp> deviceIps;

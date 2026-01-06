@@ -47,29 +47,29 @@ public class User {
     @Column(name = "updater", length = 100)
     private String updater; // 更新者
 
-    // ============= 关联关系 =============
+    // ============= 関連関係 =============
 
-    // 用户类型（字典关联）
+    // ユーザータイプ（辞書関連）
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_type_id", referencedColumnName = "dict_id", insertable = false, updatable = false)
     private Dict userType;
 
     @Column(name = "user_type_id")
-    private Long userTypeId; // 用户类型ID（辞書項目：USER_TYPE 関連）
+    private Long userTypeId; // ユーザータイプID（辞書項目：USER_TYPE 関連）
 
-    // 用户拥有的设备（一对多）
+    // ユーザーが所有するデバイス（1対多）
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private List<Device> devices = new ArrayList<>();
 
-    // 用户的采样检查记录（一对多）
+    // ユーザーのサンプリング検査記録（一対多）
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private List<SamplingCheck> samplingChecks = new ArrayList<>();
 
-    // ============= 构造函数 =============
+    // ============= コンストラクタ =============
 
     public User() {
         this.createTime = LocalDateTime.now();
