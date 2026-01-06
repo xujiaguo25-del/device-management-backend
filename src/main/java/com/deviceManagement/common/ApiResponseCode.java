@@ -8,7 +8,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum ResultCode {
+public enum ApiResponseCode {
 
     /* ===== パスワード変更業務コード ===== */
     PASSWORD_CHANGED_SUCCESS(20000, "パスワードが更新されました。再度ログインしてください。"),

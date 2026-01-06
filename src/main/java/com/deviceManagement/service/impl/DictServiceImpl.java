@@ -1,7 +1,7 @@
 package com.deviceManagement.service.impl;
 
-import com.deviceManagement.common.Result;
-import com.deviceManagement.common.ResultCode;
+import com.deviceManagement.dto.ApiResponse;
+import com.deviceManagement.common.ApiResponseCode;
 import com.deviceManagement.dto.DictItemDTO;
 import com.deviceManagement.dto.DictResponse;
 import com.deviceManagement.repository.DictRepository;
@@ -32,12 +32,12 @@ public class DictServiceImpl implements DictService {
      * @return 辞書項目リスト
      */
     @Override
-    public Result<DictResponse> getDictItemsByTypeCode(String dictTypeCode) {
+    public ApiResponse<DictResponse> getDictItemsByTypeCode(String dictTypeCode) {
 
         try {
             // パラメータを検証する
             if (dictTypeCode == null || dictTypeCode.trim().isEmpty()) {
-                return Result.error(ResultCode.DICT_PARAM_ERROR, "dictTypeCodeは文字列で指定してください");
+                return ApiResponse.error(ApiResponseCode.DICT_PARAM_ERROR, "dictTypeCodeは文字列で指定してください");
             }
 
             // データベース内の辞書項目を検索する
@@ -46,7 +46,7 @@ public class DictServiceImpl implements DictService {
 
             // 対応する辞書タイプが見つかったか確認する
             if (dictEntities == null || dictEntities.isEmpty()) {
-                return Result.error(ResultCode.DICT_PARAM_ERROR, "dictTypeCodeは文字列で指定してください");
+                return ApiResponse.error(ApiResponseCode.DICT_PARAM_ERROR, "dictTypeCodeは文字列で指定してください");
             }
 
             // 変換してソートする
@@ -59,13 +59,13 @@ public class DictServiceImpl implements DictService {
                     .sorted(Comparator.comparingInt(DictItemDTO::getSort))
                     .collect(Collectors.toList());
 
-            DictResponse response= new DictResponse(ResultCode.SUCCESS.getCode(),
-                    ResultCode.SUCCESS.getMessage(),dictItems);
-            return Result.success(response);
+            DictResponse response= new DictResponse(ApiResponseCode.SUCCESS.getCode(),
+                    ApiResponseCode.SUCCESS.getMessage(),dictItems);
+            return ApiResponse.success(response);
 
         } catch (Exception e) {
             log.error("辞書項目を検索中に例外が発生: {}", e.getMessage(), e);
-            return Result.error(ResultCode.SYSTEM_ERROR, "システムエラーが発生しました");
+            return ApiResponse.error(ApiResponseCode.SYSTEM_ERROR, "システムエラーが発生しました");
         }
     }
 

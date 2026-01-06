@@ -1,6 +1,6 @@
 package com.deviceManagement.exception;
 
-import com.deviceManagement.common.ResultCode;
+import com.deviceManagement.common.ApiResponseCode;
 import lombok.Getter;
 
 /**
@@ -9,25 +9,25 @@ import lombok.Getter;
 @Getter
 public class BusinessException extends RuntimeException {
     // 直接ResultCode列挙型オブジェクトを保持、エラーコードとデフォルトメッセージを含む
-    private final ResultCode resultCode;
+    private final ApiResponseCode apiResponseCode;
 
     /**
      * 標準コンストラクター：ResultCodeのデフォルトメッセージを使用
-     * @param resultCode エラー列挙型（例：USER_NOT_FOUND、PASSWORD_ERROR）
+     * @param apiResponseCode エラー列挙型（例：USER_NOT_FOUND、PASSWORD_ERROR）
      */
-    public BusinessException(ResultCode resultCode) {
-        super(resultCode.getMessage());
-        this.resultCode = resultCode;
+    public BusinessException(ApiResponseCode apiResponseCode) {
+        super(apiResponseCode.getMessage());
+        this.apiResponseCode = apiResponseCode;
     }
 
     /**
      * 拡張コンストラクター：カスタムメッセージを許可（ResultCodeのエラーコードを保持）
-     * @param resultCode エラー列挙型
+     * @param apiResponseCode エラー列挙型
      * @param customMessage カスタムエラーメッセージ（例：パラメータ検証の具体的なヒント）
      */
-    public BusinessException(ResultCode resultCode, String customMessage) {
+    public BusinessException(ApiResponseCode apiResponseCode, String customMessage) {
         super(customMessage);
-        this.resultCode = resultCode;
+        this.apiResponseCode = apiResponseCode;
     }
 
     /**
@@ -35,7 +35,7 @@ public class BusinessException extends RuntimeException {
      * @return エラーコード（ResultCodeと一致）
      */
     public int getCode() {
-        return resultCode.getCode();
+        return apiResponseCode.getCode();
     }
 
     /**
@@ -44,6 +44,6 @@ public class BusinessException extends RuntimeException {
      */
     @Override
     public String getMessage() {
-        return super.getMessage() != null ? super.getMessage() : resultCode.getMessage();
+        return super.getMessage() != null ? super.getMessage() : apiResponseCode.getMessage();
     }
 }

@@ -1,7 +1,7 @@
 package com.deviceManagement.exception;
 
-import com.deviceManagement.common.Result;
-import com.deviceManagement.common.ResultCode;
+import com.deviceManagement.dto.ApiResponse;
+import com.deviceManagement.common.ApiResponseCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,12 +21,12 @@ public class GlobalExceptionHandler {
      * @return 標準化されたResultレスポンス
      */
     @ExceptionHandler(BusinessException.class)
-    public Result<?> handleBusinessException(BusinessException e) {
+    public ApiResponse<?> handleBusinessException(BusinessException e) {
         // 例外codeをResultCode列挙型にマッピング
-        ResultCode resultCode = mapCodeToResultCode(e.getCode());
-        logger.warn("業務エラー：code={}, message={}", resultCode.getCode(), resultCode.getMessage());
+        ApiResponseCode apiResponseCode = mapCodeToResultCode(e.getCode());
+        logger.warn("業務エラー：code={}, message={}", apiResponseCode.getCode(), apiResponseCode.getMessage());
         // ジェネリック<Void>を指定してResult.errorメソッドの戻り値タイプに一致
-        return Result.<Void>error(resultCode);
+        return ApiResponse.<Void>error(apiResponseCode);
     }
 
     /**
@@ -35,11 +35,11 @@ public class GlobalExceptionHandler {
      * @return 標準化されたResultレスポンス
      */
     @ExceptionHandler(BindException.class)
-    public Result<?> handleBindException(BindException e) {
+    public ApiResponse<?> handleBindException(BindException e) {
         String errorMsg = e.getBindingResult().getFieldError().getDefaultMessage();
         logger.warn("パラメータ検証エラー：{}", errorMsg);
         // PARAM_ERROR列挙型のcodeを使用し、具体的なエラー情報を結合して返す
-        return Result.<Void>error(ResultCode.PARAM_ERROR, errorMsg);
+        return ApiResponse.<Void>error(ApiResponseCode.PARAM_ERROR, errorMsg);
     }
 
     /**
@@ -48,10 +48,10 @@ public class GlobalExceptionHandler {
      * @return 標準化されたResultレスポンス
      */
     @ExceptionHandler(Exception.class)
-    public Result<?> handleGlobalException(Exception e) {
+    public ApiResponse<?> handleGlobalException(Exception e) {
         logger.error("システムエラー：", e); // 調査のための完全なスタックトレースを記録
         // FAIL列挙型を直接使用してシステムエラーを返す
-        return Result.<Void>error(ResultCode.FAIL);
+        return ApiResponse.<Void>error(ApiResponseCode.FAIL);
     }
 
     /**
@@ -59,12 +59,12 @@ public class GlobalExceptionHandler {
      * @param code 業務例外code
      * @return 一致するResultCode、デフォルトはシステムエラーを返す
      */
-    private ResultCode mapCodeToResultCode(int code) {
-        for (ResultCode codeEnum : ResultCode.values()) {
+    private ApiResponseCode mapCodeToResultCode(int code) {
+        for (ApiResponseCode codeEnum : ApiResponseCode.values()) {
             if (codeEnum.getCode() == code) {
                 return codeEnum;
             }
         }
-        return ResultCode.FAIL;
+        return ApiResponseCode.FAIL;
     }
 }

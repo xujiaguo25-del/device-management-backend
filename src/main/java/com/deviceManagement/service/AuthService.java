@@ -4,8 +4,7 @@ import com.deviceManagement.dto.ChangePasswordRequest;
 import com.deviceManagement.dto.ChangePasswordResponse;
 import com.deviceManagement.dto.LoginRequest;
 import com.deviceManagement.dto.LoginResponse;
-import com.deviceManagement.common.Result;
-import com.deviceManagement.dto.LogoutResponse;
+import com.deviceManagement.dto.ApiResponse;
 
 public interface AuthService {
     /**
@@ -13,13 +12,13 @@ public interface AuthService {
      * @param loginRequest
      * @return
      */
-    Result<LoginResponse> login(LoginRequest loginRequest);
+    ApiResponse<LoginResponse> login(LoginRequest loginRequest);
 
     /**
      * ユーザーログアウト
      * @return Result<Void>：ログアウト結果
      */
-    Result<Void> logout();
+    ApiResponse<Void> logout();
 
 
 
@@ -29,5 +28,5 @@ public interface AuthService {
      * @param authHeader
      * @return
      */
-    Result<ChangePasswordResponse> changePassword(ChangePasswordRequest req, String authHeader);
+    ApiResponse<ChangePasswordResponse> changePassword(ChangePasswordRequest req, String authHeader);
 }

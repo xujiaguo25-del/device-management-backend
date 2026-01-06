@@ -1,18 +1,16 @@
 package com.deviceManagement.controller;
 
-import com.deviceManagement.common.ResultCode;
+import com.deviceManagement.common.ApiResponseCode;
 import com.deviceManagement.dto.ChangePasswordRequest;
 import com.deviceManagement.dto.ChangePasswordResponse;
 import com.deviceManagement.dto.LoginRequest;
 import com.deviceManagement.dto.LoginResponse;
-import com.deviceManagement.common.Result;
-import com.deviceManagement.dto.LogoutResponse;
+import com.deviceManagement.dto.ApiResponse;
 import com.deviceManagement.exception.BusinessException;
 import com.deviceManagement.service.AuthService;
-import com.deviceManagement.utils.CryptoUtil;
+import com.deviceManagement.security.CryptoUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -37,20 +35,20 @@ public class AuthController {
             }
         } catch (Exception e) {
             log.error("暗号化解除失敗", e);
-            throw new BusinessException(ResultCode.PARAM_ERROR, "暗号化パスワードが無効です");
+            throw new BusinessException(ApiResponseCode.PARAM_ERROR, "暗号化パスワードが無効です");
         }
     }
 
     /* 1. ログイン（密文） */
     @PostMapping("/login")
-    public Result<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+    public ApiResponse<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
         decryptPasswordFields(loginRequest);
         return authService.login(loginRequest);
     }
 
     /* 2. パスワード変更（密文） */
     @PostMapping("/change-password")
-    public Result<ChangePasswordResponse> changePassword(
+    public ApiResponse<ChangePasswordResponse> changePassword(
             @RequestBody ChangePasswordRequest req,
             @RequestHeader("Authorization") String authHeader) {
         decryptPasswordFields(req);
@@ -59,7 +57,7 @@ public class AuthController {
 
     /* 3. ログアウト（パスワード不要 → そのまま） */
     @PostMapping("/logout")
-    public Result<Void> logout() {
+    public ApiResponse<Void> logout() {
         return authService.logout();
     }
 

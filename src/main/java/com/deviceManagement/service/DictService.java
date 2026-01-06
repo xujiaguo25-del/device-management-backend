@@ -1,10 +1,7 @@
 package com.deviceManagement.service;
 
-import com.deviceManagement.common.Result;
+import com.deviceManagement.dto.ApiResponse;
 import com.deviceManagement.dto.DictResponse;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * @Author： hexy
@@ -17,5 +14,5 @@ public interface DictService {
     * @param dictTypeCode
     * @return 辞書項目リスト
     */
-    Result<DictResponse> getDictItemsByTypeCode(String dictTypeCode);
+    ApiResponse<DictResponse> getDictItemsByTypeCode(String dictTypeCode);
 }

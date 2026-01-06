@@ -1,4 +1,4 @@
-package com.deviceManagement.utils;
+package com.deviceManagement.security;
 
 import lombok.extern.slf4j.Slf4j;
 

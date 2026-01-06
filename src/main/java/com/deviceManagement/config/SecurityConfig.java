@@ -1,7 +1,7 @@
 package com.deviceManagement.config;
 
-import com.deviceManagement.utils.JwtAuthenticationFilter;
-import com.deviceManagement.utils.JwtUtil;
+import com.deviceManagement.security.JwtAuthenticationFilter;
+import com.deviceManagement.security.JwtTokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -66,8 +66,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public JwtUtil jwtUtil() {
-        return new JwtUtil(redisTemplate());
+    public JwtTokenProvider jwtUtil() {
+        return new JwtTokenProvider(redisTemplate());
     }
 
     /**
