@@ -24,7 +24,7 @@ public class DeviceController {
     public ApiResponse<Page<UserDTO>> list(
             @RequestParam(required = false) String deviceName,
             @RequestParam(required = false) String userId,
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         return ApiResponse.success(

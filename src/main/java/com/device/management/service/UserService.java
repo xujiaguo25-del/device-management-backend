@@ -24,6 +24,9 @@ public class UserService {
 
     // ページングクエリ：デバイス条件でユーザーをフィルタリングし、ユーザータイプ辞書を関連付けて返す
     public Page<UserDTO> list(String deviceName, String userId, int page, int size) {
+        // ページ数の調整：0から始まるページ番号に変換
+        page = page > 0 ? page - 1 : 0;
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("userId").ascending());
 
         // デバイスフィルタ条件に合致するUserIDリストを取得
