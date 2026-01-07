@@ -45,7 +45,7 @@ public class AuthServiceImpl implements AuthService {
 
         // 2. パスワードを検証（失敗時は直接パスワードエラー列挙型を返す）
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            return ApiResponse.error(401,"パスワードが正しくありません");
+            throw new UnauthorizedException(401, "パスワードが正しくありません");
         }
 
         // 3. JWT Tokenを生成

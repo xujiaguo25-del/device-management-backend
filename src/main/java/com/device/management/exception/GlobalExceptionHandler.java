@@ -5,8 +5,10 @@ import com.device.management.dto.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
@@ -116,6 +118,20 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * 处理解密异常
+     */
+    @ExceptionHandler(DecryptionException.class)
+    public ResponseEntity<ApiResponse<?>> handleDecryptionException(
+            DecryptionException ex, WebRequest request) {
+        log.warn("解密失败: {}", ex.getMessage());
+        int code = ex.getCode() != 0 ? ex.getCode() : 400;
+        String message = ex.getMessage() != null ? ex.getMessage() : "密码格式无效";
+
+        ApiResponse<?> response = ApiResponse.error(code, message);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    /**
      * 处理所有其他异常
      */
     @ExceptionHandler(AllException.class)
@@ -125,5 +141,4 @@ public class GlobalExceptionHandler {
         ApiResponse<?> response = ApiResponse.error(500, "服务器内部错误");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
-
 }
