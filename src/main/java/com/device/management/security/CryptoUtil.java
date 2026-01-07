@@ -24,7 +24,7 @@ public class CryptoUtil {
             return new String(decrypted, StandardCharsets.UTF_8);
         } catch (IllegalArgumentException e) {
             // 捕获Base64解码失败异常
-            throw new ResourceNotFoundException("無効な暗号化形式です");
+            throw new ResourceNotFoundException("無効な暗号化形式");
         }catch (Exception e) {
             log.error("復号に失敗しました: {}", base64, e);
             throw new RuntimeException("復号に失敗しました", e);
