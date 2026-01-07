@@ -1,7 +1,6 @@
 package com.device.management.service.impl;
 
 import com.device.management.dto.ApiResponse;
-import com.device.management.common.ApiResponseCode;
 import com.device.management.dto.DictItemDTO;
 import com.device.management.repository.DictRepository;
 import com.device.management.service.DictService;
@@ -36,7 +35,7 @@ public class DictServiceImpl implements DictService {
         try {
             // パラメータを検証する
             if (dictTypeCode == null || dictTypeCode.trim().isEmpty()) {
-                return ApiResponse.error(ApiResponseCode.DICT_PARAM_ERROR, "dictTypeCodeは文字列で指定してください");
+                return ApiResponse.error(40001, "dictTypeCodeは文字列で指定してください");
             }
 
             // データベース内の辞書項目を検索する
@@ -45,7 +44,7 @@ public class DictServiceImpl implements DictService {
 
             // 対応する辞書タイプが見つかったか確認する
             if (dictEntities == null || dictEntities.isEmpty()) {
-                return ApiResponse.error(ApiResponseCode.DICT_PARAM_ERROR, "dictTypeCodeは文字列で指定してください");
+                return ApiResponse.error(40001, "dictTypeCodeは文字列で指定してください");
             }
 
             // 変換してソートする
@@ -62,7 +61,7 @@ public class DictServiceImpl implements DictService {
 
         } catch (Exception e) {
             log.error("辞書項目を検索中に例外が発生: {}", e.getMessage(), e);
-            return ApiResponse.error(ApiResponseCode.SYSTEM_ERROR, "システムエラーが発生しました");
+            return ApiResponse.error(50000, "システムエラーが発生しました");
         }
     }
 }

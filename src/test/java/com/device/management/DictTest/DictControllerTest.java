@@ -59,7 +59,7 @@ class DictControllerTest {
     void testGetDictItemsByTypeCode_EmptyDictTypeCode() throws Exception {
         // 模拟服务层返回错误
         ApiResponse<List<DictItemDTO>> errorResponse = ApiResponse.error(
-            com.device.management.common.ApiResponseCode.DICT_PARAM_ERROR,
+            40001,
             "dictTypeCodeは文字列で指定してください"
         );
         when(dictService.getDictItemsByTypeCode("")).thenReturn(errorResponse);
