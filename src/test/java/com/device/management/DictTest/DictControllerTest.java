@@ -1,19 +1,21 @@
-package com.deviceManagement.DictTest;
+package com.device.management.DictTest;
 
-import com.deviceManagement.controller.DictController;
-import com.deviceManagement.dto.ApiResponse;
-import com.deviceManagement.dto.DictResponse;
-import com.deviceManagement.service.DictService;
+import com.device.management.controller.DictController;
+import com.device.management.dto.ApiResponse;
+import com.device.management.dto.DictItemDTO;
+import com.device.management.service.DictService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.ArgumentMatchers.any;
+import java.util.List;
+
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -24,7 +26,7 @@ class DictControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockitoBean
+    @MockBean
     private DictService dictService;
 
     @Autowired
@@ -38,8 +40,8 @@ class DictControllerTest {
     @WithMockUser
     void testGetDictItemsByTypeCode_Success() throws Exception {
         // 准备测试数据
-        DictResponse mockResponse = new DictResponse(200, "成功", null);
-        ApiResponse<DictResponse> expectedResponse = ApiResponse.success(mockResponse);
+        List<DictItemDTO> mockLists = List.of(new DictItemDTO(1L, "使用可", 1));
+        ApiResponse<List<DictItemDTO>> expectedResponse = ApiResponse.success(mockLists);
 
         // 模拟服务层返回
         when(dictService.getDictItemsByTypeCode("USER_TYPE")).thenReturn(expectedResponse);
@@ -56,8 +58,8 @@ class DictControllerTest {
     @WithMockUser
     void testGetDictItemsByTypeCode_EmptyDictTypeCode() throws Exception {
         // 模拟服务层返回错误
-        ApiResponse<DictResponse> errorResponse = ApiResponse.error(
-            com.deviceManagement.common.ApiResponseCode.DICT_PARAM_ERROR,
+        ApiResponse<List<DictItemDTO>> errorResponse = ApiResponse.error(
+            com.device.management.common.ApiResponseCode.DICT_PARAM_ERROR,
             "dictTypeCodeは文字列で指定してください"
         );
         when(dictService.getDictItemsByTypeCode("")).thenReturn(errorResponse);

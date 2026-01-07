@@ -1,12 +1,14 @@
 package com.device.management.controller;
 
 import com.device.management.dto.ApiResponse;
-import com.device.management.dto.DictResponse;
+import com.device.management.dto.DictItemDTO;
 import com.device.management.service.DictService;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @Author： hexy
@@ -25,7 +27,7 @@ public class DictController {
     private final DictService dictService;
 
     @GetMapping("/items")
-    public ApiResponse<DictResponse> getDictItemsByTypeCode(@RequestParam String dictTypeCode) {
+    public ApiResponse<List<DictItemDTO>> getDictItemsByTypeCode(@RequestParam String dictTypeCode) {
         return dictService.getDictItemsByTypeCode(dictTypeCode);
     }
 

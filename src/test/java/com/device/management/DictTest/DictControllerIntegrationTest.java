@@ -1,8 +1,7 @@
 
-package com.deviceManagement.DictTest;
-import com.deviceManagement.DeviceManagementApplication;
-import com.deviceManagement.dto.ApiResponse;
-import com.deviceManagement.dto.DictResponse;
+package com.device.management.DictTest;
+import com.device.management.DeviceManagementApplication;
+import com.device.management.dto.ApiResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

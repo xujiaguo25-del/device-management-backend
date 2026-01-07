@@ -3,7 +3,6 @@ package com.device.management.service.impl;
 import com.device.management.dto.ApiResponse;
 import com.device.management.common.ApiResponseCode;
 import com.device.management.dto.DictItemDTO;
-import com.device.management.dto.DictResponse;
 import com.device.management.repository.DictRepository;
 import com.device.management.service.DictService;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +31,7 @@ public class DictServiceImpl implements DictService {
      * @return 辞書項目リスト
      */
     @Override
-    public ApiResponse<DictResponse> getDictItemsByTypeCode(String dictTypeCode) {
+    public ApiResponse<List<DictItemDTO>> getDictItemsByTypeCode(String dictTypeCode) {
 
         try {
             // パラメータを検証する
@@ -59,9 +58,7 @@ public class DictServiceImpl implements DictService {
                     .sorted(Comparator.comparingInt(DictItemDTO::getSort))
                     .collect(Collectors.toList());
 
-            DictResponse response= new DictResponse(ApiResponseCode.SUCCESS.getCode(),
-                    ApiResponseCode.SUCCESS.getMessage(),dictItems);
-            return ApiResponse.success(response);
+            return ApiResponse.success(dictItems);
 
         } catch (Exception e) {
             log.error("辞書項目を検索中に例外が発生: {}", e.getMessage(), e);

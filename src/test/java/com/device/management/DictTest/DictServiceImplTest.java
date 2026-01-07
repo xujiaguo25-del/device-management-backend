@@ -1,11 +1,10 @@
-package com.deviceManagement.DictTest;
+package com.device.management.DictTest;
 
-import com.deviceManagement.dto.ApiResponse;
-import com.deviceManagement.dto.DictItemDTO;
-import com.deviceManagement.dto.DictResponse;
-import com.deviceManagement.entity.Dict;
-import com.deviceManagement.repository.DictRepository;
-import com.deviceManagement.service.impl.DictServiceImpl;
+import com.device.management.dto.ApiResponse;
+import com.device.management.dto.DictItemDTO;
+import com.device.management.entity.Dict;
+import com.device.management.repository.DictRepository;
+import com.device.management.service.impl.DictServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -17,7 +16,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 @SpringBootTest
 class DictServiceImplTest {
@@ -44,16 +42,16 @@ class DictServiceImplTest {
         when(dictRepository.findByDictTypeCode("USER_TYPE")).thenReturn(mockDicts);
 
         // 执行测试
-        ApiResponse<DictResponse> result = dictService.getDictItemsByTypeCode("USER_TYPE");
+        ApiResponse<List<DictItemDTO>> result = dictService.getDictItemsByTypeCode("USER_TYPE");
 
         // 验证结果
         assertNotNull(result);
         assertEquals(200, result.getCode());
         assertNotNull(result.getData());
-        assertEquals(2, result.getData().getData().size());
+        assertEquals(2, result.getData().size());
         // 验证排序（sort字段升序）
-        assertEquals(1, result.getData().getData().get(0).getSort());
-        assertEquals(2, result.getData().getData().get(1).getSort());
+        assertEquals(1, result.getData().get(0).getSort());
+        assertEquals(2, result.getData().get(1).getSort());
         
         verify(dictRepository, times(1)).findByDictTypeCode("USER_TYPE");
     }
@@ -62,7 +60,7 @@ class DictServiceImplTest {
     void testGetDictItemsByTypeCode_EmptyResult() {
         when(dictRepository.findByDictTypeCode("INVALID_TYPE")).thenReturn(Arrays.asList());
 
-        ApiResponse<DictResponse> result = dictService.getDictItemsByTypeCode("INVALID_TYPE");
+        ApiResponse<List<DictItemDTO>> result = dictService.getDictItemsByTypeCode("INVALID_TYPE");
 
         assertNotNull(result);
         assertEquals(40001, result.getCode()); // DICT_PARAM_ERROR
@@ -72,7 +70,7 @@ class DictServiceImplTest {
 
     @Test
     void testGetDictItemsByTypeCode_NullParam() {
-        ApiResponse<DictResponse> result = dictService.getDictItemsByTypeCode(null);
+        ApiResponse<List<DictItemDTO>> result = dictService.getDictItemsByTypeCode(null);
 
         assertNotNull(result);
         assertEquals(40001, result.getCode()); // DICT_PARAM_ERROR
@@ -80,7 +78,7 @@ class DictServiceImplTest {
 
     @Test
     void testGetDictItemsByTypeCode_EmptyParam() {
-        ApiResponse<DictResponse> result = dictService.getDictItemsByTypeCode("");
+        ApiResponse<List<DictItemDTO>> result = dictService.getDictItemsByTypeCode("");
 
         assertNotNull(result);
         assertEquals(40001, result.getCode()); // DICT_PARAM_ERROR
