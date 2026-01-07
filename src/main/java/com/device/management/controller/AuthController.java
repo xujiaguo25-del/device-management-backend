@@ -1,31 +1,58 @@
 package com.device.management.controller;
 
-import com.device.management.dto.ApiResponse;
 import com.device.management.dto.LoginRequest;
 import com.device.management.dto.LoginResponse;
+import com.device.management.dto.ApiResponse;
+import com.device.management.exception.UnauthorizedException;
 import com.device.management.service.AuthService;
+import com.device.management.security.CryptoUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * 认证控制器
+ * 認証Controller：ログイン、ユーザー情報インターフェースを処理する
  */
 @Slf4j
 @RestController
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired
-    private AuthService authService;
+    private final AuthService authService;
+    /** 共通復号ツール */
+    private void decryptPasswordFields(Object dto) {
+        try {
+            if (dto instanceof LoginRequest req) {
+                req.setPassword(CryptoUtil.decrypt(req.getPassword()));
+            }
+        } catch (Exception e) {
+            log.error("暗号化解除失敗", e);
+            throw new UnauthorizedException("暗号化パスワードが無効です");
+        }
+    }
 
-    /**
-     * 用户登录
-     */
+    /* 1. ログイン（密文） */
     @PostMapping("/login")
     public ApiResponse<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
-        LoginResponse response = authService.login(loginRequest);
-        return ApiResponse.success("登录成功", response);
+        // 基本的なパラメータ検証
+        if (!StringUtils.hasText(loginRequest.getUserId())) {
+//            return ApiResponse.error(400, "ユーザーIDは空にできません");
+            throw new UnauthorizedException(400, "ユーザーIDは空にできません");
+        }
+        if (!StringUtils.hasText(loginRequest.getPassword())) {
+//            return ApiResponse.error(400, "パスワードは空にできません");
+            throw new UnauthorizedException(400, "パスワードは空にできません");
+        }
+        decryptPasswordFields(loginRequest);
+        return authService.login(loginRequest);
+    }
+
+    /* 3. ログアウト（パスワード不要 → そのまま） */
+    @PostMapping("/logout")
+    public ApiResponse<Void> logout() {
+        return authService.logout();
     }
 
 }

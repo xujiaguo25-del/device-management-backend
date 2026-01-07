@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
 /**
- * 全局异常处理
+ * グローバル例外ハンドラー：全てのController層でスローされる例外を一括処理
  */
 @Slf4j
 @RestControllerAdvice
@@ -51,9 +51,23 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * 处理解密异常
+     */
+    @ExceptionHandler(DecryptionException.class)
+    public ResponseEntity<ApiResponse<?>> handleDecryptionException(
+            DecryptionException ex, WebRequest request) {
+        log.warn("解密失败: {}", ex.getMessage());
+        int code = ex.getCode() != 0 ? ex.getCode() : 400;
+        String message = ex.getMessage() != null ? ex.getMessage() : "密码格式无效";
+
+        ApiResponse<?> response = ApiResponse.error(code, message);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    /**
      * 处理所有其他异常
      */
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(AllException.class)
     public ResponseEntity<ApiResponse<?>> handleGlobalException(
             Exception ex, WebRequest request) {
         log.error("Unexpected error: {}", ex.getMessage(), ex);
