@@ -1,13 +1,14 @@
 package com.device.management.service.impl;
 
 import com.device.management.dto.*;
+import com.device.management.exception.BusinessException;
+import com.device.management.exception.UnauthorizedException;
 import com.device.management.repository.DictRepository;
 import com.device.management.repository.UserRepository;
 import com.device.management.dto.ApiResponse;
 import com.device.management.common.ApiResponseCode;
 import com.device.management.entity.Dict;
 import com.device.management.entity.User;
-import com.device.management.exception.BusinessException;
 import com.device.management.service.AuthService;
 import com.device.management.security.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Objects;
+
+import static com.device.management.common.ApiResponseCode.FAIL;
 
 
 @Slf4j
@@ -41,7 +44,7 @@ public class AuthServiceImpl implements AuthService {
     public ApiResponse<LoginResponse> login(LoginRequest loginRequest) {
         // 1. ユーザーIDでユーザーを検索（存在しない場合は例外をスロー、ResultCode列挙型を直接使用して構築）
         User user = userRepository.findByUserId(loginRequest.getUserId())
-                .orElseThrow(() -> new BusinessException(ApiResponseCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new UnauthorizedException("ユーザーが存在しません"));
 
         // 2. パスワードを検証（失敗時は直接パスワードエラー列挙型を返す）
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
@@ -55,7 +58,7 @@ public class AuthServiceImpl implements AuthService {
         Dict userType = dictRepository.findByDictIdAndDictTypeCode(
                 user.getUserTypeId(),
                 "USER_TYPE"
-        ).orElseThrow(() -> new BusinessException(ApiResponseCode.FAIL));
+        ).orElseThrow(() -> new BusinessException( FAIL));
 
 
         UserDTO userDTO = new UserDTO();
@@ -68,7 +71,7 @@ public class AuthServiceImpl implements AuthService {
         LoginResponse loginResponse = new LoginResponse(token, userDTO);
 
         // 6. ログイン成功結果を返す（ResultのloginSuccess静的ファクトリメソッドを使用）
-        return ApiResponse.success(loginResponse);
+        return ApiResponse.success( "ログイン成功",loginResponse);
     }
 
     /**
@@ -105,7 +108,7 @@ public class AuthServiceImpl implements AuthService {
             cleanupSecurityContext();
 
             // 6.成功レスポンスを返す
-            return ApiResponse.success(null);
+            return ApiResponse.success( "ログアウト成功");
 
         } catch (Exception e) {
             log.error("ログアウト処理中に例外が発生: {}", e.getMessage(), e);
@@ -163,7 +166,7 @@ public class AuthServiceImpl implements AuthService {
      * @param req  変更内容（userId / currentPassword / newPassword）
      * @param authHeader Authorization: Bearer <JWT>
      * @return Result<ChangePasswordResponse> 成功時 20000, 失敗時各業務エラーコード
-     * @throws BusinessException システムエラー（ユーザ不在等）
+     * @throws UnauthorizedException システムエラー（ユーザ不在等）
      */
     @Override
     @Transactional
@@ -185,7 +188,7 @@ public class AuthServiceImpl implements AuthService {
 
         // 3. 旧パスワードを検証（管理者はスキップ）
         User user = userRepository.findByUserId(req.getUserId())
-                .orElseThrow(() -> new BusinessException(ApiResponseCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new UnauthorizedException("ユーザーが存在しません"));
 
         if (!isAdmin && !passwordEncoder.matches(req.getCurrentPassword(), user.getPassword())) {
             return ApiResponse.error(40001, "現在のパスワードが正しくありません");

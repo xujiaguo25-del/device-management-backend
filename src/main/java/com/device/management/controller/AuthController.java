@@ -1,12 +1,11 @@
 package com.device.management.controller;
 
-import com.device.management.common.ApiResponseCode;
 import com.device.management.dto.ChangePasswordRequest;
 import com.device.management.dto.ChangePasswordResponse;
 import com.device.management.dto.LoginRequest;
 import com.device.management.dto.LoginResponse;
 import com.device.management.dto.ApiResponse;
-import com.device.management.exception.BusinessException;
+import com.device.management.exception.UnauthorizedException;
 import com.device.management.service.AuthService;
 import com.device.management.security.CryptoUtil;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +35,7 @@ public class AuthController {
             }
         } catch (Exception e) {
             log.error("暗号化解除失敗", e);
-            throw new BusinessException(ApiResponseCode.PARAM_ERROR, "暗号化パスワードが無効です");
+            throw new UnauthorizedException("暗号化パスワードが無効です");
         }
     }
 
