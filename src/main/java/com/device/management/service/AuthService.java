@@ -1,7 +1,7 @@
 package com.device.management.service;
 
 import com.device.management.dto.LoginRequest;
-import com.device.management.dto.LoginResponse;
+import com.device.management.dto.LoginDTO;
 import com.device.management.dto.ApiResponse;
 
 public interface AuthService {
@@ -10,7 +10,7 @@ public interface AuthService {
      * @param loginRequest
      * @return
      */
-    ApiResponse<LoginResponse> login(LoginRequest loginRequest);
+    ApiResponse<LoginDTO> login(LoginRequest loginRequest);
 
     /**
      * ユーザーログアウト

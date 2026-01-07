@@ -1,7 +1,7 @@
 package com.device.management.controller;
 
 import com.device.management.dto.LoginRequest;
-import com.device.management.dto.LoginResponse;
+import com.device.management.dto.LoginDTO;
 import com.device.management.dto.ApiResponse;
 import com.device.management.exception.UnauthorizedException;
 import com.device.management.service.AuthService;
@@ -35,7 +35,7 @@ public class AuthController {
 
     /* 1. ログイン（密文） */
     @PostMapping("/login")
-    public ApiResponse<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+    public ApiResponse<LoginDTO> login(@RequestBody LoginRequest loginRequest) {
         // 基本的なパラメータ検証
         if (!StringUtils.hasText(loginRequest.getUserId())) {
 //            return ApiResponse.error(400, "ユーザーIDは空にできません");
