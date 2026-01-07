@@ -118,7 +118,7 @@ public class GlobalExceptionHandler {
     /**
      * 处理所有其他异常
      */
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(AllException.class)
     public ResponseEntity<ApiResponse<?>> handleGlobalException(
             Exception ex, WebRequest request) {
         log.error("Unexpected error: {}", ex.getMessage(), ex);

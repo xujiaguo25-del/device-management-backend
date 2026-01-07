@@ -1,7 +1,6 @@
 package com.device.management.service.impl;
 
 import com.device.management.dto.ApiResponse;
-import com.device.management.common.ApiResponseCode;
 import com.device.management.dto.DictItemDTO;
 import com.device.management.dto.DictResponse;
 import com.device.management.repository.DictRepository;
@@ -59,8 +58,8 @@ public class DictServiceImpl implements DictService {
                     .sorted(Comparator.comparingInt(DictItemDTO::getSort))
                     .collect(Collectors.toList());
 
-            DictResponse response= new DictResponse(ApiResponseCode.SUCCESS.getCode(),
-                    ApiResponseCode.SUCCESS.getMessage(),dictItems);
+            DictResponse response= new DictResponse(200,
+                    "成功",dictItems);
             return ApiResponse.success(response);
 
         } catch (Exception e) {

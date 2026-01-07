@@ -1,12 +1,11 @@
 package com.device.management.service.impl;
 
 import com.device.management.dto.*;
-import com.device.management.exception.BusinessException;
+import com.device.management.exception.AllException;
 import com.device.management.exception.UnauthorizedException;
 import com.device.management.repository.DictRepository;
 import com.device.management.repository.UserRepository;
 import com.device.management.dto.ApiResponse;
-import com.device.management.common.ApiResponseCode;
 import com.device.management.entity.Dict;
 import com.device.management.entity.User;
 import com.device.management.service.AuthService;
@@ -19,10 +18,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
 import java.util.Objects;
 
-import static com.device.management.common.ApiResponseCode.FAIL;
 
 
 @Slf4j
@@ -58,7 +55,7 @@ public class AuthServiceImpl implements AuthService {
         Dict userType = dictRepository.findByDictIdAndDictTypeCode(
                 user.getUserTypeId(),
                 "USER_TYPE"
-        ).orElseThrow(() -> new BusinessException( FAIL));
+        ).orElseThrow(() -> new AllException( "システムエラー"));
 
 
         UserDTO userDTO = new UserDTO();
@@ -210,8 +207,8 @@ public class AuthServiceImpl implements AuthService {
 
         // 7. レスポンスを返却する
         ChangePasswordResponse resp = new ChangePasswordResponse();
-        resp.setCode(ApiResponseCode.PASSWORD_CHANGED_SUCCESS.getCode());
-        resp.setMsg(ApiResponseCode.PASSWORD_CHANGED_SUCCESS.getMessage());
+        resp.setCode(20000);
+        resp.setMsg( "パスワードが更新されました。再度ログインしてください。");
         return ApiResponse.success(resp);
     }
 }
