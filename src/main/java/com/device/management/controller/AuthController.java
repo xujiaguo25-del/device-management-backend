@@ -1,7 +1,5 @@
 package com.device.management.controller;
 
-import com.device.management.dto.ChangePasswordRequest;
-import com.device.management.dto.ChangePasswordResponse;
 import com.device.management.dto.LoginRequest;
 import com.device.management.dto.LoginResponse;
 import com.device.management.dto.ApiResponse;
@@ -29,10 +27,6 @@ public class AuthController {
             if (dto instanceof LoginRequest req) {
                 req.setPassword(CryptoUtil.decrypt(req.getPassword()));
             }
-            if (dto instanceof ChangePasswordRequest req) {
-                req.setCurrentPassword(CryptoUtil.decrypt(req.getCurrentPassword()));
-                req.setNewPassword(CryptoUtil.decrypt(req.getNewPassword()));
-            }
         } catch (Exception e) {
             log.error("暗号化解除失敗", e);
             throw new UnauthorizedException("暗号化パスワードが無効です");
@@ -53,15 +47,6 @@ public class AuthController {
         }
         decryptPasswordFields(loginRequest);
         return authService.login(loginRequest);
-    }
-
-    /* 2. パスワード変更（密文） */
-    @PostMapping("/change-password")
-    public ApiResponse<ChangePasswordResponse> changePassword(
-            @RequestBody ChangePasswordRequest req,
-            @RequestHeader("Authorization") String authHeader) {
-        decryptPasswordFields(req);
-        return authService.changePassword(req, authHeader);
     }
 
     /* 3. ログアウト（パスワード不要 → そのまま） */

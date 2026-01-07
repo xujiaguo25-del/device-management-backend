@@ -1,7 +1,5 @@
 package com.device.management.service;
 
-import com.device.management.dto.ChangePasswordRequest;
-import com.device.management.dto.ChangePasswordResponse;
 import com.device.management.dto.LoginRequest;
 import com.device.management.dto.LoginResponse;
 import com.device.management.dto.ApiResponse;
@@ -20,13 +18,4 @@ public interface AuthService {
      */
     ApiResponse<Void> logout();
 
-
-
-    /**
-     * パスワード変更機能
-     * @param req
-     * @param authHeader
-     * @return
-     */
-    ApiResponse<ChangePasswordResponse> changePassword(ChangePasswordRequest req, String authHeader);
 }
