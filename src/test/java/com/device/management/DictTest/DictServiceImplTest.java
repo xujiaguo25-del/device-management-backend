@@ -33,7 +33,7 @@ class DictServiceImplTest {
 
     @Test
     void testGetDictItemsByTypeCode_Success() {
-        // 准备测试数据
+        // テストデータの準備
         List<Dict> mockDicts = Arrays.asList(
             createMockDict(1L, "USER_TYPE", "admin", 2),
             createMockDict(2L, "USER_TYPE", "user", 1)
@@ -41,15 +41,15 @@ class DictServiceImplTest {
         
         when(dictRepository.findByDictTypeCode("USER_TYPE")).thenReturn(mockDicts);
 
-        // 执行测试
+        // テスト実行
         ApiResponse<List<DictItemDTO>> result = dictService.getDictItemsByTypeCode("USER_TYPE");
 
-        // 验证结果
+        // 結果の検証
         assertNotNull(result);
         assertEquals(200, result.getCode());
         assertNotNull(result.getData());
         assertEquals(2, result.getData().size());
-        // 验证排序（sort字段升序）
+        // ソート（sortフィールドの昇順）の検証
         assertEquals(1, result.getData().get(0).getSort());
         assertEquals(2, result.getData().get(1).getSort());
         
