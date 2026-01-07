@@ -4,9 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import java.time.LocalDateTime;
 
 /**
@@ -20,27 +17,32 @@ import java.time.LocalDateTime;
 public class User {
 
     @Id
-    @Column(name = "USER_ID", length = 20)
-    private String userId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
+    private String userId; // ユーザID（プライマリキー）
 
-    @Column(name = "USER_NAME", length = 100, nullable = false)
-    private String userName;
+    @Column(name = "dept_id")
+    private String deptId; // 部署番号
 
-    @Column(name = "DEPARTMENT_CODE", length = 20, nullable = false)
-    private String departmentCode;
+    @Column(name = "name")
+    private String userName; // 氏名
 
-    @Column(name = "USER_LEVEL", length = 20, nullable = false)
-    private String userLevel;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_type_id", referencedColumnName = "dict_id")
+    private Dict userTypeDict; // ユーザタイプ（辞書項目：USER_TYPE 関連）
 
-    @Column(name = "PASSWORD_HASH", length = 200, nullable = false)
-    private String passwordHash;
+    @Column(name = "password")
+    private String password; // パスワード（暗号化保存）
 
-    @CreationTimestamp
-    @Column(name = "CREATED_DATE")
-    private LocalDateTime createdDate;
+    @Column(name = "create_time", columnDefinition = "timestamp")
+    private LocalDateTime createTime; //作成日時
 
-    @UpdateTimestamp
-    @Column(name = "UPDATED_DATE")
-    private LocalDateTime updatedDate;
+    @Column(name = "creater")
+    private String creater; //作成者
 
+    @Column(name = "update_time", columnDefinition = "timestamp")
+    private LocalDateTime updateTime; //更新日時
+
+    @Column(name = "updater")
+    private String updater; //更新者
 }
