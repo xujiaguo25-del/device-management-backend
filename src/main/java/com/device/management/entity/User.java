@@ -20,27 +20,33 @@ import java.time.LocalDateTime;
 public class User {
 
     @Id
-    @Column(name = "USER_ID", length = 20)
+    @Column(name = "USER_ID", length = 50)
     private String userId;
 
-    @Column(name = "USER_NAME", length = 100, nullable = false)
-    private String userName;
+    @Column(name = "dept_id", length = 50, nullable = false)
+    private String deptId;
 
-    @Column(name = "DEPARTMENT_CODE", length = 20, nullable = false)
-    private String departmentCode;
+    @Column(name = "name", length = 100, nullable = false)
+    private String name;
 
-    @Column(name = "USER_LEVEL", length = 20, nullable = false)
-    private String userLevel;
+    @Column(name = "user_type_id", nullable = false)
+    private Integer userTypeId;
 
-    @Column(name = "PASSWORD_HASH", length = 200, nullable = false)
-    private String passwordHash;
+    @Column(name = "password", length = 255, nullable = false)
+    private String password;
 
     @CreationTimestamp
-    @Column(name = "CREATED_DATE")
-    private LocalDateTime createdDate;
+    @Column(name = "create_time")
+    private LocalDateTime createTime;
+
+    @Column(name = "creater", length = 100)
+    private String creater;
 
     @UpdateTimestamp
-    @Column(name = "UPDATED_DATE")
-    private LocalDateTime updatedDate;
+    @Column(name = "update_time")
+    private LocalDateTime updateTime;
+
+    @Column(name = "updater", length = 100)
+    private String updater;
 
 }
