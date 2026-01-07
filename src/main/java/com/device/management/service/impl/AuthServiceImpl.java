@@ -155,4 +155,60 @@ public class AuthServiceImpl implements AuthService {
             log.warn("セキュリティコンテキストのクリーンアップ中にエラーが発生: {}", e.getMessage());
         }
     }
+    /**
+     * パスワード変更
+     *・一般ユーザ：自分のパスワードのみ変更可能（旧パスワード必須）
+     *・管理者　　：全ユーザーのパスワードをリセット可能（旧パスワード不要）
+     * @param req  変更内容（userId / currentPassword / newPassword）
+     * @param authHeader Authorization: Bearer <JWT>
+     * @return Result<ChangePasswordResponse> 成功時 20000, 失敗時各業務エラーコード
+     * @throws UnauthorizedException システムエラー（ユーザ不在等）
+     */
+    @Override
+    @Transactional
+    public ApiResponse<ChangePasswordResponse> changePassword(ChangePasswordRequest req,
+                                                              String authHeader) {
+        // 1.JWT を解析し、検証する
+        String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
+        if (!jwtTokenProvider.validateToken(token)) {
+            return ApiResponse.error(401, "トークンが無効です");
+        }
+        String tokenUserId = jwtTokenProvider.getUserIdFromToken(token);
+        Long tokenUserType = jwtTokenProvider.getUserTypeIdFromToken(token);
+
+        // 2. 一般ユーザーは自身のパスワードのみ変更可能 管理者は全ユーザーのパスワードを変更可能
+        boolean isAdmin = Objects.equals(tokenUserType, 11L);
+        if (!isAdmin && !tokenUserId.equals(req.getUserId())) {
+            return ApiResponse.error(403, "他人のパスワードを変更する権限がありません");
+        }
+
+        // 3. 旧パスワードを検証（管理者はスキップ）
+        User user = userRepository.findByUserId(req.getUserId())
+                .orElseThrow(() -> new UnauthorizedException("ユーザーが存在しません"));
+
+        if (!isAdmin && !passwordEncoder.matches(req.getCurrentPassword(), user.getPassword())) {
+            return ApiResponse.error(40001, "現在のパスワードが正しくありません");
+        }
+
+        // 4. 新しいパスワードは古いパスワードと同一にできません
+        if (passwordEncoder.matches(req.getNewPassword(), user.getPassword())) {
+            return ApiResponse.error(40003, "新しいパスワードは古いパスワードと同じにすることはできません");
+        }
+
+        // 5. パスワード強度の二重チェック
+        if (!req.getNewPassword().matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?])[A-Za-z\\d@$!%*?]{8,}$")) {
+            return ApiResponse.error(40002, "新しいパスワードが強度要件を満たしていません");
+        }
+
+        // 6. パスワードを更新する
+        user.setPassword(passwordEncoder.encode(req.getNewPassword()));
+        userRepository.save(user);
+
+        // 7. レスポンスを返却する
+        ChangePasswordResponse resp = new ChangePasswordResponse();
+        resp.setCode(20000);
+        resp.setMsg( "パスワードが更新されました。再度ログインしてください。");
+        return ApiResponse.success(resp);
+    }
+
 }
