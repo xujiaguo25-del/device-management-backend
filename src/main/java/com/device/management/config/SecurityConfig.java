@@ -53,6 +53,11 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/login", "/auth/logout").permitAll()
+                        //エクスポート用インターフェースを開放（テスト用）
+                        .requestMatchers("/api/devices/export/excel").permitAll()
+                        .requestMatchers("/api/devices/test").permitAll()
+                        // デバイス削除インターフェースを開放
+                        .requestMatchers("/api/devices/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
