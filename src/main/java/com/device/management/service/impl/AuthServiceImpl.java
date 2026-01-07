@@ -61,7 +61,7 @@ public class AuthServiceImpl implements AuthService {
         userDTO.setName(user.getName());
         userDTO.setUserTypeName(userType.getDictItemName());
 
-        // 5. LoginResponseを組み立て
+        // 5. LoginDTOを組み立て
         LoginDTO loginDTO = new LoginDTO(token, userDTO);
 
         // 6. ログイン成功結果を返す（ResultのloginSuccess静的ファクトリメソッドを使用）
