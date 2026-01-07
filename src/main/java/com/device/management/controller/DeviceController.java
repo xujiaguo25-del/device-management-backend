@@ -18,8 +18,9 @@ public class DeviceController {
     private final UserService userService;
 
     //デバイス一覧、ページングとフィルタリング機能付き
-    //アクセス例：GET /api/devices/list?userId=JS0105&page=0&size=10
-    @GetMapping("/list")
+    //アクセス例：GET /api/devices?userId=JS0105&page=0&size=10
+    //アクセス例：GET /api/devices
+    @GetMapping
     public ApiResponse<Page<UserDTO>> list(
             @RequestParam(required = false) String deviceName,
             @RequestParam(required = false) String userId,
