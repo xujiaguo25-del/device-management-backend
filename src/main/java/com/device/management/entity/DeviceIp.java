@@ -4,8 +4,6 @@ package com.device.management.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import jakarta.persistence.*;
-import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
@@ -30,9 +28,6 @@ public class DeviceIp {
     // device:ip（1：n）
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "device_id", referencedColumnName = "device_id", insertable = false, updatable = false)
-    // device:ip（1：n）
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "device_id", referencedColumnName = "device_id")
     private Device device; //機器番号（外部キー）
 
     @Column(name = "create_time", columnDefinition = "timestamp")
@@ -46,5 +41,4 @@ public class DeviceIp {
 
     @Column(name = "updater")
     private String updater; //更新者
-}
 }
