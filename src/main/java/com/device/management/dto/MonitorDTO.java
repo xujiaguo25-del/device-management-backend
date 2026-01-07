@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public class MonitorDTO {
     private Integer monitorId; // モニター番号
     private String monitorName; // モニター名
-    private String deviceId; // 关联的设备ID
+    private String deviceId; // 機器番号（外部キー）
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime; //作成日時
     private String creater; //作成者
