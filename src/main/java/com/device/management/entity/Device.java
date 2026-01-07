@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 機器オブジェクト
@@ -102,4 +104,11 @@ public class Device {
 
     @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<SamplingCheck> samplingChecks;
+
+    @OneToMany(mappedBy = "device", fetch = FetchType.LAZY)
+    private Set<DeviceIp> ipList = new HashSet<>();
+
+    @OneToMany(mappedBy = "device", fetch = FetchType.LAZY)
+    private Set<Monitor> monitorList = new HashSet<>();
+
 }
