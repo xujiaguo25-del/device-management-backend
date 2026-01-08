@@ -50,46 +50,46 @@ public class DevicePermissionController {
         return devicePermissionService.getPermissions(page, size, user, deviceInfo);
     }
 
-    //権限を追加します
-    @PostMapping
-    public  ApiResponse<PermissionsDTO> addPermissions(
-            @RequestBody PermissionsDTO devicePermission
-    ){
-        return devicePermissionService.addPermissions(devicePermission);
-    }
-
-    //権限詳細
-    @GetMapping(value = "/{id}")
-    public ApiResponse<PermissionsDTO> getPermissions() {
-        return null;
-    }
-
-    //権限を更新します
-    @PutMapping
-    public ApiResponse<PermissionsDTO> updatePermissions(
-            @RequestBody PermissionsDTO permissionsDTO
-    ){
-        return devicePermissionService.updatePermissions(permissionsDTO);
-    }
-
-    //権限を削除します
-    @DeleteMapping(value = "/{id}")
-    public ApiResponse<Void> deletePermissions(
-            @PathVariable("id") String id
-    ){
-        return devicePermissionService.deletePermissions(id);
-    }
-
-    //権限をexcelファイル形式でエクスポートします
-    @GetMapping(value = "/export")
-    public ApiResponse<Void> exportPermissions(
-            @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-            @RequestParam(value = "size", required = false, defaultValue = "20") Integer size,
-            @RequestParam(value = "userInfo", required = false) User user,
-            @RequestParam(value = "deviceInfo", required = false) DeviceInfo deviceInfo,
-            @RequestParam(value = "permissionInfo", required = false) String permissionInfo
-    )
-    {
-        return devicePermissionService.exportPermissions(page,size,user,deviceInfo,permissionInfo);
-    }
+//    //権限を追加します
+//    @PostMapping
+//    public  ApiResponse<PermissionsDTO> addPermissions(
+//            @RequestBody PermissionsDTO devicePermission
+//    ){
+//        return devicePermissionService.addPermissions(devicePermission);
+//    }
+//
+//    //権限詳細
+//    @GetMapping(value = "/{id}")
+//    public ApiResponse<PermissionsDTO> getPermissions() {
+//        return null;
+//    }
+//
+//    //権限を更新します
+//    @PutMapping
+//    public ApiResponse<PermissionsDTO> updatePermissions(
+//            @RequestBody PermissionsDTO permissionsDTO
+//    ){
+//        return devicePermissionService.updatePermissions(permissionsDTO);
+//    }
+//
+//    //権限を削除します
+//    @DeleteMapping(value = "/{id}")
+//    public ApiResponse<Void> deletePermissions(
+//            @PathVariable("id") String id
+//    ){
+//        return devicePermissionService.deletePermissions(id);
+//    }
+//
+//    //権限をexcelファイル形式でエクスポートします
+//    @GetMapping(value = "/export")
+//    public ApiResponse<Void> exportPermissions(
+//            @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+//            @RequestParam(value = "size", required = false, defaultValue = "20") Integer size,
+//            @RequestParam(value = "userInfo", required = false) User user,
+//            @RequestParam(value = "deviceInfo", required = false) DeviceInfo deviceInfo,
+//            @RequestParam(value = "permissionInfo", required = false) String permissionInfo
+//    )
+//    {
+//        return devicePermissionService.exportPermissions(page,size,user,deviceInfo,permissionInfo);
+//    }
 }

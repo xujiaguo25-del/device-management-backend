@@ -17,11 +17,12 @@ import java.time.Instant;
 @Table(name = "device_ip")
 public class DeviceIp {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // 添加自增主键
     @Column(name = "ip_id", nullable = false)
     private Integer id;
 
     @NotNull
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "device_id", nullable = false)
     private DeviceInfo device;
@@ -47,6 +48,4 @@ public class DeviceIp {
     @Size(max = 100)
     @Column(name = "updater", length = 100)
     private String updater;
-
-
 }

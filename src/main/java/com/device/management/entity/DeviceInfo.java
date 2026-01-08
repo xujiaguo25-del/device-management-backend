@@ -50,9 +50,10 @@ public class DeviceInfo {
     @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "user_id")
     private User user;
 
-    @OneToOne(mappedBy = "device", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    // 修改为 @OneToMany 关系
+    @OneToMany(mappedBy = "device", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private DeviceIp deviceIp;
+    private List<DeviceIp> deviceIps; // 字段名改为复数形式
 
     @Column(name = "remark", length = Integer.MAX_VALUE)
     private String remark;
@@ -99,6 +100,4 @@ public class DeviceInfo {
     @Size(max = 100)
     @Column(name = "updater", length = 100)
     private String updater;
-
-
 }

@@ -55,7 +55,7 @@ public class DevicePermissionService {
         // 构建分页对象，按权限编号排列
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.ASC, "permissionId"));
 
-        // 构建查询条件
+        // 构建查询条件 - 使用 DISTINCT 避免重复数据
         Specification<DevicePermission> spec = buildQuerySpecification(user, deviceInfo);
 
         // 执行分页查询
@@ -73,10 +73,15 @@ public class DevicePermissionService {
         );
     }
 
-    //构建查询条件 - 只根据用户ID和设备ID
+    // 构建查询条件 - 修复 fetch 问题
     private Specification<DevicePermission> buildQuerySpecification(User user, DeviceInfo deviceInfo) {
         return (Root<DevicePermission> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
             List<Predicate> predicates = new ArrayList<>();
+
+            // 使用 DISTINCT 避免一对多关系导致的数据重复
+            if (query.getResultType().equals(DevicePermission.class)) {
+                query.distinct(true);
+            }
 
             // 根据用户的userid查询
             if (user != null && StringUtils.hasText(user.getUserId())) {
@@ -84,24 +89,12 @@ public class DevicePermissionService {
                 Join<DevicePermission, DeviceInfo> deviceJoin = root.join("device", JoinType.INNER);
                 Join<DeviceInfo, User> userJoin = deviceJoin.join("user", JoinType.INNER);
                 predicates.add(cb.equal(userJoin.get("userId"), user.getUserId()));
-
-                // 验证用户是否存在
-                User existingUser = userRepository.findByUserId(user.getUserId());
-                if (existingUser == null) {
-                    throw new BusinessException(30003, "用户不存在");
-                }
             }
 
             // 根据设备ID查询
             if (deviceInfo != null && StringUtils.hasText(deviceInfo.getDeviceId())) {
                 Join<DevicePermission, DeviceInfo> deviceJoin = root.join("device", JoinType.INNER);
                 predicates.add(cb.equal(deviceJoin.get("deviceId"), deviceInfo.getDeviceId()));
-
-                // 验证设备是否存在
-                DeviceInfo existingDevice = deviceRepository.findByDeviceId(deviceInfo.getDeviceId());
-                if (existingDevice == null) {
-                    throw new BusinessException(30001, "设备不存在");
-                }
             }
 
             // 如果没有任何条件，返回所有记录
@@ -113,14 +106,14 @@ public class DevicePermissionService {
         };
     }
 
-    //将实体列表转换为DTO列表
+    // 将实体列表转换为DTO列表
     private List<PermissionsDTO> convertToDTOList(List<DevicePermission> permissions) {
         return permissions.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
-    //将单个实体转换为DTO
+    // 将单个实体转换为DTO - 修改为处理多个IP地址
     private PermissionsDTO convertToDTO(DevicePermission permission) {
         if (permission == null) {
             return null;
@@ -131,17 +124,27 @@ public class DevicePermissionService {
 
         // 设备和用户信息
         if (permission.getDevice() != null) {
-            dto.setDeviceId(permission.getDevice().getDeviceId());
-            dto.setComputerName(permission.getDevice().getComputerName());
-            dto.setLoginUsername(permission.getDevice().getLoginUsername());
-            dto.setUserId(permission.getDevice().getUser().getUserId());
-            dto.setName(permission.getDevice().getUser().getName());
-            dto.setDeptId(permission.getDevice().getUser().getDeptId());
-            dto.setIpAddress(permission.getDevice().getDeviceIp().getIpAddress());
+            DeviceInfo device = permission.getDevice();
+            dto.setDeviceId(device.getDeviceId());
+            dto.setComputerName(device.getComputerName());
+            dto.setLoginUsername(device.getLoginUsername());
+            dto.setUserId(device.getUser().getUserId());
+            dto.setName(device.getUser().getName());
+            dto.setDeptId(device.getUser().getDeptId());
 
+            // 处理多个IP地址 - 从 deviceIps 列表中提取所有 IP 地址
+            if (device.getDeviceIps() != null && !device.getDeviceIps().isEmpty()) {
+                List<String> ipAddresses = device.getDeviceIps().stream()
+                        .map(deviceIp -> deviceIp.getIpAddress())
+                        .filter(ip -> ip != null && !ip.trim().isEmpty())
+                        .collect(Collectors.toList());
+                dto.setIpAddress(ipAddresses);
+            } else {
+                dto.setIpAddress(new ArrayList<>()); // 如果没有IP地址，返回空列表
+            }
+        } else {
+            dto.setIpAddress(new ArrayList<>()); // 如果没有设备信息，返回空列表
         }
-
-        // 用户信息
 
         // 域状态
         if (permission.getDomainStatus() != null) {
@@ -179,63 +182,6 @@ public class DevicePermissionService {
         dto.setUpdater(permission.getUpdater());
 
         return dto;
-    }
-
-    public ApiResponse<PermissionsDTO> addPermissions(PermissionsDTO permissionsDTO) {
-        DeviceInfo deviceInfo =   deviceRepository.findByDeviceId(permissionsDTO.getDeviceId());
-        if (deviceInfo == null) {
-            throw new BusinessException(30001,"设备不存在");
-        }
-
-        DevicePermission devicePermissions = devicePermissionRepository.findDevicePermissionsByDevice(deviceInfo);
-
-        if (devicePermissions != null) {
-            throw new BusinessException(30002,"设备已存在权限信息");
-        }
-
-        devicePermissionRepository.save(DevicePermission.builder()
-                .permissionId(UUID.randomUUID().toString())
-                .device(deviceInfo)
-                .domainStatus(
-                        dictRepository.findByDictTypeCodeAndSort("DOMAIN_STATUS",permissionsDTO.getDomainStatus())
-                )
-                .domainGroup(permissionsDTO.getDomainGroup())
-                .noDomainReason(permissionsDTO.getNoDomainReason())
-                .smartitStatus(
-                        dictRepository.findByDictTypeCodeAndSort("SMARTIT_STATUS",permissionsDTO.getDomainStatus())
-                )
-                .noSmartitReason(permissionsDTO.getNoSmartitReason())
-                .usbStatus(
-                        dictRepository.findByDictTypeCodeAndSort("USB_STATUS",permissionsDTO.getDomainStatus())
-                )
-                .usbReason(permissionsDTO.getUsbReason())
-                .usbExpireDate(permissionsDTO.getUsbExpireDate())
-                .antivirusStatus(
-                        dictRepository.findByDictTypeCodeAndSort("ANTIVIRUS_STATUS",permissionsDTO.getDomainStatus())
-                )
-                .noSymantecReason(permissionsDTO.getNoSymantecReason())
-                .remark(permissionsDTO.getRemark())
-                .createTime(Instant.now())
-//                        .creater(jwtTokenProvider.getUserIdFromToken("eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJKUzIxMTUiLCJzdWIiOiJKUzIxMTUiLCJpYXQiOjE3Njc1OTE4NzgsImV4cCI6MTc2NzY3ODI3OH0.FV_jjUTSWvYEeTYgFtb2iPkalIz48NK_2lTgi-HtWVk"))
-                .creater("JS2115")
-                .updateTime(Instant.now())
-//                        .updater(jwtTokenProvider.getUserIdFromToken("eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJKUzIxMTUiLCJzdWIiOiJKUzIxMTUiLCJpYXQiOjE3Njc1OTE4NzgsImV4cCI6MTc2NzY3ODI3OH0.FV_jjUTSWvYEeTYgFtb2iPkalIz48NK_2lTgi-HtWVk"))
-                .updater("JS2115")
-                .build());
-
-        return ApiResponse.success("添加成功",permissionsDTO);
-    }
-
-    public ApiResponse<PermissionsDTO> updatePermissions(PermissionsDTO permissionsDTO) {
-        return null;
-    }
-
-    public ApiResponse<Void> deletePermissions(String id) {
-        return null;
-    }
-
-    public ApiResponse<Void> exportPermissions(Integer page, Integer size, User user, DeviceInfo deviceInfo, String permissionInfo) {
-        return null;
     }
 
 }
