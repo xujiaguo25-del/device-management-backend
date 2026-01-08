@@ -33,6 +33,7 @@ public class SamplingCheckController {
     @Autowired
     private SamplingCheckService samplingCheckService;
 
+    //詳細情報の取得
     @GetMapping("/{sampling_id}")
     public ApiResponse<SamplingCheckDTO> securityCheckQueryById(@PathVariable String sampling_id){
         SamplingCheckDTO samplingCheckDTO = samplingCheckService.findById(sampling_id);                  //Service層のクエリメソッドを呼び出す
@@ -43,5 +44,4 @@ public class SamplingCheckController {
             return ApiResponse.success("検索成功",samplingCheckDTO);
         }
     }
-
 }
