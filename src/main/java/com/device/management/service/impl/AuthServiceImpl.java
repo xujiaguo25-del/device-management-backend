@@ -64,7 +64,7 @@ public class AuthServiceImpl implements AuthService {
         userDTO.setName(user.getName());
         userDTO.setUserTypeName(userType.getDictItemName());
 
-        // 5. LoginResponseを組み立て
+        // 5. LoginDTOを組み立て
         LoginDTO loginDTO = new LoginDTO(token, userDTO);
 
         // 6. ログイン成功結果を返す（ResultのloginSuccess静的ファクトリメソッドを使用）
@@ -160,16 +160,14 @@ public class AuthServiceImpl implements AuthService {
      *・一般ユーザ：自分のパスワードのみ変更可能（旧パスワード必須）
      *・管理者　　：全ユーザーのパスワードをリセット可能（旧パスワード不要）
      * @param req  変更内容（userId / currentPassword / newPassword）
-     * @param authHeader Authorization: Bearer <JWT>
-     * @return Result<ChangePasswordResponse> 成功時 20000, 失敗時各業務エラーコード
+     * @return ApiResponse<ChangePasswordResponse> 成功時 20000, 失敗時各業務エラーコード
      * @throws UnauthorizedException システムエラー（ユーザ不在等）
      */
     @Override
     @Transactional
-    public ApiResponse<ChangePasswordResponse> changePassword(ChangePasswordRequest req,
-                                                              String authHeader) {
+    public ApiResponse<Void> changePassword(ChangePasswordRequest req) {
         // 1.JWT を解析し、検証する
-        String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
+        String token = extractTokenFromRequest();;
         if (!jwtTokenProvider.validateToken(token)) {
             return ApiResponse.error(401, "トークンが無効です");
         }
@@ -203,12 +201,12 @@ public class AuthServiceImpl implements AuthService {
         // 6. パスワードを更新する
         user.setPassword(passwordEncoder.encode(req.getNewPassword()));
         userRepository.save(user);
-
+/*
         // 7. レスポンスを返却する
         ChangePasswordResponse resp = new ChangePasswordResponse();
         resp.setCode(20000);
-        resp.setMsg( "パスワードが更新されました。再度ログインしてください。");
-        return ApiResponse.success(resp);
+        resp.setMsg( "パスワードが更新されました。再度ログインしてください。");*/
+        return ApiResponse.success("パスワードが更新されました。再度ログインしてください。");
     }
 
 }

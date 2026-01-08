@@ -1,7 +1,6 @@
 package com.device.management.controller;
 
 import com.device.management.dto.ChangePasswordRequest;
-import com.device.management.dto.ChangePasswordResponse;
 import com.device.management.dto.LoginRequest;
 import com.device.management.dto.LoginDTO;
 import com.device.management.dto.ApiResponse;
@@ -59,11 +58,10 @@ public class AuthController {
 
     /* 2. パスワード変更（密文） */
     @PostMapping("/change-password")
-    public ApiResponse<ChangePasswordResponse> changePassword(
-            @RequestBody ChangePasswordRequest req,
-            @RequestHeader("Authorization") String authHeader) {//@RequestBody：接收JSON格式的請求體，@RequestHeader：獲取Authorization請求頭
+    public ApiResponse<Void> changePassword(
+            @RequestBody ChangePasswordRequest req) {//@RequestBody：接收JSON格式的請求體，@RequestHeader：獲取Authorization請求頭
         decryptPasswordFields(req);// 解密密碼字段
-        return authService.changePassword(req, authHeader); // 調用服務層，解密後轉發給服務層
+        return authService.changePassword(req); // 調用服務層，解密後轉發給服務層
     }
 
     /* 3. ログアウト（パスワード不要 → そのまま） */

@@ -19,8 +19,7 @@ public interface AuthService {
     /**
      * パスワード変更機能
      * @param req
-     * @param authHeader
      * @return
      */
-    ApiResponse<ChangePasswordResponse> changePassword(ChangePasswordRequest req, String authHeader);
+    ApiResponse<Void> changePassword(ChangePasswordRequest req);
 }
