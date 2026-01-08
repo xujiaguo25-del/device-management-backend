@@ -17,7 +17,7 @@ import org.springframework.web.context.request.WebRequest;
 public class GlobalExceptionHandler {
 
     /**
-     * 处理资源不找到异常
+     * リソースが見つからない例外を処理
      */
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<?>> handleResourceNotFoundException(
@@ -28,19 +28,19 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 处理参数验证异常
+     * パラメータ検証例外を処理
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<?>> handleValidationException(
             MethodArgumentNotValidException ex, WebRequest request) {
         String message = ex.getBindingResult().getFieldError().getDefaultMessage();
         log.error("Validation error: {}", message);
-        ApiResponse<?> response = ApiResponse.error(400, "参数验证失败: " + message);
+        ApiResponse<?> response = ApiResponse.error(400, "パラメータ検証に失敗しました: " + message);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     /**
-     * 处理认证失败异常
+     * 認証失敗例外を処理
      */
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ApiResponse<?>> handleUnauthorizedException(
@@ -51,27 +51,27 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 处理解密异常
+     * 復号化例外を処理
      */
     @ExceptionHandler(DecryptionException.class)
     public ResponseEntity<ApiResponse<?>> handleDecryptionException(
             DecryptionException ex, WebRequest request) {
-        log.warn("解密失败: {}", ex.getMessage());
+        log.warn("復号に失敗しました: {}", ex.getMessage());
         int code = ex.getCode() != 0 ? ex.getCode() : 400;
-        String message = ex.getMessage() != null ? ex.getMessage() : "密码格式无效";
+        String message = ex.getMessage() != null ? ex.getMessage() : "パスワードフォーマットが無効です";
 
         ApiResponse<?> response = ApiResponse.error(code, message);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     /**
-     * 处理所有其他异常
+     * その他の全ての例外を処理
      */
     @ExceptionHandler(AllException.class)
     public ResponseEntity<ApiResponse<?>> handleGlobalException(
             Exception ex, WebRequest request) {
         log.error("Unexpected error: {}", ex.getMessage(), ex);
-        ApiResponse<?> response = ApiResponse.error(500, "服务器内部错误");
+        ApiResponse<?> response = ApiResponse.error(500, "サーバー内部エラー");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }

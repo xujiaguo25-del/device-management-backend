@@ -25,7 +25,7 @@ public class CryptoUtil {
             byte[] decrypted = cipher.doFinal(decodedBytes);
             return new String(decrypted, StandardCharsets.UTF_8);
         } catch (IllegalArgumentException e) {
-            // 捕获Base64解码失败异常
+            // Base64デコード失敗例外をキャッチ
             throw new DecryptionException("無効な暗号化形式");
         }catch (Exception e) {
             log.error("復号に失敗しました: {}", base64, e);

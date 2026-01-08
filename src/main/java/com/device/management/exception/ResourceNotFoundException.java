@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 自定义异常类
+ * カスタム例外クラス
  */
 @Data
 @NoArgsConstructor

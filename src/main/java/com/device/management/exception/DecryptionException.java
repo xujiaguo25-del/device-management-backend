@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 解密异常类
+ * 復号化例外クラス
  */
 @Data
 @NoArgsConstructor
