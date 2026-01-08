@@ -39,7 +39,7 @@ public class AuthServiceImpl implements AuthService {
      */
     @Override
     public ApiResponse<LoginDTO> login(LoginRequest loginRequest) {
-        // 1. ユーザーIDでユーザーを検索（存在しない場合は例外をスロー、ResultCode列挙型を直接使用して構築）
+        // 1. ユーザーIDでユーザーを検索
         User user = userRepository.findByUserId(loginRequest.getUserId())
                 .orElseThrow(() -> new UnauthorizedException("ユーザーが存在しません"));
 
@@ -67,7 +67,7 @@ public class AuthServiceImpl implements AuthService {
         // 5. LoginDTOを組み立て
         LoginDTO loginDTO = new LoginDTO(token, userDTO);
 
-        // 6. ログイン成功結果を返す（ResultのloginSuccess静的ファクトリメソッドを使用）
+        // 6. ログイン成功結果を返す
         return ApiResponse.success( "ログイン成功", loginDTO);
     }
 

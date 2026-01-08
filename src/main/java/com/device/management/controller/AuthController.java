@@ -45,11 +45,9 @@ public class AuthController {
     public ApiResponse<LoginDTO> login(@RequestBody LoginRequest loginRequest) {
         // 基本的なパラメータ検証
         if (!StringUtils.hasText(loginRequest.getUserId())) {
-//            return ApiResponse.error(400, "ユーザーIDは空にできません");
             throw new UnauthorizedException(400, "ユーザーIDは空にできません");
         }
         if (!StringUtils.hasText(loginRequest.getPassword())) {
-//            return ApiResponse.error(400, "パスワードは空にできません");
             throw new UnauthorizedException(400, "パスワードは空にできません");
         }
         decryptPasswordFields(loginRequest);
