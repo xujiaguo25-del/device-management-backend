@@ -29,6 +29,7 @@ public class DeviceDTO {
     private String project;//所属プロジェクト, example = "MS"
     private String devRoom;//所属開発室, example = "M2-A-01"
     private String userId;//ユーザー社員番号, example = "JS0001"
+    private UserDTO userInfo;
     private String remark;//備考, example = "開発機"
 
     //辞書

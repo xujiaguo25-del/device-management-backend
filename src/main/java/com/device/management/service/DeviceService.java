@@ -2,7 +2,6 @@ package com.device.management.service;
 
 import com.device.management.dto.*;
 import com.device.management.entity.*;
-import com.device.management.dto.DictMapper;
 import com.device.management.repository.DeviceRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -151,6 +150,16 @@ public class DeviceService {
         return DeviceDTO.builder()
                 .deviceId(device.getDeviceId().trim())
                 .userId(device.getUserId())
+                .userInfo(device.getUserId() != null ? UserDTO.builder()
+                    .userId(device.getUser().getUserId())
+                    .deptId(device.getUser().getDeptId())
+                    .userName(device.getUser().getUserName())
+                    .userType(DictMapper.toDTO(device.getUser().getUserTypeDict()))
+                    .createTime(device.getUser().getCreateTime())
+                    .creater(device.getUser().getCreater())
+                    .updateTime(device.getUser().getUpdateTime())
+                    .updater(device.getUser().getUpdater())
+                    .build() : null)
                 .deviceModel(device.getDeviceModel())
                 .computerName(device.getComputerName())
                 .loginUsername(device.getLoginUsername())
