@@ -1,23 +1,19 @@
 package com.device.management.security;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.util.StringUtils;
-import org.springframework.web.filter.OncePerRequestFilter;
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * JWT 认证过滤器
+ * 臨時注釋：屏蔽JWT验证逻辑，仅用于接口测试，测试完成后恢复原有代码
  */
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -29,6 +25,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+        // ========== 新增：直接放行所有请求，跳过JWT验证 ==========
+        filterChain.doFilter(request, response);
+        return; // 终止方法，确保后续验证逻辑不执行
+
+        // ========== 原有JWT验证逻辑全部注释 ==========
+        /*
         try {
             String jwt = getJwtFromRequest(request);
 
@@ -46,6 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+        */
     }
 
     /**

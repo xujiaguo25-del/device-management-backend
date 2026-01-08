@@ -29,7 +29,7 @@
 
 ```
 backend/
-├── src/main/java/com/device/management/
+├── src/main/java/com/device/com.device.management/
 │   ├── entity/              # JPA实体类
 │   │   ├── User.java
 │   │   ├── Device.java
