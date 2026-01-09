@@ -1,19 +1,19 @@
-import com.device.management.DeviceManagementApplication;
+package PermissonDataInsertTest;
+
+import com.device.DeviceManagementApplication;
 import com.device.management.repository.DictRepository;
 import com.device.management.entity.Dict;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 
-@SpringBootTest(classes = DeviceManagementApplication.class) // 指定扫描的根包
+@SpringBootTest(classes = DeviceManagementApplication.class)
 public class DictDataInsertTest {
 
     @Autowired
