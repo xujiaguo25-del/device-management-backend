@@ -34,43 +34,43 @@ public class SamplingCheckController {
     private SamplingCheckService samplingCheckService;
 
     //xiaoshuang
-    //报表导出
+    //レポートのエクスポート
     @GetMapping("/export")
     public void exportSamplingChecks(@RequestParam String reportCode,
                                      HttpServletResponse response) throws IOException {
-        //创建工作簿
+        //ブックの作成
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("工作现场检查");
 
-        //写入表头,表内容
+        //ヘッダー、テーブル内容の書き込み
         setTableHead(sheet);
         List<SamplingCheckDTO> samplingCheckDTOS = samplingCheckService.findByReportId(reportCode);
         setTableContent(sheet,1,samplingCheckDTOS);
 
-        // 设置响应头
+        // レスポンスヘッダの設定
         String fileName = reportCode + "月度检查表.xlsx";
         String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader("Content-Disposition","attachment; filename*=UTF-8''" + encodedFileName );
 
-        // 写入输出流
+        // ライト出力ストリーム
         workbook.write(response.getOutputStream());
         workbook.close();
     }
 
-    //创建表头
+    //ヘッダーの作成
     private void setTableHead(Sheet sheet) {
         Row row0 = sheet.createRow(0);
         Row row1 = sheet.createRow(1);
 
-        // 第一行表头
+        // 最初の行ヘッダ
         row0.createCell(0).setCellValue("编号");
         row0.createCell(1).setCellValue("工号");
         row0.createCell(2).setCellValue("姓名");
         row0.createCell(3).setCellValue("设备编号");
         row0.createCell(4).setCellValue("检查项目");
         row0.createCell(10).setCellValue("处置措施");
-        // 第二行表头
+        // 第2行ヘッダ
         row1.createCell(1).setCellValue("工号");
         row1.createCell(2).setCellValue("姓名");
         row1.createCell(4).setCellValue("开机认证");
@@ -80,7 +80,7 @@ public class SamplingCheckController {
         row1.createCell(8).setCellValue("病毒防护");
         row1.createCell(9).setCellValue("USB接口(封条)");
 
-        //合并表头
+        //ヘッダーのマージ
         sheet.addMergedRegion(new CellRangeAddress(0, 1, 0, 0));
         sheet.addMergedRegion(new CellRangeAddress(0, 1, 1, 1));
         sheet.addMergedRegion(new CellRangeAddress(0, 1, 2, 2));
@@ -93,7 +93,7 @@ public class SamplingCheckController {
         log.warn("Writed Table Head ");
     }
 
-    //把数据库记录写入表格
+    //データベースレコードをテーブルに書き込む
     private void setTableContent(Sheet sheet, int endRow, List<SamplingCheckDTO> samplingCheckDTOS) {
         int rowNum = 0;
         for(SamplingCheckDTO samplingCheckDTO : samplingCheckDTOS) {
@@ -103,7 +103,7 @@ public class SamplingCheckController {
             row.createCell(2).setCellValue( samplingCheckDTO.getName());
             row.createCell(3).setCellValue( samplingCheckDTO.getDeviceId());
             row.createCell(10).setCellValue( samplingCheckDTO.getDisposalMeasures());
-            //通过Option类处理可能为空值的字段
+            //OptionクラスでNULL値の可能性のあるフィールドを処理する
             Optional<Boolean> op1 = Optional.ofNullable(samplingCheckDTO.getBootAuthentication());
             if(op1.orElse(false)) row.createCell(4).setCellValue("○");
 
@@ -124,5 +124,4 @@ public class SamplingCheckController {
         }
         log.warn("Writed Table Content ");
     }
-
 }
