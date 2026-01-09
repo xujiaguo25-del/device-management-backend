@@ -22,72 +22,52 @@ public class DeviceUsagePermissionService {
 
     /**
      * IDに基づいて権限の詳細を照会する
+     *  1. 権限IDをパラメータとして受け取る
+     *  2. リポジトリ層を通じて対応する権限エンティティを検索する
+     *  3. 検索できない場合はリソース未発見の例外をスローする
+     *  4. エンティティオブジェクトをDTOオブジェクトに変換する
+     *  5. DTOオブジェクトを呼び出し元に返す
+     * @param permissionId 権限ID
+     * @return 権限詳細情報DTOオブジェクト
      */
     @Transactional(readOnly = true)
     public DeviceUsagePermissionDTO findPermissionDetail(String permissionId) {
         log.info("権限の詳細を確認する，permissionId: {}", permissionId);
 
+        //IDに基づいてデータベースから権限オブジェクトを取得する
         DeviceUsagePermission permission = permissionRepository.findById(permissionId)
                 .orElseThrow(() -> {
                     log.error("権限情報が存在しません，permissionId: {}", permissionId);
+                    //存在しなければ、例外を投げる
                     return new ResourceNotFoundException("権限情報が存在しません，permissionId: " + permissionId);
                 });
 
-        // DTO
+        // エンティティオブジェクトをDTOオブジェクトに変換して返却する
         return convertToDTO(permission);
     }
 
-    /**
-     * 権限情報を更新
-     */
-    @Transactional
-    public void updatePermission(String permissionId, DeviceUsagePermission updatedData) {
-        log.info("権限情報を更新，permissionId: {}", permissionId);
-
-        DeviceUsagePermission existing = permissionRepository.findById(permissionId)
-                .orElseThrow(() -> new ResourceNotFoundException("権限情報が存在しません"));
-
-        // 更新
-        if (updatedData.getDomainStatus() != null) {
-            existing.setDomainStatus(updatedData.getDomainStatus());
-        }
-        if (updatedData.getDomainGroup() != null) {
-            existing.setDomainGroup(updatedData.getDomainGroup());
-        }
-        if (updatedData.getNoDomainReason() != null) {
-            existing.setNoDomainReason(updatedData.getNoDomainReason());
-        }
-        if (updatedData.getSmartitStatus() != null) {
-            existing.setSmartitStatus(updatedData.getSmartitStatus());
-        }
-        if (updatedData.getNoSmartitReason() != null) {
-            existing.setNoSmartitReason(updatedData.getNoSmartitReason());
-        }
-        if (updatedData.getUsbStatus() != null) {
-            existing.setUsbStatus(updatedData.getUsbStatus());
-        }
-        if (updatedData.getUsbReason() != null) {
-            existing.setUsbReason(updatedData.getUsbReason());
-        }
-        if (updatedData.getUsbExpireDate() != null) {
-            existing.setUsbExpireDate(updatedData.getUsbExpireDate());
-        }
-        if (updatedData.getAntivirusStatus() != null) {
-            existing.setAntivirusStatus(updatedData.getAntivirusStatus());
-        }
-        if (updatedData.getNoSymantecReason() != null) {
-            existing.setNoSymantecReason(updatedData.getNoSymantecReason());
-        }
-        if (updatedData.getRemark() != null) {
-            existing.setRemark(updatedData.getRemark());
-        }
-        if (updatedData.getUpdater() != null) {
-            existing.setUpdater(updatedData.getUpdater());
-        }
-        permissionRepository.save(existing);
-    }
-
     /** フィールドに基づいて権限情報を更新する */
+
+    /**
+     * フィールドに基づいて権限情報を更新する
+     *  1. IDに基づいて既存の権限エンティティを検索する
+     *  2. 各パラメータに値があるかを確認する（StringUtilsを使用して文字列を判定）
+     *  3. 値があるパラメータを既存のエンティティに更新する
+     *  4. 更新者を"JS111"に設定する（後で機能を追加し、ログインユーザーを直接取得する予定）
+     *  5. 更新後のエンティティを保存する
+     * @param permissionId      権限ID
+     * @param smartitStatusId   SmartITステータスID
+     * @param noSmartitReason   SmartITがない理由
+     * @param usbStatusId       USBステータスID
+     * @param usbReason         USBの理由
+     * @param usbExpireDate     USB有効期限
+     * @param antivirusStatusId ウイルス対策ソフトステータスID
+     * @param noSymantecReason  ウイルス対策ソフトがない理由
+     * @param domainStatusId    ドメインステータスID
+     * @param domainGroup       ドメイングループ
+     * @param noDomainReason    ドメインがない理由
+     * @param remark            備考
+     */
     @Transactional
     public void updatePermissionByFields(String permissionId,
                                          String smartitStatusId,
@@ -105,9 +85,11 @@ public class DeviceUsagePermissionService {
 
         log.info("フィールドに基づいて権限情報を更新する，ID: {}", permissionId);
 
+        //既存の権限エンティティを照会する
         DeviceUsagePermission existing = permissionRepository.findById(permissionId)
                 .orElseThrow(() -> new ResourceNotFoundException("権限情報が存在しません"));
 
+        //パラメータを一つずつ確認して更新する
         if (StringUtils.hasText(noSmartitReason)) {
             existing.setNoSmartitReason(noSmartitReason);
         }
@@ -126,6 +108,7 @@ public class DeviceUsagePermissionService {
         if (StringUtils.hasText(remark)) {
             existing.setRemark(remark);
         }
+        //更新者を設定する（現在のユーザーを取得）
         //        getIdFromToken("")
             existing.setUpdater("JS111");
 
@@ -133,21 +116,26 @@ public class DeviceUsagePermissionService {
             existing.setUsbExpireDate(usbExpireDate);
         }
 
+        //保存して更新
         permissionRepository.save(existing);
         log.info("権限情報の更新が完了しました，permissionId: {}", permissionId);
     }
 
     /**
-     * DTO
+     * DTOへの変換メソッド
+     * エンティティオブジェクトをDTOオブジェクトに変換する方法
+     * @param permission 権限エンティティオブジェクト
+     * @return 変換後のDTOオブジェクト
      */
     private DeviceUsagePermissionDTO convertToDTO(DeviceUsagePermission permission) {
         DeviceUsagePermissionDTO dto = new DeviceUsagePermissionDTO();
 
-        // 権限基本情報
+        // 権限基本IDを設定
         dto.setPermissionId(permission.getPermissionId());
 
-        // デバイス情報
+        // デバイス情報マッピング
         if (permission.getDevice() != null) {
+            //デバイス情報
             dto.setDeviceId(permission.getDevice().getDeviceId());
             dto.setComputerName(permission.getDevice().getComputerName());
             dto.setDeviceModel(permission.getDevice().getDeviceModel());
@@ -188,6 +176,7 @@ public class DeviceUsagePermissionService {
         }
         dto.setNoSymantecReason(permission.getNoSymantecReason());
 
+        //情報の作成と更新
         dto.setRemark(permission.getRemark());
         dto.setCreateTime(permission.getCreateTime());
         dto.setCreater(permission.getCreater());

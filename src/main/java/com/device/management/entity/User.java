@@ -10,7 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 /**
- * 用户实体类
+ * ユーザーエンティティクラス
  */
 @Data
 @NoArgsConstructor
