@@ -23,7 +23,8 @@ public class DeviceUsagePermissionController {
 
     /** IDによる権限の詳細を確認する */
     @GetMapping("/{permissionId}")
-    public ApiResponse<DeviceUsagePermissionDTO> getPermissionDetail(@PathVariable String permissionId) {
+    public ApiResponse<DeviceUsagePermissionDTO> getPermissionDetail(@PathVariable String permissionId)
+    {
         DeviceUsagePermissionDTO dto = permissionService.findPermissionDetail(permissionId);
         return ApiResponse.success("検索に成功しました", dto);
     }
@@ -42,15 +43,15 @@ public class DeviceUsagePermissionController {
             @RequestParam(required = false) String domainStatusId,         //  domain_status_id
             @RequestParam(required = false) String domainGroup,            //  domain_group
             @RequestParam(required = false) String noDomainReason,         //  no_domain_reason
-            @RequestParam(required = false) String remark,                 //  remark
-            @RequestParam String updater) {                                //  updater
+            @RequestParam(required = false) String remark                 //  remark
+     ) {
 
         permissionService.updatePermissionByFields(permissionId,
                 smartitStatusId, noSmartitReason,
                 usbStatusId, usbReason, usbExpireDate,
                 antivirusStatusId, noSymantecReason,
                 domainStatusId, domainGroup, noDomainReason,
-                remark, updater);
+                remark);
 
         return ApiResponse.success("更新に成功しました");
     }

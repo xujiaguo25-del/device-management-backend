@@ -84,7 +84,6 @@ public class DeviceUsagePermissionService {
         if (updatedData.getUpdater() != null) {
             existing.setUpdater(updatedData.getUpdater());
         }
-
         permissionRepository.save(existing);
     }
 
@@ -101,14 +100,13 @@ public class DeviceUsagePermissionService {
                                          String domainStatusId,
                                          String domainGroup,
                                          String noDomainReason,
-                                         String remark,
-                                         String updater) {
+                                         String remark
+                                         ) {
 
         log.info("フィールドに基づいて権限情報を更新する，ID: {}", permissionId);
 
         DeviceUsagePermission existing = permissionRepository.findById(permissionId)
                 .orElseThrow(() -> new ResourceNotFoundException("権限情報が存在しません"));
-
 
         if (StringUtils.hasText(noSmartitReason)) {
             existing.setNoSmartitReason(noSmartitReason);
@@ -128,9 +126,8 @@ public class DeviceUsagePermissionService {
         if (StringUtils.hasText(remark)) {
             existing.setRemark(remark);
         }
-        if (StringUtils.hasText(updater)) {
-            existing.setUpdater(updater);
-        }
+        //        getIdFromToken("")
+            existing.setUpdater("JS111");
 
         if (usbExpireDate != null) {
             existing.setUsbExpireDate(usbExpireDate);
