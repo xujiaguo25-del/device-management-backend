@@ -14,26 +14,8 @@ import java.util.List;
 
 @Repository
 public interface DevicePermissionRepository
-        extends JpaRepository<DevicePermission, String>, // ID类型是String，不是Long
+        extends JpaRepository<DevicePermission, String>,
         JpaSpecificationExecutor<DevicePermission>
 {
-    DevicePermission findDevicePermissionsByDevice(DeviceInfo device);
 
-    // 通过设备ID查询
-    @Query("SELECT dp FROM DevicePermission dp WHERE dp.device.deviceId = :deviceId")
-    DevicePermission findByDeviceId(@Param("deviceId") String deviceId);
-
-    // 分页查询
-    @Query("SELECT dp FROM DevicePermission dp WHERE dp.device.deviceId = :deviceId")
-    Page<DevicePermission> findByDeviceId(@Param("deviceId") String deviceId, Pageable pageable);
-
-    // 通过用户工号查询
-    @Query("SELECT dp FROM DevicePermission dp WHERE dp.device.user.userId = :userId")
-    Page<DevicePermission> findByUserId(@Param("userId") String userId, Pageable pageable);
-
-    // 同时按设备ID和用户工号查询
-    @Query("SELECT dp FROM DevicePermission dp WHERE dp.device.deviceId = :deviceId AND dp.device.user.userId = :userId")
-    Page<DevicePermission> findByDeviceIdAndUserId(@Param("deviceId") String deviceId,
-                                                      @Param("userId") String userId,
-                                                      Pageable pageable);
 }
