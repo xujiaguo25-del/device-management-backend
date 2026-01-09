@@ -12,8 +12,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 /**
- * JWT 认证过滤器
- * 臨時注釋：屏蔽JWT验证逻辑，仅用于接口测试，测试完成后恢复原有代码
+ * JWT認証フィルター
  */
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -25,11 +24,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        // ========== 新增：直接放行所有请求，跳过JWT验证 ==========
+        // ==========すべてのリクエストを直接通過させ、JWT認証をスキップする ==========
         filterChain.doFilter(request, response);
-        return; // 终止方法，确保后续验证逻辑不执行
+        return; // 終了方法、後続の検証ロジックが実行されないことを確認する
 
-        // ========== 原有JWT验证逻辑全部注释 ==========
+        // ========== 既存のJWT認証ロジックをすべてコメントアウト ==========
         /*
         try {
             String jwt = getJwtFromRequest(request);
@@ -52,7 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     /**
-     * 从请求头中获取 JWT Token
+     * リクエストヘッダーからJWT Tokenを取得する
      */
     private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");

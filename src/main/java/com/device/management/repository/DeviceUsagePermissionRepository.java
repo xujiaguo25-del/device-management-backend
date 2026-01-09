@@ -8,9 +8,9 @@ import org.springframework.stereotype.Repository;
 public interface DeviceUsagePermissionRepository 
     extends JpaRepository<DeviceUsagePermission, String> {
     
-    // 根据权限ID查询
+    // 権限IDで検索
     DeviceUsagePermission findByPermissionId(String permissionId);
     
-    // 检查权限是否存在
+    // 権限が存在するか確認する
     boolean existsByPermissionId(String permissionId);
 }

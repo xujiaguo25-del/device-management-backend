@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @Table(name = "device_permission")
 public class DevicePermission {
 
-    // ========== 必填字段（NOT NULL）==========
     @Id
     @Column(name = "permission_id", length = 50, nullable = false)
     private String permissionId;
@@ -29,7 +28,7 @@ public class DevicePermission {
     @Column(name = "update_time", nullable = false)
     private LocalDateTime updateTime;
 
-    // ========== 可选字段（NULLABLE）==========
+
     @Column(name = "domain_status_id")
     private Long domainStatusId;
 

@@ -13,7 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
- * 认证服务
+ * 認証サービス
  */
 @Slf4j
 @Service
@@ -29,21 +29,21 @@ public class AuthService {
     private PasswordEncoder passwordEncoder;
 
     /**
-     * 用户登录
+     * ユーザーログイン
      */
     public LoginResponse login(LoginRequest loginRequest) {
         User user = userRepository.findByUserId(loginRequest.getUserId())
                 .orElseThrow(() -> new UnauthorizedException("用户名或密码不正确"));
 
-        // 验证密码
+        // パスワードを確認
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPasswordHash())) {
             throw new UnauthorizedException("用户名或密码不正确");
         }
 
-        // 生成 JWT Token
+        // JWT Token生成
         String token = jwtTokenProvider.generateToken(user.getUserId());
 
-        // 构建响应
+        // 应答
         UserDTO userDTO = convertToDTO(user);
         LoginResponse response = new LoginResponse();
         response.setToken(token);
@@ -55,7 +55,7 @@ public class AuthService {
 
 
     /**
-     * 转换为 DTO
+     *  DTOに変換する
      */
     private UserDTO convertToDTO(User user) {
         UserDTO dto = new UserDTO();

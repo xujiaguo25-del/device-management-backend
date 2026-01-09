@@ -13,17 +13,17 @@ import java.util.List;
 @Repository
 public interface DevicePermissionRepository extends JpaRepository<DevicePermission, String> {
 
-    // 根据设备ID查询
+    //デバイスIDで検索
     List<DevicePermission> findByDeviceId(String deviceId);
 
-    // 检查某个权限ID是否存在
+    // 特定の権限IDが存在するか確認する
     boolean existsByPermissionId(String permissionId);
 
-    // 新增：根据permission_id查询单个权限
+    //permission_idに基づいて単一の権限を検索する
     @Query("SELECT dp FROM DevicePermission dp WHERE dp.permissionId = :permissionId")
     DevicePermission findByPermissionId(@Param("permissionId") String permissionId);
 
-    // 新增：根据permission_id删除（需要@Modifying和@Transactional）
+    // permission_idに基づいて削除（@Modifyingと@Transactionalが必要）
     @Modifying
     @Transactional
     @Query("DELETE FROM DevicePermission dp WHERE dp.permissionId = :permissionId")

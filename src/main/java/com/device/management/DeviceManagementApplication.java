@@ -7,24 +7,25 @@ import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServic
 import org.springframework.context.annotation.ComponentScan;
 
 /**
- * 设备管理系统 Spring Boot 主应用程序
- * 新增显式包扫描+禁用Security自动配置，解决扫描漏扫和权限拦截问题
+ デバイス管理システム Spring Boot メインアプリケーション
+ * 明示的なパッケージスキャンを追加 + Security自動設定を無効化し、
+ * スキャン漏れと権限インターセプトの問題を解決します
  */
 @SpringBootApplication(
-        // 核心1：显式指定扫描范围，强制扫描控制器/服务/配置包
+        // スキャン範囲を明示的に指定し、コントローラー/サービス/設定パッケージのスキャンを強制
         scanBasePackages = {
-                "com.device.management.controller",   // 控制器包
-                "com.device.management.service",     // 服务包
-                "com.device.management.config",      // 配置包
-                "com.device.management.security"     // 安全相关包
+                "com.device.management.controller",
+                "com.device.management.service",
+                "com.device.management.config",
+                "com.device.management.security"
         },
-        // 核心2：兜底禁用Security自动配置，彻底避免权限拦截
+        // 兜底的にSecurity自動設定を無効化し、権限インターセプトを完全に回避
         exclude = {
                 SecurityAutoConfiguration.class,
                 UserDetailsServiceAutoConfiguration.class
         }
 )
-// 双重保障：显式组件扫描（和scanBasePackages效果一致，避免漏扫）
+// 明示的なコンポーネントスキャン（scanBasePackagesと効果は同一、スキャン漏れを回避）
 @ComponentScan(basePackages = "com.device.management")
 public class DeviceManagementApplication {
 

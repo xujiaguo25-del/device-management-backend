@@ -48,7 +48,7 @@ public class ApiResponse<T> {
     }
 
     public static <T> ApiResponse<List<T>> page(List<T> data, Long total, Integer page, Integer size) {
-        ApiResponse<List<T>> response = new ApiResponse<>(200, "查询成功", data);
+        ApiResponse<List<T>> response = new ApiResponse<>(200, "検索成功", data);
         response.setTotal(total);
         response.setPage(page);
         response.setSize(size);

@@ -1,6 +1,5 @@
-package com.device.management;
+package com.device.management.entity;
 
-import com.device.management.entity.DeviceInfo;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

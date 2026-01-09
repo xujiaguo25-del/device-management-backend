@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 资源冲突异常（HTTP 400）
+ * リソース競合エラー（HTTP 400）
  */
 @Data
 @NoArgsConstructor
