@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.net.InetAddress;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -105,6 +106,18 @@ public class DeviceService {
         }
 
         // ip insert
+
+        // ipチェック
+        String ipAddress = deviceIpDTO.getIpAddress();
+        ipAddress = ipAddress.trim();
+
+        try {
+            InetAddress.getByName(ipAddress);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("IPアドレスの形式が無効です: " + ipAddress);
+        }
+
+        // insert
         DeviceIp deviceIpReturn = convertDeviceIpToEntity(deviceIpDTO);
         if (!deviceIpRepository.existsByIpAddress(deviceIpDTO.getIpAddress())) {
 
@@ -246,13 +259,25 @@ public class DeviceService {
         }
 
         // ip update
+
+        // ipチェック
+        String ipAddress = deviceIpDTO.getIpAddress();
+        ipAddress = ipAddress.trim();
+
+        try {
+            InetAddress.getByName(ipAddress);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("IPアドレスの形式が無効です: " + ipAddress);
+        }
+
+
         DeviceIp deviceIpReturn = convertDeviceIpToEntity(deviceIpDTO);
         if(deviceIpRepository.existsByIpAddress(deviceIpDTO.getIpAddress())) {
 
             DeviceIp deviceIpDB = deviceIpRepository.findByIpAddress(deviceIpDTO.getIpAddress());
 
             if(!deviceIpDB.getIpId().equals(deviceIpDTO.getIpId())) {
-                throw new IllegalStateException("This monitor is used by " + deviceIpDB.getDeviceId() + "!");
+                throw new IllegalStateException("This ip is used by " + deviceIpDB.getDeviceId() + "!");
             }
             // else updateがない
 
