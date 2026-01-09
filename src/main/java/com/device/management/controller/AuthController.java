@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 认证控制器
+ * 認証コントローラー
  */
 @Slf4j
 @RestController

@@ -15,9 +15,6 @@ public class DeviceUsagePermission {
     @Column(name = "permission_id", length = 50)
     private String permissionId;
 
-    @Column(name = "job_number", length = 50, nullable = false)
-    private String jobNumber;
-
     @Column(name = "domain_status_id")
     private Long domainStatusId;
     
@@ -51,9 +48,7 @@ public class DeviceUsagePermission {
     
     @Column(name = "remark", columnDefinition = "TEXT")
     private String remark;
-    
-    @Column(name = "is_deleted")
-    private Integer isDeleted = 0;
+
     
     @Column(name = "create_time")
     private LocalDateTime createTime = LocalDateTime.now();

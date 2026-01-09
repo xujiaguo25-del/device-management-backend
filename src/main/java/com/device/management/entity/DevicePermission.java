@@ -63,8 +63,6 @@ public class DevicePermission {
     @Column(name = "remark", columnDefinition = "TEXT")
     private String remark;
 
-    @Column(name = "remark_text", columnDefinition = "TEXT")
-    private String remarkText;
 
     @Column(name = "creater", length = 100)
     private String creater;
@@ -72,6 +70,4 @@ public class DevicePermission {
     @Column(name = "updater", length = 100)
     private String updater;
 
-    @Column(name = "is_deleted")
-    private Integer isDeleted = 0;
 }

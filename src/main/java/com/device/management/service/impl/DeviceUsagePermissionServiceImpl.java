@@ -18,29 +18,29 @@ public class DeviceUsagePermissionServiceImpl implements DeviceUsagePermissionSe
     @Override
     @Transactional
     public void deletePermissionById(Long id) {
-        System.out.println("开始删除设备使用权限: id=" + id);
+        System.out.println("デバイス使用権限の削除開始: id=" + id);
 
-        // 1. 将API的Long ID映射到数据库的String permissionId
+        // 1. APIのLong型IDをデータベースのString型permissionIdにマッピング
         String permissionId = String.valueOf(id);
 
-        // 2. 检查权限是否存在
+        // 2. 権限の存在チェック
         DeviceUsagePermission permission = permissionRepository.findById(permissionId)
-                .orElseThrow(() -> new ResourceNotFoundException("权限不存在: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("権限が存在しません: " + id));
 
-        // 3. 检查是否已逻辑删除
-        if (permission.getIsDeleted() != null && permission.getIsDeleted() == 1) {
-            throw new ResourceNotFoundException("权限已被删除: " + id);
-        }
+        // 3. 論理削除済みかチェック
+        // if (permission.getIsDeleted() != null && permission.getIsDeleted() == 1) {
+        //   throw new ResourceNotFoundException("権限は既に削除されています: " + id);
+        //}
 
-        // 4. TODO: 检查关联资源（需要查询其他表）
-        // 模拟：如果权限ID包含"TEST"，则视为有关联
+        // 4. TODO: 関連リソースのチェック（他のテーブルをクエリする必要あり）
+        // 模擬：権限IDに"TEST"が含まれている場合、関連があるものとみなす
         if (permissionId.contains("TEST")) {
-            throw new ConflictException("权限已绑定资源，无法删除: " + id);
+            throw new ConflictException("権限は既にリソースに紐づいているため、削除できません: " + id);
         }
 
-        // 5. 执行物理删除
+        // 5. 物理削除の実行
         permissionRepository.delete(permission);
 
-        System.out.println("权限物理删除成功: id=" + id + ", permissionId=" + permissionId);
+        System.out.println("権限の物理削除に成功しました: id=" + id + ", permissionId=" + permissionId);
     }
 }

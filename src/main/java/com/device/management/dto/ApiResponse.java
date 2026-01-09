@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 /**
- * API 响应包装类
+ * API
  */
 @Data
 @NoArgsConstructor
