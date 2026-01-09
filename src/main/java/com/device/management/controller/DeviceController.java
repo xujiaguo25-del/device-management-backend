@@ -2,9 +2,7 @@ package com.device.management.controller;
 
 import com.device.management.dto.DeviceDTO;
 import com.device.management.dto.ApiResponse;
-import com.device.management.dto.UserDTO;
 import com.device.management.service.DeviceService;
-import com.device.management.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -15,20 +13,25 @@ import org.springframework.web.bind.annotation.*;
 public class DeviceController {
 
     private final DeviceService deviceService;
-    private final UserService userService;
 
     //デバイス一覧、ページングとフィルタリング機能付き
     //アクセス例：GET /api/devices?userId=JS0105&page=1&size=10
+    //アクセス例：GET /api/devices?userName=张三
+    //アクセス例：GET /api/devices?project=MS
+    //アクセス例：GET /api/devices?devRoom=M2-A-01
     //アクセス例：GET /api/devices
     @GetMapping
-    public ApiResponse<Page<UserDTO>> list(
+    public ApiResponse<Page<DeviceDTO>> list(
             @RequestParam(required = false) String deviceName,
             @RequestParam(required = false) String userId,
+            @RequestParam(required = false) String userName,
+            @RequestParam(required = false) String project,
+            @RequestParam(required = false) String devRoom,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         return ApiResponse.success(
-                userService.list(deviceName, userId, page, size)
+                deviceService.list(deviceName, userId, userName, project, devRoom, page, size)
         );
     }
 
