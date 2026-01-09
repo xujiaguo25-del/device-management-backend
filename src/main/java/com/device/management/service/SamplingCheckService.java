@@ -19,6 +19,11 @@ public class SamplingCheckService {
     @Autowired
     private SamplingCheckMapper samplingCheckMapper;
 
+    //IDで検索
+    public SamplingCheckDTO findById(String id) {
+        log.info("find sampling check by id {}", id);
+        SamplingCheck samplingCheck = samplingCheckRepository.findById(id).orElse(null);
+        return samplingCheckMapper.convertToDto(samplingCheck);
     //報告番号で検索
     public List<SamplingCheckDTO> findByReportId(String reportId) {
         log.info("find sampling check by reportId {}", reportId);

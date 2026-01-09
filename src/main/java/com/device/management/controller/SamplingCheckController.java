@@ -33,6 +33,15 @@ public class SamplingCheckController {
     @Autowired
     private SamplingCheckService samplingCheckService;
 
+    //詳細情報の取得
+    @GetMapping("/{sampling_id}")
+    public ApiResponse<SamplingCheckDTO> securityCheckQueryById(@PathVariable String sampling_id){
+        SamplingCheckDTO samplingCheckDTO = samplingCheckService.findById(sampling_id);                  //Service層のクエリメソッドを呼び出す
+        if(samplingCheckDTO==null){                                                                    //返り値に基づいて判断する
+            return ApiResponse.error(404,"目標が存在しない");
+        }
+        else {
+            return ApiResponse.success("検索成功",samplingCheckDTO);
     //xiaoshuang
     //レポートのエクスポート
     @GetMapping("/export")
@@ -122,6 +131,5 @@ public class SamplingCheckController {
             Optional<Boolean> op6 = Optional.ofNullable(samplingCheckDTO.getUsbInterface());
             if(op6.orElse(false)) row.createCell(9).setCellValue("○");
         }
-        log.warn("Writed Table Content ");
     }
 }
