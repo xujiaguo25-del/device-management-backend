@@ -1,7 +1,7 @@
 package com.device.management.controller;
 
 import com.device.management.dto.ApiResponse;
-import com.device.management.dto.PermissionsDTO;
+import com.device.management.dto.PermissionsListDTO;
 import com.device.management.entity.DeviceInfo;
 import com.device.management.entity.User;
 import com.device.management.service.DevicePermissionService;
@@ -28,7 +28,7 @@ public class DevicePermissionController {
 
     //権限一覧を照会します
     @GetMapping
-    public ApiResponse<List<PermissionsDTO>> getPermissions(
+    public ApiResponse<List<PermissionsListDTO>> getPermissions(
             @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false, defaultValue = "10") Integer size,
             @RequestParam(required = false) String userId,

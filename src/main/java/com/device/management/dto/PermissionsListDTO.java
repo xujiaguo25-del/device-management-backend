@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class PermissionsDTO {
+public class PermissionsListDTO {
     private String permissionId;
     private String deviceId;
     private List<String> monitorNames;
