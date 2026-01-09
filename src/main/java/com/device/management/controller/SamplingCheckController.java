@@ -32,6 +32,14 @@ import java.util.Optional;
 public class SamplingCheckController {
     @Autowired
     private SamplingCheckService samplingCheckService;
+    
+    //データを更新
+    @PutMapping("/{sampling_id}")
+    public ApiResponse<SamplingCheckDTO> updateSamplingCheck(
+            @PathVariable String sampling_id,             //URLパスからパラメータを取得する
+            @Valid @RequestBody SamplingCheckDTO dto) {   //リクエストボディからJSONデータを取得し、DTOに自動でマッピングします。
+        try {
+            return ApiResponse.success("更新成功", samplingCheckService.update(sampling_id,dto));
 
 
     //liujiale
@@ -68,6 +76,15 @@ public class SamplingCheckController {
         }
     }
 
+    //データを削除
+    @DeleteMapping("/{sampling_id}")
+    public ApiResponse<Void> deleteSamplingCheck(@PathVariable String sampling_id) {
+
+        try {
+            samplingCheckService.delete(sampling_id);                                    //Service層を呼び出してデータを削除する
+            return ApiResponse.success("删除成功", null);                      //成功レスポンスを返す
+        } catch (RuntimeException e) {
+            return ApiResponse.error(404, "删除失败: " + e.getMessage());     //データが存在しません
     //詳細情報の取得
     @GetMapping("/{sampling_id}")
     public ApiResponse<SamplingCheckDTO> securityCheckQueryById(@PathVariable String sampling_id){
