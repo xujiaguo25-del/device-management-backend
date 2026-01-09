@@ -6,6 +6,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
+/*
+* 業務異常
+* */
 public class BusinessException extends RuntimeException {
     private Integer code;
 

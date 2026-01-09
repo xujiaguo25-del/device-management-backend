@@ -8,43 +8,37 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 public class DevicePermissionVo {
-    // 设备信息[java.lang.Long, java.lang.String, java.lang.Object,
-    // java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String,
-    // java.lang.Long, java.lang.String, java.lang.String, java.lang.Long, java.lang.String,
-    // java.lang.Long, java.lang.String,
-    // java.time.LocalDate, java.lang.Long, java.lang.String, java.lang.String], and not every argument has an alias)
     private String PermissionId;
     private String deviceId;
     private Object monitorName;
     private String computerName;
     private Object ipAddress;
 
-    // 使用者信息 | ユーザー情報
+    // ユーザー情報
     private String UserId;
     private String name;
     private String deptId;
     private String loginUsername;
 
-    // 域信息  | 領域情報
+    // 領域情報
     private Long domainStatusId;
     private String domainGroup;
     private String noDomainReason;
 
-    // SmartIT信息 | SmartIT情報
+    // SmartIT情報
     private Long smartitStatusId;
     private String noSmartitReason;
 
-    // USB信息   | USB情報
+    // USB情報
     private Long usbStatusId;
     private String usbReason;
     private LocalDate useExpireDate;
 
-    // 其他  | その他
+    //その他
     private Long antivirusStatusId;
     private String noSymantecReason;
     private String remark;
 }
-
 
 //    ==================================================================================================
 //    select null,d.device_id,d.computer_name,'ip',u.job_number,u.name,u.dept_id,d.login_username,

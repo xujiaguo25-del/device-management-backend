@@ -10,6 +10,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Getter
 @Setter
+/*
+* 権限データ挿入用のオブジェクト
+* */
 public class PermissionInsertDTO {
     private String permissionId;
 
