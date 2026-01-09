@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class DictItemDTO {
+public class DictItemDto {
     // 辞書ID（下拉框value値）
     private Long dictId;
     // 辞書項目名（下拉框label値）

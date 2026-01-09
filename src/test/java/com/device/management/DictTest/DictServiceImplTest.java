@@ -1,7 +1,7 @@
 package com.device.management.DictTest;
 
 import com.device.management.dto.ApiResponse;
-import com.device.management.dto.DictItemDTO;
+import com.device.management.dto.DictItemDto;
 import com.device.management.entity.Dict;
 import com.device.management.repository.DictRepository;
 import com.device.management.service.impl.DictServiceImpl;
@@ -42,7 +42,7 @@ class DictServiceImplTest {
         when(dictRepository.findByDictTypeCode("USER_TYPE")).thenReturn(mockDicts);
 
         // テスト実行
-        ApiResponse<List<DictItemDTO>> result = dictService.getDictItemsByTypeCode("USER_TYPE");
+        ApiResponse<List<DictItemDto>> result = dictService.getDictItemsByTypeCode("USER_TYPE");
 
         // 結果の検証
         assertNotNull(result);
@@ -60,7 +60,7 @@ class DictServiceImplTest {
     void testGetDictItemsByTypeCode_EmptyResult() {
         when(dictRepository.findByDictTypeCode("INVALID_TYPE")).thenReturn(Arrays.asList());
 
-        ApiResponse<List<DictItemDTO>> result = dictService.getDictItemsByTypeCode("INVALID_TYPE");
+        ApiResponse<List<DictItemDto>> result = dictService.getDictItemsByTypeCode("INVALID_TYPE");
 
         assertNotNull(result);
         assertEquals(40001, result.getCode()); // DICT_PARAM_ERROR
@@ -70,7 +70,7 @@ class DictServiceImplTest {
 
     @Test
     void testGetDictItemsByTypeCode_NullParam() {
-        ApiResponse<List<DictItemDTO>> result = dictService.getDictItemsByTypeCode(null);
+        ApiResponse<List<DictItemDto>> result = dictService.getDictItemsByTypeCode(null);
 
         assertNotNull(result);
         assertEquals(40001, result.getCode()); // DICT_PARAM_ERROR
@@ -78,7 +78,7 @@ class DictServiceImplTest {
 
     @Test
     void testGetDictItemsByTypeCode_EmptyParam() {
-        ApiResponse<List<DictItemDTO>> result = dictService.getDictItemsByTypeCode("");
+        ApiResponse<List<DictItemDto>> result = dictService.getDictItemsByTypeCode("");
 
         assertNotNull(result);
         assertEquals(40001, result.getCode()); // DICT_PARAM_ERROR

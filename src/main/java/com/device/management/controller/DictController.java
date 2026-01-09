@@ -1,11 +1,11 @@
 package com.device.management.controller;
 
 import com.device.management.dto.ApiResponse;
-import com.device.management.dto.DictItemDTO;
+import com.device.management.dto.DictItemDto;
 import com.device.management.service.DictService;
-import jakarta.annotation.Resource;
-import lombok.RequiredArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,14 +20,14 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/dict")
-@RequiredArgsConstructor
 public class DictController {
 
-    @Resource
-    private final DictService dictService;
+    @Autowired
+    private DictService dictService;
 
     @GetMapping("/items")
-    public ApiResponse<List<DictItemDTO>> getDictItemsByTypeCode(@RequestParam String dictTypeCode) {
+    public ApiResponse<List<DictItemDto>> getDictItemsByTypeCode(
+            @NotBlank(message = "dictTypeCodeは必須です") @RequestParam String dictTypeCode) {
         return dictService.getDictItemsByTypeCode(dictTypeCode);
     }
 

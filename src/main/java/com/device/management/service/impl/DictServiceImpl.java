@@ -1,11 +1,11 @@
 package com.device.management.service.impl;
 
 import com.device.management.dto.ApiResponse;
-import com.device.management.dto.DictItemDTO;
+import com.device.management.dto.DictItemDto;
 import com.device.management.repository.DictRepository;
 import com.device.management.service.DictService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -19,10 +19,10 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class DictServiceImpl implements DictService {
 
-    private final DictRepository dictRepository;
+    @Autowired
+    private DictRepository dictRepository;
     /**
      * 辞書タイプのコードに基づいて辞書項目を検索する（sortで昇順に並べ替え）
      *
@@ -30,7 +30,7 @@ public class DictServiceImpl implements DictService {
      * @return 辞書項目リスト
      */
     @Override
-    public ApiResponse<List<DictItemDTO>> getDictItemsByTypeCode(String dictTypeCode) {
+    public ApiResponse<List<DictItemDto>> getDictItemsByTypeCode(String dictTypeCode) {
 
         try {
             // パラメータを検証する
@@ -48,13 +48,13 @@ public class DictServiceImpl implements DictService {
             }
 
             // 変換してソートする
-            List<DictItemDTO> dictItems = dictEntities.stream()
-                    .map(dict -> new DictItemDTO(
+            List<DictItemDto> dictItems = dictEntities.stream()
+                    .map(dict -> new DictItemDto(
                             dict.getDictId(),
                             dict.getDictItemName(),
                             dict.getSort()
                     ))
-                    .sorted(Comparator.comparingInt(DictItemDTO::getSort))
+                    .sorted(Comparator.comparingInt(DictItemDto::getSort))
                     .collect(Collectors.toList());
 
             return ApiResponse.success(dictItems);

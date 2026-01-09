@@ -1,7 +1,10 @@
 package com.device.management.security;
 
+import com.device.management.dto.ChangePasswordRequest;
+import com.device.management.dto.LoginRequest;
 import com.device.management.exception.DecryptionException;
 import com.device.management.exception.ResourceNotFoundException;
+import com.device.management.exception.UnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
@@ -15,6 +18,23 @@ public class CryptoUtil {
     private static final String KEY = "1234567890abcdef";
     private static final String ALG  = "AES/ECB/PKCS5Padding";
     private static final String CHARSET = "UTF-8";
+
+    /** 共通復号ツール */
+    public static void decryptPasswordFields(Object dto) {
+        try {
+            if (dto instanceof LoginRequest req) {
+                req.setPassword(CryptoUtil.decrypt(req.getPassword())); // ログインパスワードを復号
+                // フロントエンドから送信されるのは暗号化されたパスワードで、バックエンドで復号する必要があります
+            }
+            if (dto instanceof ChangePasswordRequest req) {
+                req.setCurrentPassword(CryptoUtil.decrypt(req.getCurrentPassword()));
+                req.setNewPassword(CryptoUtil.decrypt(req.getNewPassword())); // 現在のパスワードを復号
+            }
+        } catch (Exception e) {
+            log.error("暗号化解除失敗", e);
+            throw new UnauthorizedException("暗号化パスワードが無効です");
+        }
+    }
 
     public static String decrypt(String base64) {
         try {

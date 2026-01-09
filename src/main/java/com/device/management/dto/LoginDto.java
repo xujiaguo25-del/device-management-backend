@@ -4,13 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * ログインレスポンス
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
-public class UserDTO {
-    private String userId;
-    private String deptId;
-    private String name;
-    private String userTypeName;
+public class LoginDto {
+    private String token;
+    private UserDto userDTO;
 }

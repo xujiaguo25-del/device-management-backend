@@ -8,12 +8,13 @@ import com.device.management.repository.UserRepository;
 import com.device.management.dto.ApiResponse;
 import com.device.management.entity.Dict;
 import com.device.management.entity.User;
+import com.device.management.enums.DictEnum;
 import com.device.management.service.AuthService;
 import com.device.management.security.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,21 +25,29 @@ import java.util.Objects;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    private final UserRepository userRepository;
-    private final DictRepository dictRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
-    private final HttpServletRequest httpServletRequest;
+    @Autowired
+    private UserRepository userRepository;
+    
+    @Autowired
+    private DictRepository dictRepository;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+    
+    @Autowired
+    private HttpServletRequest httpServletRequest;
     /**
      * ユーザーログイン：tokenとuserInfoを含むログイン結果を返す
      * @param loginRequest ログインリクエストパラメータ
      * @return Result<LoginDTO>：成功時はtoken+ユーザー情報、失敗時はエラー列挙型を返す
      */
     @Override
-    public ApiResponse<LoginDTO> login(LoginRequest loginRequest) {
+    public ApiResponse<LoginDto> login(LoginRequest loginRequest) {
         // 1. ユーザーIDでユーザーを検索
         User user = userRepository.findByUserId(loginRequest.getUserId())
                 .orElseThrow(() -> new UnauthorizedException("ユーザーが存在しません"));
@@ -58,14 +67,14 @@ public class AuthServiceImpl implements AuthService {
         ).orElseThrow(() -> new AllException( "システムエラー"));
 
 
-        UserDTO userDTO = new UserDTO();
+        UserDto userDTO = new UserDto();
         userDTO.setUserId(user.getUserId());
         userDTO.setDeptId(user.getDeptId());
         userDTO.setName(user.getName());
         userDTO.setUserTypeName(userType.getDictItemName());
 
         // 5. LoginDTOを組み立て
-        LoginDTO loginDTO = new LoginDTO(token, userDTO);
+        LoginDto loginDTO = new LoginDto(token, userDTO);
 
         // 6. ログイン成功結果を返す
         return ApiResponse.success( "ログイン成功", loginDTO);
@@ -85,7 +94,7 @@ public class AuthServiceImpl implements AuthService {
             if (!StringUtils.hasText(token)) {
                 log.warn("nmtoken");
                 cleanupSecurityContext();
-                return ApiResponse.error(401, "nmtoken");
+                return ApiResponse.error(401, "notoken");
             }
 
             String userId = null;
@@ -175,7 +184,7 @@ public class AuthServiceImpl implements AuthService {
         Long tokenUserType = jwtTokenProvider.getUserTypeIdFromToken(token);
 
         // 2. 一般ユーザーは自身のパスワードのみ変更可能 管理者は全ユーザーのパスワードを変更可能
-        boolean isAdmin = Objects.equals(tokenUserType, 11L);
+        boolean isAdmin = Objects.equals(tokenUserType, DictEnum.USER_TYPE_ADMIN.getDictId());
         if (!isAdmin && !tokenUserId.equals(req.getUserId())) {
             return ApiResponse.error(403, "他人のパスワードを変更する権限がありません");
         }
@@ -192,12 +201,7 @@ public class AuthServiceImpl implements AuthService {
         if (passwordEncoder.matches(req.getNewPassword(), user.getPassword())) {
             return ApiResponse.error(40003, "新しいパスワードは古いパスワードと同じにすることはできません");
         }
-
-        // 5. パスワード強度の二重チェック
-        if (!req.getNewPassword().matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?])[A-Za-z\\d@$!%*?]{8,}$")) {
-            return ApiResponse.error(40002, "新しいパスワードが強度要件を満たしていません");
-        }
-
+        
         // 6. パスワードを更新する
         user.setPassword(passwordEncoder.encode(req.getNewPassword()));
         userRepository.save(user);

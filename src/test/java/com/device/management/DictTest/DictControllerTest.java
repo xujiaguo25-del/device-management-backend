@@ -2,7 +2,7 @@ package com.device.management.DictTest;
 
 import com.device.management.controller.DictController;
 import com.device.management.dto.ApiResponse;
-import com.device.management.dto.DictItemDTO;
+import com.device.management.dto.DictItemDto;
 import com.device.management.service.DictService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,8 +40,8 @@ class DictControllerTest {
     @WithMockUser
     void testGetDictItemsByTypeCode_Success() throws Exception {
         // テストデータの準備
-        List<DictItemDTO> mockLists = List.of(new DictItemDTO(1L, "使用可", 1));
-        ApiResponse<List<DictItemDTO>> expectedResponse = ApiResponse.success(mockLists);
+        List<DictItemDto> mockLists = List.of(new DictItemDto(1L, "使用可", 1));
+        ApiResponse<List<DictItemDto>> expectedResponse = ApiResponse.success(mockLists);
 
         // サービス層の返却をシミュレート
         when(dictService.getDictItemsByTypeCode("USER_TYPE")).thenReturn(expectedResponse);
@@ -58,7 +58,7 @@ class DictControllerTest {
     @WithMockUser
     void testGetDictItemsByTypeCode_EmptyDictTypeCode() throws Exception {
         // サービス層の返却エラーをシミュレート
-        ApiResponse<List<DictItemDTO>> errorResponse = ApiResponse.error(
+        ApiResponse<List<DictItemDto>> errorResponse = ApiResponse.error(
             40001,
             "dictTypeCodeは文字列で指定してください"
         );
