@@ -90,14 +90,26 @@ public class DeviceUsagePermissionService {
                 .orElseThrow(() -> new ResourceNotFoundException("権限情報が存在しません"));
 
         //パラメータを一つずつ確認して更新する
+        if (StringUtils.hasText(smartitStatusId)) {
+            existing.setNoSmartitReason(smartitStatusId);
+        }
         if (StringUtils.hasText(noSmartitReason)) {
             existing.setNoSmartitReason(noSmartitReason);
+        }
+        if (StringUtils.hasText(usbStatusId)) {
+            existing.setUsbReason(usbStatusId);
         }
         if (StringUtils.hasText(usbReason)) {
             existing.setUsbReason(usbReason);
         }
+        if (StringUtils.hasText(antivirusStatusId)) {
+            existing.setNoSymantecReason(antivirusStatusId);
+        }
         if (StringUtils.hasText(noSymantecReason)) {
             existing.setNoSymantecReason(noSymantecReason);
+        }
+        if (StringUtils.hasText(domainStatusId)) {
+            existing.setDomainGroup(domainStatusId);
         }
         if (StringUtils.hasText(domainGroup)) {
             existing.setDomainGroup(domainGroup);
