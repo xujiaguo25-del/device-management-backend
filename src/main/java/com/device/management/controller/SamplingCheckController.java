@@ -32,68 +32,7 @@ import java.util.Optional;
 public class SamplingCheckController {
     @Autowired
     private SamplingCheckService samplingCheckService;
-    
-    //データを更新
-    @PutMapping("/{sampling_id}")
-    public ApiResponse<SamplingCheckDTO> updateSamplingCheck(
-            @PathVariable String sampling_id,             //URLパスからパラメータを取得する
-            @Valid @RequestBody SamplingCheckDTO dto) {   //リクエストボディからJSONデータを取得し、DTOに自動でマッピングします。
-        try {
-            return ApiResponse.success("更新成功", samplingCheckService.update(sampling_id,dto));
 
-
-    //liujiale
-    //安全点検リストを取得
-    @GetMapping
-    public ApiResponse<List<SamplingCheckDTO>> getSamplingChecks(
-            @RequestParam int page,                               //ページ番号を取得
-            @RequestParam(defaultValue = "10") int size,         //1ページあたりに表示する情報件数（デフォルトは10件）
-            @RequestParam(required = false) String deviceId,     //デバイスIDでフィルタリング可能
-            @RequestParam(required = false) String userId) {     //ユーザーIDでフィルタリング可能
-
-        try {
-            Page<SamplingCheckDTO> result = samplingCheckService.getSamplingChecks(page, size, deviceId, userId);    //データの取得を試行
-            return ApiResponse.page(
-                    result.getContent(),       // 現在のページのデータリスト
-                    result.getTotalElements(), // 総件数
-                    page,                      // 現在のページ番号
-                    size                       // 1ページあたりの件数
-            );
-        }
-        catch (Exception e) {
-            return ApiResponse.error(500, "查询失败: " + e.getMessage());    //エラー情報を返却
-        }
-    }
-
-    //データを新規追加
-    @PostMapping
-    public ApiResponse<SamplingCheckDTO> addSamplingCheck(@Valid @RequestBody SamplingCheckDTO dto) {
-        try{
-            return ApiResponse.success("添加成功", samplingCheckService.create(dto));
-        }
-        catch (Exception e) {
-            return ApiResponse.error(500, e.getMessage());      //エラー情報を返却
-        }
-    }
-
-    //データを削除
-    @DeleteMapping("/{sampling_id}")
-    public ApiResponse<Void> deleteSamplingCheck(@PathVariable String sampling_id) {
-
-        try {
-            samplingCheckService.delete(sampling_id);                                    //Service層を呼び出してデータを削除する
-            return ApiResponse.success("删除成功", null);                      //成功レスポンスを返す
-        } catch (RuntimeException e) {
-            return ApiResponse.error(404, "删除失败: " + e.getMessage());     //データが存在しません
-    //詳細情報の取得
-    @GetMapping("/{sampling_id}")
-    public ApiResponse<SamplingCheckDTO> securityCheckQueryById(@PathVariable String sampling_id){
-        SamplingCheckDTO samplingCheckDTO = samplingCheckService.findById(sampling_id);                  //Service層のクエリメソッドを呼び出す
-        if(samplingCheckDTO==null){                                                                    //返り値に基づいて判断する
-            return ApiResponse.error(404,"目標が存在しない");
-        }
-        else {
-            return ApiResponse.success("検索成功",samplingCheckDTO);
     //xiaoshuang
     //レポートのエクスポート
     @GetMapping("/export")
@@ -148,9 +87,6 @@ public class SamplingCheckController {
         sheet.addMergedRegion(new CellRangeAddress(0, 1, 3, 3));
         sheet.addMergedRegion(new CellRangeAddress(0, 0, 4, 9));
         sheet.addMergedRegion(new CellRangeAddress(0, 1, 10, 10));
-        for (int i = 0; i <= 10; i++) {
-            sheet.autoSizeColumn(i);
-        }
         log.warn("Writed Table Head ");
     }
 
@@ -159,7 +95,7 @@ public class SamplingCheckController {
         int rowNum = 0;
         for(SamplingCheckDTO samplingCheckDTO : samplingCheckDTOS) {
             Row row = sheet.createRow( ++endRow );
-            row.createCell(0).setCellValue( rowNum++ );
+            row.createCell(0).setCellValue( ++rowNum );
             row.createCell(1).setCellValue( samplingCheckDTO.getUserId());
             row.createCell(2).setCellValue( samplingCheckDTO.getName());
             row.createCell(3).setCellValue( samplingCheckDTO.getDeviceId());
@@ -182,6 +118,84 @@ public class SamplingCheckController {
 
             Optional<Boolean> op6 = Optional.ofNullable(samplingCheckDTO.getUsbInterface());
             if(op6.orElse(false)) row.createCell(9).setCellValue("○");
+        }
+        log.warn("Writed Table Content ");
+    }
+
+
+
+    //wangjunxi
+    //詳細情報の取得
+    @GetMapping("/{sampling_id}")
+    public ApiResponse<SamplingCheckDTO> securityCheckQueryById(@PathVariable String sampling_id){
+        SamplingCheckDTO samplingCheckDTO = samplingCheckService.findById(sampling_id);                  //Service層のクエリメソッドを呼び出す
+        if(samplingCheckDTO==null){                                                                    //返り値に基づいて判断する
+            return ApiResponse.error(404,"目標が存在しない");
+        }
+        else {
+            return ApiResponse.success("検索成功",samplingCheckDTO);
+        }
+    }
+
+
+    //liujiale
+    //安全点検リストを取得
+    @GetMapping
+    public ApiResponse<List<SamplingCheckDTO>> getSamplingChecks(
+            @RequestParam int page,                               //ページ番号を取得
+            @RequestParam(defaultValue = "10") int size,         //1ページあたりに表示する情報件数（デフォルトは10件）
+            @RequestParam(required = false) String deviceId,     //デバイスIDでフィルタリング可能
+            @RequestParam(required = false) String userId) {     //ユーザーIDでフィルタリング可能
+
+        try {
+            Page<SamplingCheckDTO> result = samplingCheckService.getSamplingChecks(page, size, deviceId, userId);    //データの取得を試行
+            return ApiResponse.page(
+                    result.getContent(),       // 現在のページのデータリスト
+                    result.getTotalElements(), // 総件数
+                    page,                      // 現在のページ番号
+                    size                       // 1ページあたりの件数
+            );
+        }
+        catch (Exception e) {
+            return ApiResponse.error(500, "查询失败: " + e.getMessage());    //エラー情報を返却
+        }
+    }
+
+    //データを新規追加
+    @PostMapping
+    public ApiResponse<SamplingCheckDTO> addSamplingCheck(@Valid @RequestBody SamplingCheckDTO dto) {
+        try{
+            return ApiResponse.success("添加成功", samplingCheckService.create(dto));
+        }
+        catch (Exception e) {
+            return ApiResponse.error(500, e.getMessage());      //エラー情報を返却
+        }
+    }
+
+
+
+    //データを更新
+    @PutMapping("/{sampling_id}")
+    public ApiResponse<SamplingCheckDTO> updateSamplingCheck(
+            @PathVariable String sampling_id,             //URLパスからパラメータを取得する
+            @Valid @RequestBody SamplingCheckDTO dto) {   //リクエストボディからJSONデータを取得し、DTOに自動でマッピングします。
+        try {
+            return ApiResponse.success("更新成功", samplingCheckService.update(sampling_id,dto));
+        }
+        catch (Exception e) {
+            return ApiResponse.error(500, e.getMessage());
+        }
+    }
+
+    //データを削除
+    @DeleteMapping("/{sampling_id}")
+    public ApiResponse<Void> deleteSamplingCheck(@PathVariable String sampling_id) {
+
+        try {
+            samplingCheckService.delete(sampling_id);                                    //Service層を呼び出してデータを削除する
+            return ApiResponse.success("删除成功", null);                      //成功レスポンスを返す
+        } catch (RuntimeException e) {
+            return ApiResponse.error(404, "删除失败: " + e.getMessage());     //データが存在しません
         }
     }
 }
