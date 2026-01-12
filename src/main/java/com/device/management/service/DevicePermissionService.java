@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -42,7 +43,7 @@ public class DevicePermissionService {
     DeviceUsagePermissionRepository deviceUsagePermissionRepository;
 
     public PermissionInsertDTO addPermissions(PermissionInsertDTO permissionsDTO) {
-        DeviceInfo deviceInfo = deviceRepository.findByDeviceId(permissionsDTO.getDeviceId());
+        DeviceInfo deviceInfo = deviceRepository.findDeviceByDeviceId(permissionsDTO.getDeviceId());
         if (deviceInfo == null) {
             throw new BusinessException(30002, "デバイスが存在しません");
         }
@@ -53,9 +54,9 @@ public class DevicePermissionService {
             throw new BusinessException(30003, "デバイスにはすでに権限情報があります");
         }
 
-        devicePermissionRepository.save(DevicePermission.builder().permissionId(UUID.randomUUID().toString()).device(deviceInfo).domainStatus(Dict.builder().id(permissionsDTO.getDomainStatus()).build()).domainGroup(permissionsDTO.getDomainGroup()).noDomainReason(permissionsDTO.getNoDomainReason()).smartitStatus(Dict.builder().id(permissionsDTO.getSmartitStatus()).build()).noSmartitReason(permissionsDTO.getNoSmartitReason()).usbStatus(Dict.builder().id(permissionsDTO.getUsbStatus()).build()).usbReason(permissionsDTO.getUsbReason()).usbExpireDate(permissionsDTO.getUsbExpireDate()).antivirusStatus(Dict.builder().id(permissionsDTO.getAntivirusStatus()).build()).noSymantecReason(permissionsDTO.getNoSymantecReason()).remark(permissionsDTO.getRemark()).createTime(Instant.now())
+        devicePermissionRepository.save(DevicePermission.builder().permissionId(UUID.randomUUID().toString()).device(deviceInfo).domainStatus(Dict.builder().id(permissionsDTO.getDomainStatus()).build()).domainGroup(permissionsDTO.getDomainGroup()).noDomainReason(permissionsDTO.getNoDomainReason()).smartitStatus(Dict.builder().id(permissionsDTO.getSmartitStatus()).build()).noSmartitReason(permissionsDTO.getNoSmartitReason()).usbStatus(Dict.builder().id(permissionsDTO.getUsbStatus()).build()).usbReason(permissionsDTO.getUsbReason()).usbExpireDate(permissionsDTO.getUsbExpireDate()).antivirusStatus(Dict.builder().id(permissionsDTO.getAntivirusStatus()).build()).noSymantecReason(permissionsDTO.getNoSymantecReason()).remark(permissionsDTO.getRemark()).createTime(LocalDateTime.now())
 //                        .creater(jwtTokenProvider.getUserIdFromToken("eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJKUzIxMTUiLCJzdWIiOiJKUzIxMTUiLCJpYXQiOjE3Njc1OTE4NzgsImV4cCI6MTc2NzY3ODI3OH0.FV_jjUTSWvYEeTYgFtb2iPkalIz48NK_2lTgi-HtWVk"))
-                .creater("JS2115").updateTime(Instant.now())
+                .creater("JS2115").updateTime(LocalDateTime.now())
 //                        .updater(jwtTokenProvider.getUserIdFromToken("eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJKUzIxMTUiLCJzdWIiOiJKUzIxMTUiLCJpYXQiOjE3Njc1OTE4NzgsImV4cCI6MTc2NzY3ODI3OH0.FV_jjUTSWvYEeTYgFtb2iPkalIz48NK_2lTgi-HtWVk"))
                 .updater("JS2115").build());
 
@@ -154,8 +155,8 @@ public class DevicePermissionService {
             dto.setDeptId(device.getUser().getDeptId());
 
             // 複数のIPアドレスを処理する - deviceIpsリストからすべてのIPアドレスを抽出する
-            if (device.getDeviceIps() != null && !device.getDeviceIps().isEmpty()) {
-                List<String> ipAddresses = device.getDeviceIps().stream()
+            if (device.getDeviceIp() != null && !device.getDeviceIp().isEmpty()) {
+                List<String> ipAddresses = device.getDeviceIp().stream()
                         .map(deviceIp -> deviceIp.getIpAddress())
                         .filter(ip -> ip != null && !ip.trim().isEmpty())
                         .collect(Collectors.toList());
@@ -165,8 +166,8 @@ public class DevicePermissionService {
             }
 
             // モニター ID の処理 - monitors リストからすべてのモニター ID を抽出
-            if (device.getMonitors() != null && !device.getMonitors().isEmpty()) {
-                List<@Size(max = 100) String> monitorNames = device.getMonitors().stream()
+            if (device.getMonitor() != null && !device.getMonitor().isEmpty()) {
+                List<@Size(max = 100) String> monitorNames = device.getMonitor().stream()
                         .map(monitorInfo -> monitorInfo.getMonitorName())
                         .filter(id -> id != null)
                         .collect(Collectors.toList());
@@ -223,7 +224,7 @@ public class DevicePermissionService {
         String permissionId = String.valueOf(id);
 
         // 2. 権限の存在チェック
-        DeviceUsagePermission permission = deviceUsagePermissionRepository.findById(permissionId)
+        DevicePermission permission = deviceUsagePermissionRepository.findById(permissionId)
                 .orElseThrow(() -> new ResourceNotFoundException("権限が存在しません: " + id));
 
         // 3. 論理削除済みかチェック

@@ -4,6 +4,7 @@ import lombok.*;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -32,8 +33,8 @@ public class PermissionsListDTO {
     private int antivirusStatus;
     private String noSymantecReason;
     private String remark;
-    private Instant createTime;
+    private LocalDateTime createTime;
     private String creater;
-    private Instant updateTime;
+    private LocalDateTime updateTime;
     private String updater;
 }

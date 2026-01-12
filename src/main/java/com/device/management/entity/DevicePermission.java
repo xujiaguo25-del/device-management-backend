@@ -2,6 +2,7 @@ package com.device.management.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -9,14 +10,14 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
+@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@Builder
 @Table(name = "device_permission", schema = "public")
-public class DeviceUsagePermission {
+public class DevicePermission {
     
     @Id
     @Column(name = "permission_id", length = 50, nullable = false)

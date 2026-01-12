@@ -1,8 +1,7 @@
 package com.device.management.service;
 
 import com.device.management.dto.DeviceUsagePermissionDTO;
-import com.device.management.dto.ApiResponse;
-import com.device.management.entity.DeviceUsagePermission;
+import com.device.management.entity.DevicePermission;
 import com.device.management.entity.Dict;
 import com.device.management.exception.ConflictException;
 import com.device.management.exception.ResourceNotFoundException;
@@ -33,7 +32,7 @@ public class DeviceUsagePermissionService {
 //        permissionId = String.valueOf(permissionId);
 
         // 2. 権限の存在チェック
-        DeviceUsagePermission permission = permissionRepository.findById(permissionId)
+        DevicePermission permission = permissionRepository.findById(permissionId)
                 .orElseThrow(() -> new ResourceNotFoundException("権限が存在しません: " + permissionId));
 
         // 3. 論理削除済みかチェック
@@ -65,7 +64,7 @@ public class DeviceUsagePermissionService {
         log.info("権限の詳細を確認する，permissionId: {}", permissionId);
 
         //IDに基づいてデータベースから権限オブジェクトを取得する
-        DeviceUsagePermission permission = permissionRepository.findById(permissionId)
+        DevicePermission permission = permissionRepository.findById(permissionId)
                 .orElseThrow(() -> {
                     log.error("権限情報が存在しません，permissionId: {}", permissionId);
                     // 存在しない場合は例外をスローします。
@@ -88,7 +87,7 @@ public class DeviceUsagePermissionService {
         log.info("フィールドに基づいて権限情報を更新する，ID: {}", permissionId);
 
         //既存の権限エンティティを取得します。
-        DeviceUsagePermission existing = permissionRepository.findById(permissionId)
+        DevicePermission existing = permissionRepository.findById(permissionId)
                 .orElseThrow(() -> new ResourceNotFoundException("権限情報が存在しません"));
 
         //パラメータを一つずつ確認して更新する
@@ -162,7 +161,7 @@ public class DeviceUsagePermissionService {
      * @param permission 権限エンティティオブジェクト
      * @return 変換後のDTOオブジェクト
      */
-    private DeviceUsagePermissionDTO convertToDTO(DeviceUsagePermission permission) {
+    private DeviceUsagePermissionDTO convertToDTO(DevicePermission permission) {
         DeviceUsagePermissionDTO dto = new DeviceUsagePermissionDTO();
 
         // 権限基本IDを設定
@@ -187,7 +186,7 @@ public class DeviceUsagePermissionService {
 
         // ドメインステータス情報
         if (permission.getDomainStatus() != null) {
-            dto.setDomainStatusId(permission.getDomainStatus().getDictId());
+            dto.setDomainStatusId(permission.getDomainStatus().getId());
             dto.setDomainStatusName(permission.getDomainStatus().getDictItemName());
         }
         dto.setDomainGroup(permission.getDomainGroup());
@@ -195,14 +194,14 @@ public class DeviceUsagePermissionService {
 
         // SmartITステータス情報
         if (permission.getSmartitStatus() != null) {
-            dto.setSmartitStatusId(permission.getSmartitStatus().getDictId());
+            dto.setSmartitStatusId(permission.getSmartitStatus().getId());
             dto.setSmartitStatusName(permission.getSmartitStatus().getDictItemName());
         }
         dto.setNoSmartitReason(permission.getNoSmartitReason());
 
         // USBステータス情報
         if (permission.getUsbStatus() != null) {
-            dto.setUsbStatusId(permission.getUsbStatus().getDictId());
+            dto.setUsbStatusId(permission.getUsbStatus().getId());
             dto.setUsbStatusName(permission.getUsbStatus().getDictItemName());
         }
         dto.setUsbReason(permission.getUsbReason());
@@ -210,7 +209,7 @@ public class DeviceUsagePermissionService {
 
         // アンチウイルスソフトのステータス情報
         if (permission.getAntivirusStatus() != null) {
-            dto.setAntivirusStatusId(permission.getAntivirusStatus().getDictId());
+            dto.setAntivirusStatusId(permission.getAntivirusStatus().getId());
             dto.setAntivirusStatusName(permission.getAntivirusStatus().getDictItemName());
         }
         dto.setNoSymantecReason(permission.getNoSymantecReason());

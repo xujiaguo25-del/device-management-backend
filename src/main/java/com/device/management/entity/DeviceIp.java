@@ -9,6 +9,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -36,7 +37,7 @@ public class DeviceIp {
     @NotNull
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "create_time", nullable = false)
-    private Instant createTime;
+    private LocalDateTime createTime;
 
     @Size(max = 100)
     @Column(name = "creater", length = 100)
@@ -45,7 +46,7 @@ public class DeviceIp {
     @NotNull
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "update_time", nullable = false)
-    private Instant updateTime;
+    private LocalDateTime updateTime;
 
     @Size(max = 100)
     @Column(name = "updater", length = 100)
