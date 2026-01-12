@@ -89,6 +89,4 @@ public class DevicePermission {
     @Size(max = 100)
     @Column(name = "updater", length = 100)
     private String updater;
-
-
 }

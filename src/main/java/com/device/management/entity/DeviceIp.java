@@ -19,6 +19,7 @@ import java.time.Instant;
 @NoArgsConstructor
 public class DeviceIp {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // 添加自增主键
     @Column(name = "ip_id", nullable = false)
     private Integer id;
 
@@ -49,6 +50,4 @@ public class DeviceIp {
     @Size(max = 100)
     @Column(name = "updater", length = 100)
     private String updater;
-
-
 }

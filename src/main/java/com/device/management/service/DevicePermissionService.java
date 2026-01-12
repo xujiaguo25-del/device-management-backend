@@ -1,20 +1,34 @@
 package com.device.management.service;
 
+import com.device.management.dto.ApiResponse;
 import com.device.management.dto.PermissionInsertDTO;
+import com.device.management.dto.PermissionsListDTO;
 import com.device.management.entity.DeviceInfo;
 import com.device.management.entity.DevicePermission;
 import com.device.management.entity.Dict;
+import com.device.management.entity.User;
 import com.device.management.exception.BusinessException;
 import com.device.management.repository.DevicePermissionRepository;
 import com.device.management.repository.DeviceRepository;
 import com.device.management.repository.DictRepository;
+import com.device.management.repository.UserRepository;
 import com.device.management.security.JwtTokenProvider;
 import jakarta.annotation.Resource;
+import jakarta.persistence.criteria.*;
+import jakarta.validation.constraints.Size;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
-
+import java.util.stream.Collectors;
 
 @Service
 public class DevicePermissionService {
@@ -26,10 +40,10 @@ public class DevicePermissionService {
     private JwtTokenProvider jwtTokenProvider;
     @Resource
     private DictRepository dictRepository;
+    @Resource
+    private UserRepository userRepository;
 
     public PermissionInsertDTO addPermissions(PermissionInsertDTO permissionsDTO) {
-
-
         DeviceInfo deviceInfo = deviceRepository.findByDeviceId(permissionsDTO.getDeviceId());
         if (deviceInfo == null) {
             throw new BusinessException(30002, "デバイスが存在しません");
@@ -48,5 +62,157 @@ public class DevicePermissionService {
                 .updater("JS2115").build());
 
         return permissionsDTO;
+    }
+
+    public ApiResponse<List<PermissionsListDTO>> getPermissions(Integer page, Integer size, User user, DeviceInfo deviceInfo) {
+        // ページネーションパラメータを検証する
+        if (page == null || page < 0) {
+            page = 1;
+        }
+        if (size == null || size <= 0) {
+            size = 10;
+        } else if (size > 20) {
+            size = 20;
+        }
+
+        // ページ分割オブジェクトを構築し、権限番号で並べる
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.ASC, "permissionId"));
+
+        // クエリ条件を構築する
+        Specification<DevicePermission> spec = buildQuerySpecification(user, deviceInfo);
+
+        // ページネーションクエリを実行する
+        Page<DevicePermission> permissionPage = devicePermissionRepository.findAll(spec, pageable);
+
+        // DTOリストに変換する
+        List<PermissionsListDTO> dtoList = convertToDTOList(permissionPage.getContent());
+
+        // 応答を構築する
+        return ApiResponse.page(
+                dtoList,
+                permissionPage.getTotalElements(),
+                permissionPage.getNumber() + 1,
+                permissionPage.getSize()
+        );
+    }
+
+    // クエリ条件を構築する
+    private Specification<DevicePermission> buildQuerySpecification(User user, DeviceInfo deviceInfo) {
+        return (Root<DevicePermission> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            // DISTINCT を使用して、1対多の関係によるデータの重複を回避する
+            if (query.getResultType().equals(DevicePermission.class)) {
+                query.distinct(true);
+            }
+
+            // ユーザーIDで検索
+            if (user != null && StringUtils.hasText(user.getUserId())) {
+                // DeviceInfoに関連付けられたユーザーを検索する
+                Join<DevicePermission, DeviceInfo> deviceJoin = root.join("device", JoinType.INNER);
+                Join<DeviceInfo, User> userJoin = deviceJoin.join("user", JoinType.INNER);
+                predicates.add(cb.equal(userJoin.get("userId"), user.getUserId()));
+            }
+
+            // デバイスIDで検索
+            if (deviceInfo != null && StringUtils.hasText(deviceInfo.getDeviceId())) {
+                Join<DevicePermission, DeviceInfo> deviceJoin = root.join("device", JoinType.INNER);
+                predicates.add(cb.equal(deviceJoin.get("deviceId"), deviceInfo.getDeviceId()));
+            }
+
+            // もし条件がなければ、すべての記録を返します
+            if (predicates.isEmpty()) {
+                return cb.conjunction(); // true を返し、すべてを検索します
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+    }
+
+    // エンティティのリストをDTOのリストに変換する
+    private List<PermissionsListDTO> convertToDTOList(List<DevicePermission> permissions) {
+        return permissions.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    // 単一のエンティティをDTOに変換する
+    private PermissionsListDTO convertToDTO(DevicePermission permission) {
+        if (permission == null) {
+            return null;
+        }
+
+        PermissionsListDTO dto = new PermissionsListDTO();
+        dto.setPermissionId(permission.getPermissionId());
+
+        // デバイスとユーザー情報
+        if (permission.getDevice() != null) {
+            DeviceInfo device = permission.getDevice();
+            dto.setDeviceId(device.getDeviceId());
+            dto.setComputerName(device.getComputerName());
+            dto.setLoginUsername(device.getLoginUsername());
+            dto.setUserId(device.getUser().getUserId());
+            dto.setName(device.getUser().getName());
+            dto.setDeptId(device.getUser().getDeptId());
+
+            // 複数のIPアドレスを処理する - deviceIpsリストからすべてのIPアドレスを抽出する
+            if (device.getDeviceIps() != null && !device.getDeviceIps().isEmpty()) {
+                List<String> ipAddresses = device.getDeviceIps().stream()
+                        .map(deviceIp -> deviceIp.getIpAddress())
+                        .filter(ip -> ip != null && !ip.trim().isEmpty())
+                        .collect(Collectors.toList());
+                dto.setIpAddress(ipAddresses);
+            } else {
+                dto.setIpAddress(new ArrayList<>()); // IPアドレスがない場合は、空のリストを返します
+            }
+
+            // モニター ID の処理 - monitors リストからすべてのモニター ID を抽出
+            if (device.getMonitors() != null && !device.getMonitors().isEmpty()) {
+                List<@Size(max = 100) String> monitorNames = device.getMonitors().stream()
+                        .map(monitorInfo -> monitorInfo.getMonitorName())
+                        .filter(id -> id != null)
+                        .collect(Collectors.toList());
+                dto.setMonitorNames(monitorNames);
+            } else {
+                dto.setMonitorNames(new ArrayList<>()); // モニターがない場合は、空のリストを返します
+            }
+        }
+
+        // 域状態
+        if (permission.getDomainStatus() != null) {
+            dto.setDomainStatus(permission.getDomainStatus().getSort() != null ?
+                    permission.getDomainStatus().getSort() : 0);
+        }
+        dto.setDomainGroup(permission.getDomainGroup());
+        dto.setNoDomainReason(permission.getNoDomainReason());
+
+        // Smartitの状態
+        if (permission.getSmartitStatus() != null) {
+            dto.setSmartitStatus(permission.getSmartitStatus().getSort() != null ?
+                    permission.getSmartitStatus().getSort() : 0);
+        }
+        dto.setNoSmartitReason(permission.getNoSmartitReason());
+
+        // USBの状態
+        if (permission.getUsbStatus() != null) {
+            dto.setUsbStatus(permission.getUsbStatus().getSort() != null ?
+                    permission.getUsbStatus().getSort() : 0);
+        }
+        dto.setUsbReason(permission.getUsbReason());
+        dto.setUsbExpireDate(permission.getUsbExpireDate());
+
+        // ウイルス対策の状態
+        if (permission.getAntivirusStatus() != null) {
+            dto.setAntivirusStatus(permission.getAntivirusStatus().getSort() != null ?
+                    permission.getAntivirusStatus().getSort() : 0);
+        }
+        dto.setNoSymantecReason(permission.getNoSymantecReason());
+        dto.setRemark(permission.getRemark());
+        dto.setCreateTime(permission.getCreateTime());
+        dto.setCreater(permission.getCreater());
+        dto.setUpdateTime(permission.getUpdateTime());
+        dto.setUpdater(permission.getUpdater());
+
+        return dto;
     }
 }

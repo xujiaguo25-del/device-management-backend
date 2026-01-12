@@ -3,10 +3,14 @@ package com.device.management.controller;
 import com.device.management.dto.ApiResponse;
 import com.device.management.dto.DevicePermissionExcelVo;
 import com.device.management.dto.PermissionInsertDTO;
+import com.device.management.dto.PermissionsListDTO;
+import com.device.management.entity.DeviceInfo;
+import com.device.management.entity.User;
 import com.device.management.service.DevicePermissionExcelService;
 import com.device.management.service.DevicePermissionService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -28,6 +32,30 @@ public class DevicePermissionController {
     DevicePermissionService devicePermissionService;
     @Resource
     private DevicePermissionExcelService devicePermissionExcelService;
+
+    //権限一覧を照会します
+    @GetMapping
+    public ApiResponse<List<PermissionsListDTO>> getPermissions(
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer size,
+            @RequestParam(required = false) String userId,
+            @RequestParam(required = false) String deviceId) {
+
+        // 构建查询条件
+        User user = null;
+        if (StringUtils.hasText(userId)) {
+            user = new User();
+            user.setUserId(userId);
+        }
+
+        DeviceInfo deviceInfo = null;
+        if (StringUtils.hasText(deviceId)) {
+            deviceInfo = new DeviceInfo();
+            deviceInfo.setDeviceId(deviceId);
+        }
+
+        return devicePermissionService.getPermissions(page, size, user, deviceInfo);
+    }
 
     //権限を追加します
     @PostMapping

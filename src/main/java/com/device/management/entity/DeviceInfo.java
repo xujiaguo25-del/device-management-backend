@@ -9,6 +9,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.Instant;
+import java.util.List;
 
 @Getter
 @Setter
@@ -46,8 +47,18 @@ public class DeviceInfo {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.RESTRICT)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "user_id")
     private User user;
+
+    // 设备IP地址（一对多）
+    @OneToMany(mappedBy = "device", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<DeviceIp> deviceIps;
+
+    // 设备显示器（一对多）
+    @OneToMany(mappedBy = "device", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<MonitorInfo> monitors;
 
     @Column(name = "remark", length = Integer.MAX_VALUE)
     private String remark;
@@ -94,6 +105,4 @@ public class DeviceInfo {
     @Size(max = 100)
     @Column(name = "updater", length = 100)
     private String updater;
-
-
 }

@@ -1,6 +1,7 @@
 package com.device.management.config;
 
 import com.device.management.security.JwtAuthenticationFilter;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -52,8 +53,9 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/auth/login", "/auth/logout").permitAll()
-                                .requestMatchers("/**").permitAll()  //本番環境に上げる時に元のコードに戻す
+                        .requestMatchers("/auth/login", "/auth/logout").permitAll()
+                        .requestMatchers(EndpointRequest.to("health")).permitAll()
+                        .requestMatchers("/permissions","/permissions/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
