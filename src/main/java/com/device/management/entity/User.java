@@ -1,10 +1,7 @@
 package com.device.management.entity;
 
-
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.ToString;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -18,14 +15,15 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "users")
+@AllArgsConstructor
+@Builder
 public class User {
-
     @Id
-    @Column(name = "user_id", length = 50)
-    private String userId; // ユーザID（プライマリキー）
+    @Column(name = "user_id")
+    private String userId; // 従業員番号
 
-    @Column(name = "dept_id", length = 50, nullable = false)
-    private String deptId; // 部署番号
+    @Column(name = "dept_id")
+    private String deptId; // 部門
 
     @Column(name = "name", length = 100, nullable = false)
     private String name; // 氏名

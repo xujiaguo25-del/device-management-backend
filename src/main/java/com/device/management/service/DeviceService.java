@@ -84,27 +84,6 @@ public class DeviceService {
                 .creater(deviceFullDTO.getCreater()).updater(deviceFullDTO.getUpdater())
                 .build();
 
-        UserDTO userDTO = UserDTO.builder()
-                .userId(deviceFullDTO.getUserId()).name(deviceFullDTO.getName())
-                .deptId(deviceFullDTO.getDeptId())
-                .creater(deviceFullDTO.getCreater()).updater(deviceFullDTO.getUpdater())
-                .build();
-
-
-        // user insert
-        User userReturn = convertUserToEntity(userDTO);
-        if (!userRepository.existsByUserId(userDTO.getUserId())) {
-
-            User user = convertUserToEntity(userDTO);
-            user.setPassword("123");
-            user.setUserTypeId(1L);
-
-            user.setCreateTime(LocalDateTime.now());
-            user.setUpdateTime(LocalDateTime.now());
-
-            userReturn = userRepository.save(user);
-        }
-
 
         // device insert
         List<Device> deviceList = deviceRepository.findByDeviceId(deviceDTO.getDeviceId());
@@ -164,7 +143,7 @@ public class DeviceService {
                 .memoryId(deviceReturn.getMemoryId()).ssdId(deviceReturn.getSsdId()).hddId(deviceReturn.getHddId())
                 .creater(deviceReturn.getCreater()).updater(deviceReturn.getUpdater())
                 .monitorName(monitorReturn.getMonitorName()).ipAddress(deviceIpReturn.getIpAddress())
-                .name(userReturn.getName()).deptId(userReturn.getDeptId())
+                .name(deviceFullDTO.getName()).deptId(deviceFullDTO.getDeptId())
                 .build();
 
         return deviceFullDtoReturn; //設備FullDTOを返す
@@ -320,34 +299,6 @@ public class DeviceService {
         return deviceFullDtoReturn;
     }
 
-
-    // UserDTO 回転 User
-    private User convertUserToEntity(UserDTO dto) {
-        User user = new User();
-
-        user.setUserId(dto.getUserId());
-        user.setName(dto.getName());
-        user.setDeptId(dto.getDeptId());
-        user.setCreateTime(dto.getCreateTime());
-        user.setCreater(dto.getCreater());
-        user.setUpdateTime(dto.getUpdateTime());
-        user.setUpdater(dto.getUpdater());
-
-        return user;
-    }
-
-    // User 回転 UserDTO
-    private UserDTO convertUserToDTO(User user) {
-        return UserDTO.builder()
-                .userId(user.getUserId())
-                .name(user.getName())
-                .deptId(user.getDeptId())
-                .createTime(user.getCreateTime())
-                .creater(user.getCreater())
-                .updateTime(user.getUpdateTime())
-                .updater(user.getUpdater())
-                .build();
-    }
 
 
     // MonitorDTO 回転 Monitor
@@ -961,15 +912,10 @@ public class DeviceService {
         DeviceDTO dto = DeviceDTO.builder()
                 .deviceId(device.getDeviceId().trim())
                 .userId(device.getUserId())
-                .userInfo(device.getUser() != null ? UserDTO.builder()
+                .userInfo(device.getUser() != null ? UserDto.builder()
                         .userId(device.getUser().getUserId())
                         .deptId(device.getUser().getDeptId())
                         .name(device.getUser().getName())
-                        .userType(DictMapper.toDTO(device.getUser().getUserTypeDict()))
-                        .createTime(device.getUser().getCreateTime())
-                        .creater(device.getUser().getCreater())
-                        .updateTime(device.getUser().getUpdateTime())
-                        .updater(device.getUser().getUpdater())
                         .build() : null)
                 .deviceModel(device.getDeviceModel())
                 .computerName(device.getComputerName())

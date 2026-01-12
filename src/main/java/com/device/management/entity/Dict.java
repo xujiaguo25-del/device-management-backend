@@ -1,16 +1,17 @@
 package com.device.management.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
 @Entity
 @Table(name = "dict")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Dict {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "dict_id", columnDefinition = "bigint")
@@ -46,11 +47,7 @@ public class Dict {
     @Column(name = "updater", length = 100)
     private String updater; // 更新者
 
-    // ========== 列挙型定義 ==========
-
-    /**
-     * ディクショナリ種別列挙型
-     */
+    //ディクショナリ種別列挙型
     @Getter
     public enum DictType {
         CONFIRM_STATUS("CONFIRM_STATUS", "本人确认"),
@@ -68,18 +65,7 @@ public class Dict {
         }
     }
 
-    // ========== 業務メソッド ==========
-
-    /**
-     * 指定した種別のディクショナリ項目か判定する
-     */
-    public boolean isType(DictType dictType) {
-        return this.dictTypeCode.equals(dictType.getCode());
-    }
-
-    /**
-     * フル表示名を取得する（種別＋項目名）
-     */
+    //フル表示名を取得する（種別＋項目名）
     public String getFullDisplayName() {
         return dictTypeName + " - " + dictItemName;
     }
