@@ -9,15 +9,15 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "device_info")
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class DeviceInfo {
     @Id
     @Size(max = 50)
@@ -53,12 +53,12 @@ public class DeviceInfo {
     // 设备IP地址（一对多）
     @OneToMany(mappedBy = "device", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private List<DeviceIp> deviceIps;
+    private List<DeviceIp> deviceIp;
 
     // 设备显示器（一对多）
     @OneToMany(mappedBy = "device", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private List<MonitorInfo> monitors;
+    private List<MonitorInfo> monitor;
 
     @Column(name = "remark", length = Integer.MAX_VALUE)
     private String remark;
@@ -105,4 +105,6 @@ public class DeviceInfo {
     @Size(max = 100)
     @Column(name = "updater", length = 100)
     private String updater;
+
+
 }

@@ -1,92 +1,84 @@
 package com.device.management.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 
-@Getter
-@Setter
-@Entity
-@Table(name = "device_permission")
-@Builder
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
-public class DevicePermission {
+@AllArgsConstructor
+@Entity
+@Table(name = "device_permission", schema = "public")
+public class DeviceUsagePermission {
+    
     @Id
-    @Size(max = 50)
-    @Column(name = "permission_id", nullable = false, length = 50)
+    @Column(name = "permission_id", length = 50, nullable = false)
     private String permissionId;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "device_id", nullable = false)
+    @OneToOne
+    @JoinColumn(name = "device_id", referencedColumnName = "device_id",
+            foreignKey = @ForeignKey(name = "fk_permission_device"))
     private DeviceInfo device;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JoinColumn(name = "domain_status_id")
+    @ManyToOne
+    @JoinColumn(name = "domain_status_id", referencedColumnName = "dict_id",
+            foreignKey = @ForeignKey(name = "fk_permission_domain"))
     private Dict domainStatus;
 
-    @Size(max = 100)
     @Column(name = "domain_group", length = 100)
     private String domainGroup;
 
-    @Column(name = "no_domain_reason", length = Integer.MAX_VALUE)
+    @Column(name = "no_domain_reason", columnDefinition = "text")
     private String noDomainReason;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JoinColumn(name = "smartit_status_id")
+    @ManyToOne
+    @JoinColumn(name = "smartit_status_id", referencedColumnName = "dict_id",
+            foreignKey = @ForeignKey(name = "fk_permission_smartit"))
     private Dict smartitStatus;
 
-    @Column(name = "no_smartit_reason", length = Integer.MAX_VALUE)
+    @Column(name = "no_smartit_reason", columnDefinition = "text")
     private String noSmartitReason;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JoinColumn(name = "usb_status_id")
+    @ManyToOne
+    @JoinColumn(name = "usb_status_id", referencedColumnName = "dict_id",
+            foreignKey = @ForeignKey(name = "fk_permission_usb"))
     private Dict usbStatus;
 
-    @Column(name = "usb_reason", length = Integer.MAX_VALUE)
+    @Column(name = "usb_reason", columnDefinition = "text")
     private String usbReason;
-
+    
     @Column(name = "usb_expire_date")
     private LocalDate usbExpireDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JoinColumn(name = "antivirus_status_id")
+    @ManyToOne
+    @JoinColumn(name = "antivirus_status_id", referencedColumnName = "dict_id",
+            foreignKey = @ForeignKey(name = "fk_permission_antivirus"))
     private Dict antivirusStatus;
 
-    @Column(name = "no_symantec_reason", length = Integer.MAX_VALUE)
+    @Column(name = "no_symantec_reason", columnDefinition = "text")
     private String noSymantecReason;
 
-    @Column(name = "remark", length = Integer.MAX_VALUE)
+    @Column(name = "remark", columnDefinition = "text")
     private String remark;
 
-    @NotNull
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "create_time", nullable = false)
-    private Instant createTime;
+    @CreationTimestamp
+    @Column(name = "create_time", updatable = false)
+    private LocalDateTime createTime;
 
-    @Size(max = 100)
     @Column(name = "creater", length = 100)
     private String creater;
 
-    @NotNull
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "update_time", nullable = false)
-    private Instant updateTime;
+    @UpdateTimestamp
+    @Column(name = "update_time")
+    private LocalDateTime updateTime;
 
-    @Size(max = 100)
     @Column(name = "updater", length = 100)
     private String updater;
 }

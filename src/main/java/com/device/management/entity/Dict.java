@@ -1,21 +1,17 @@
 package com.device.management.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
+import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
 @Entity
-@Table(name = "dict")
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@Table(name = "dict", schema = "public")
 public class Dict {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "dict_id", nullable = false)
@@ -51,7 +47,7 @@ public class Dict {
     @NotNull
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "create_time", nullable = false)
-    private Instant createTime;
+    private LocalDateTime createTime;
 
     @Size(max = 100)
     @Column(name = "creater", length = 100)
@@ -60,7 +56,7 @@ public class Dict {
     @NotNull
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "update_time", nullable = false)
-    private Instant updateTime;
+    private LocalDateTime updateTime;
 
     @Size(max = 100)
     @Column(name = "updater", length = 100)

@@ -1,5 +1,6 @@
 package com.device.management.repository;
 
+import jakarta.validation.constraints.Size;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.query.QueryByExampleExecutor;
