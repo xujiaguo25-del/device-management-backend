@@ -42,8 +42,8 @@ public class DevicePermissionService {
     @Resource
     DeviceUsagePermissionRepository deviceUsagePermissionRepository;
 
-    public PermissionInsertDTO addPermissions(PermissionInsertDTO permissionsDTO) {
-        DeviceInfo deviceInfo = deviceRepository.findDeviceByDeviceId(permissionsDTO.getDeviceId());
+    public PermissionInsertDTO addPermissions(PermissionInsertDTO permissionInsertDTO) {
+        DeviceInfo deviceInfo = deviceRepository.findDeviceByDeviceId(permissionInsertDTO.getDeviceId());
         if (deviceInfo == null) {
             throw new BusinessException(30002, "デバイスが存在しません");
         }
@@ -54,13 +54,15 @@ public class DevicePermissionService {
             throw new BusinessException(30003, "デバイスにはすでに権限情報があります");
         }
 
-        devicePermissionRepository.save(DevicePermission.builder().permissionId(UUID.randomUUID().toString()).device(deviceInfo).domainStatus(Dict.builder().id(permissionsDTO.getDomainStatus()).build()).domainGroup(permissionsDTO.getDomainGroup()).noDomainReason(permissionsDTO.getNoDomainReason()).smartitStatus(Dict.builder().id(permissionsDTO.getSmartitStatus()).build()).noSmartitReason(permissionsDTO.getNoSmartitReason()).usbStatus(Dict.builder().id(permissionsDTO.getUsbStatus()).build()).usbReason(permissionsDTO.getUsbReason()).usbExpireDate(permissionsDTO.getUsbExpireDate()).antivirusStatus(Dict.builder().id(permissionsDTO.getAntivirusStatus()).build()).noSymantecReason(permissionsDTO.getNoSymantecReason()).remark(permissionsDTO.getRemark()).createTime(LocalDateTime.now())
+        String permissionId = UUID.randomUUID().toString();
+
+        devicePermissionRepository.save(DevicePermission.builder().permissionId(permissionId).device(deviceInfo).domainStatus(Dict.builder().id(permissionInsertDTO.getDomainStatus()).build()).domainGroup(permissionInsertDTO.getDomainGroup()).noDomainReason(permissionInsertDTO.getNoDomainReason()).smartitStatus(Dict.builder().id(permissionInsertDTO.getSmartitStatus()).build()).noSmartitReason(permissionInsertDTO.getNoSmartitReason()).usbStatus(Dict.builder().id(permissionInsertDTO.getUsbStatus()).build()).usbReason(permissionInsertDTO.getUsbReason()).usbExpireDate(permissionInsertDTO.getUsbExpireDate()).antivirusStatus(Dict.builder().id(permissionInsertDTO.getAntivirusStatus()).build()).noSymantecReason(permissionInsertDTO.getNoSymantecReason()).remark(permissionInsertDTO.getRemark()).createTime(LocalDateTime.now())
 //                        .creater(jwtTokenProvider.getUserIdFromToken("eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJKUzIxMTUiLCJzdWIiOiJKUzIxMTUiLCJpYXQiOjE3Njc1OTE4NzgsImV4cCI6MTc2NzY3ODI3OH0.FV_jjUTSWvYEeTYgFtb2iPkalIz48NK_2lTgi-HtWVk"))
                 .creater("JS2115").updateTime(LocalDateTime.now())
 //                        .updater(jwtTokenProvider.getUserIdFromToken("eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJKUzIxMTUiLCJzdWIiOiJKUzIxMTUiLCJpYXQiOjE3Njc1OTE4NzgsImV4cCI6MTc2NzY3ODI3OH0.FV_jjUTSWvYEeTYgFtb2iPkalIz48NK_2lTgi-HtWVk"))
                 .updater("JS2115").build());
-
-        return permissionsDTO;
+        permissionInsertDTO.setPermissionId(permissionId);
+        return permissionInsertDTO;
     }
 
     public ApiResponse<List<PermissionsListDTO>> getPermissions(Integer page, Integer size, User user, DeviceInfo deviceInfo) {
