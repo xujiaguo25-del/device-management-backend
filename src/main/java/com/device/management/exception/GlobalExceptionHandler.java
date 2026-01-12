@@ -4,10 +4,12 @@ import com.device.management.dto.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 /**
  * 全局异常处理
@@ -51,13 +53,25 @@ public class GlobalExceptionHandler {
     }
 
     /**
+    * 业务异常
+    * */
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ApiResponse<String>> handleBusinessException(
+            BusinessException ex, WebRequest request) {
+        log.error("Business error: {}", ex.getMessage());
+        ApiResponse<String> response = ApiResponse.error(ex.getCode(), ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
+
+    /**
      * 处理所有其他异常
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<?>> handleGlobalException(
             Exception ex, WebRequest request) {
         log.error("Unexpected error: {}", ex.getMessage(), ex);
-        ApiResponse<?> response = ApiResponse.error(500, "服务器内部错误");
+        ApiResponse<?> response = ApiResponse.error(500, "服务器内部错误："+ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }
