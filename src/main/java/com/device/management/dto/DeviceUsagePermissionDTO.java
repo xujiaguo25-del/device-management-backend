@@ -24,18 +24,22 @@ public class DeviceUsagePermissionDTO {
     private String deptId;
 
     //権限状態（dict表を通じて関連付け）
-    private String domainStatus;
+    private Long domainStatusId;
+    private String domainStatusName;
     private String domainGroup;
     private String noDomainReason;
 
-    private String smartitStatus;
+    private Long smartitStatusId;
+    private String smartitStatusName;
     private String noSmartitReason;
 
-    private String usbStatus;
+    private Long usbStatusId;
+    private String usbStatusName;
     private String usbReason;
     private LocalDate usbExpireDate;
 
-    private String antivirusStatus;
+    private Long antivirusStatusId;
+    private String antivirusStatusName;
     private String noSymantecReason;
 
     private String remark;
