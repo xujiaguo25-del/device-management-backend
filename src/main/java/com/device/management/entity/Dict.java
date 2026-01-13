@@ -6,9 +6,12 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Data
 @Entity
 @Table(name = "dict")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Dict {
 
     @Id

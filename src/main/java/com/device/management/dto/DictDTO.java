@@ -1,5 +1,6 @@
 package com.device.management.dto;
 
+import com.device.management.entity.Dict;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
@@ -8,17 +9,16 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.time.LocalDateTime;
 
-
- //統一辞書DTO
-
+/**
+ * 統一辞書DTO
+ * 辞書項目情報
+ */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-//辞書項目情報
 public class DictDTO {
-
 
     private Long dictId;//辞書ID, example = "1"
     private String dictTypeCode;//辞書タイプコード, example = "OS_TYPE"
@@ -38,4 +38,31 @@ public class DictDTO {
 
     private String fullDisplayName;
 
+    /**
+     * DictエンティティをDictDTOに変換する
+     * 
+     * @param dict Dictエンティティ
+     * @return DictDTO、入力がnullの場合はnullを返す
+     */
+    public static DictDTO fromEntity(Dict dict) {
+        if (dict == null) {
+            return null;
+        }
+
+        return DictDTO.builder()
+                .dictId(dict.getDictId())
+                .dictTypeCode(dict.getDictTypeCode())
+                .dictTypeName(dict.getDictTypeName())
+                .dictTypeDescription(dict.getDictTypeDescription())
+                .dictItemName(dict.getDictItemName())
+                .sort(dict.getSort())
+                // Short型をBoolean型に変換 (1: true, その他: false)
+                .isEnabled(dict.getIsEnabled() != null && dict.getIsEnabled() == 1)
+                .createTime(dict.getCreateTime())
+                .creater(dict.getCreater())
+                .updateTime(dict.getUpdateTime())
+                .updater(dict.getUpdater())
+                .fullDisplayName(dict.getFullDisplayName())
+                .build();
+    }
 }

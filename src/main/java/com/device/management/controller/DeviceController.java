@@ -1,7 +1,7 @@
 package com.device.management.controller;
 
-import com.device.management.dto.DeviceDTO;
 import com.device.management.dto.ApiResponse;
+import com.device.management.dto.DeviceFullDTO;
 import com.device.management.service.DeviceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,7 +23,7 @@ public class DeviceController {
     //アクセス例：GET /api/devices?devRoom=M2-A-01
     //アクセス例：GET /api/devices
     @GetMapping
-    public ApiResponse<Page<DeviceDTO>> list(
+    public ApiResponse<Page<DeviceFullDTO>> list(
             @RequestParam(required = false) String deviceName,
             @RequestParam(required = false) String userId,
             @RequestParam(required = false) String userName,
@@ -38,16 +38,17 @@ public class DeviceController {
     }
 
     //デバイス詳細
-    //アクセス例：GET /api/devices/JS0105
+    //アクセス例：GET /api/devices/deviceId
     @GetMapping("/{deviceId}")
-    public ApiResponse<DeviceDTO> detail(
+    public ApiResponse<DeviceFullDTO> detail(
             @PathVariable String deviceId
     ) {
         return ApiResponse.success(
                 deviceService.detail(deviceId)
         );
     }
-            // 全ての重複しない開発室名を取得
+    
+    // 全ての重複しない開発室名を取得
     // アクセス例：GET /api/devices/devroom
     @GetMapping("/devroom")
     public ApiResponse<List<String>> getAllDevRooms() {

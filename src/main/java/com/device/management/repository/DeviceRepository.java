@@ -69,13 +69,13 @@ public interface DeviceRepository extends JpaRepository<Device, String> {
             "LEFT JOIN FETCH d.selfConfirmDict " +
             "WHERE (:deviceName IS NULL OR d.computerName LIKE %:deviceName%) " +
             "AND (:userId IS NULL OR d.userId = :userId) " +
-            "AND (:userName IS NULL OR u.userName LIKE %:userName%) " +
+            "AND (:name IS NULL OR u.name LIKE %:name%) " +
             "AND (:project IS NULL OR d.project LIKE %:project%) " +
             "AND (:devRoom IS NULL OR d.devRoom LIKE %:devRoom%)")
     List<Device> findByConditions(
             @Param("deviceName") String deviceName,
             @Param("userId") String userId,
-            @Param("userName") String userName,
+            @Param("name") String name,
             @Param("project") String project,
             @Param("devRoom") String devRoom
     );
@@ -85,13 +85,13 @@ public interface DeviceRepository extends JpaRepository<Device, String> {
             "LEFT JOIN d.user u " +
             "WHERE (:deviceName IS NULL OR d.computerName LIKE %:deviceName%) " +
             "AND (:userId IS NULL OR d.userId = :userId) " +
-            "AND (:userName IS NULL OR u.userName LIKE %:userName%) " +
+            "AND (:name IS NULL OR u.name LIKE %:name%) " +
             "AND (:project IS NULL OR d.project LIKE %:project%) " +
             "AND (:devRoom IS NULL OR d.devRoom LIKE %:devRoom%)")
     Long countByConditions(
             @Param("deviceName") String deviceName,
             @Param("userId") String userId,
-            @Param("userName") String userName,
+            @Param("name") String name,
             @Param("project") String project,
             @Param("devRoom") String devRoom
     );

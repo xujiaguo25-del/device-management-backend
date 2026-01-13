@@ -3,12 +3,15 @@ package com.device.management.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 /**
  * monitorオブジェクト
  */
 @Data
 @Entity
 @Table(name = "monitor_info")
+@JsonIgnoreProperties({"device"})
 public class Monitor {
 
     @Id

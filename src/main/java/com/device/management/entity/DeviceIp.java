@@ -3,12 +3,15 @@ package com.device.management.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 /**
  * DeviceIPオブジェクト
  */
 @Data
 @Entity
 @Table(name = "device_ip")
+@JsonIgnoreProperties({"device"})
 public class DeviceIp {
 
     @Id
