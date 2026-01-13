@@ -25,7 +25,7 @@ public class User {
     private String deptId; // 部署番号
 
     @Column(name = "name")
-    private String userName; // 氏名
+    private String name; // 氏名
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_type_id", referencedColumnName = "dict_id")

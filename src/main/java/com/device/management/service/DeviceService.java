@@ -1,8 +1,12 @@
 package com.device.management.service;
 
-import com.device.management.dto.*;
-import com.device.management.entity.*;
+import com.device.management.dto.DeviceFullDTO;
+import com.device.management.dto.DictDTO;
+import com.device.management.entity.Device;
+import com.device.management.entity.DeviceIp;
+import com.device.management.entity.Monitor;
 import com.device.management.repository.DeviceRepository;
+import com.device.management.dto.DictMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
@@ -16,23 +20,24 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class DeviceService {
+
     private final DeviceRepository deviceRepository;
 
     /**
      * デバイス一覧取得（ページングとフィルタリング対応）
      */
-    public Page<DeviceDTO> list(String deviceName, String userId, String userName, String project, String devRoom, int page, int size) {
+    @Transactional(readOnly = true)
+    public Page<DeviceFullDTO> list(String deviceName, String userId, String name, String project, String devRoom, int page, int size) {
         // ページ番号調整：1始まりから0始まりに変換
         page = page > 0 ? page - 1 : 0;
         Pageable pageable = PageRequest.of(page, size, Sort.by("deviceId").ascending());
 
         // 条件に合致するデバイス一覧を取得
-        List<Device> devices = deviceRepository.findByConditions(deviceName, userId, userName, project, devRoom);
+        List<Device> devices = deviceRepository.findByConditions(deviceName, userId, name, project, devRoom);
         
         // 総レコード数を取得
-        Long totalCount = deviceRepository.countByConditions(deviceName, userId, userName, project, devRoom);
+        Long totalCount = deviceRepository.countByConditions(deviceName, userId, name, project, devRoom);
         
         if (devices.isEmpty()) {
             return Page.empty(pageable);
@@ -52,8 +57,8 @@ public class DeviceService {
         Map<String, List<Monitor>> monitorMap = getDeviceMonitorMap(deviceIds);
 
         // DTOに変換
-        List<DeviceDTO> dtoList = pagedDevices.stream()
-                .map(device -> toDTOWithRelations(device, ipMap, monitorMap))
+        List<DeviceFullDTO> dtoList = pagedDevices.stream()
+                .map(device -> toFullDTOWithRelations(device, ipMap, monitorMap))
                 .collect(Collectors.toList());
 
         return new PageImpl<>(dtoList, pageable, totalCount);
@@ -62,7 +67,8 @@ public class DeviceService {
     /**
      * デバイス詳細情報取得
      */
-    public DeviceDTO detail(String deviceId) {
+    @Transactional(readOnly = true)
+    public DeviceFullDTO detail(String deviceId) {
         if (!StringUtils.hasText(deviceId)) return null;
 
         try {
@@ -73,7 +79,7 @@ public class DeviceService {
             }
 
             List<String> ids = Collections.singletonList(device.getDeviceId().trim());
-            return toDTOWithRelations(device, getDeviceIpMap(ids), getDeviceMonitorMap(ids));
+            return toFullDTOWithRelations(device, getDeviceIpMap(ids), getDeviceMonitorMap(ids));
         } catch (Exception e) {
             log.error("デバイス詳細クエリ中にエラーが発生しました: {}", deviceId, e);
             return null;
@@ -83,16 +89,18 @@ public class DeviceService {
     /**
      * 単一ユーザーの全デバイスを取得
      */
-    public List<DeviceDTO> getDevicesByUserId(String userId) {
+    @Transactional(readOnly = true)
+    public List<DeviceFullDTO> getDevicesByUserId(String userId) {
         if (!StringUtils.hasText(userId)) return new ArrayList<>();
-        Map<String, List<DeviceDTO>> resultMap = getDeviceMapByUserIds(Collections.singletonList(userId.trim()));
+        Map<String, List<DeviceFullDTO>> resultMap = getDeviceMapByUserIds(Collections.singletonList(userId.trim()));
         return resultMap.getOrDefault(userId.trim(), new ArrayList<>());
     }
 
     /**
      * バッチ処理：ユーザーIDリストに対応するデバイスマッピングを取得
      */
-    public Map<String, List<DeviceDTO>> getDeviceMapByUserIds(List<String> userIds) {
+    @Transactional(readOnly = true)
+    public Map<String, List<DeviceFullDTO>> getDeviceMapByUserIds(List<String> userIds) {
         if (userIds == null || userIds.isEmpty()) return Collections.emptyMap();
 
         List<Device> allDevices = deviceRepository.findByUserIdsWithDicts(userIds);
@@ -106,13 +114,14 @@ public class DeviceService {
         Map<String, List<Monitor>> monitorMap = getDeviceMonitorMap(deviceIds);
 
         return allDevices.stream()
-                .map(dev -> toDTOWithRelations(dev, ipMap, monitorMap))
-                .collect(Collectors.groupingBy(DeviceDTO::getUserId));
+                .map(dev -> toFullDTOWithRelations(dev, ipMap, monitorMap))
+                .collect(Collectors.groupingBy(DeviceFullDTO::getUserId));
     }
 
     /**
      * 全ての開発室名を取得（重複排除）
      */
+    @Transactional(readOnly = true)
     public List<String> getAllDevRooms() {
         try {
             List<String> devRooms = deviceRepository.findDistinctDevRooms();
@@ -133,6 +142,7 @@ public class DeviceService {
     /**
      * 全てのプロジェクト名を取得（重複排除）
      */
+    @Transactional(readOnly = true)
     public List<String> getAllProjects() {
         try {
             List<String> projects = deviceRepository.findDistinctProjects();
@@ -153,71 +163,45 @@ public class DeviceService {
     /**
      * UserService呼び出し用：デバイス名またはユーザーIDでフィルタリングしてユニークなユーザーIDリストを取得
      */
+    @Transactional(readOnly = true)
     public List<String> findUserIdsByCondition(String deviceName, String userId) {
         return deviceRepository.findUserIdsByCondition(deviceName, userId);
     }
 
     /**
-     * デバイスエンティティを関連データを含むDTOに変換（フィールド欠落防止）
+     * デバイスエンティティを関連データを含むDTOに変換（DeviceFullDTO用）
      */
-    private DeviceDTO toDTOWithRelations(Device device, Map<String, List<DeviceIp>> ipMap, Map<String, List<Monitor>> monitorMap) {
-        DeviceDTO dto = toBasicDTO(device);
+    private DeviceFullDTO toFullDTOWithRelations(Device device, Map<String, List<DeviceIp>> ipMap, Map<String, List<Monitor>> monitorMap) {
+        DeviceFullDTO dto = toFullBasicDTO(device);
         String key = device.getDeviceId().trim();
 
-        // IPリストを設定
+        // IPリストを設定（直接使用DeviceIp实体）
         List<DeviceIp> ips = ipMap.getOrDefault(key, new ArrayList<>());
-        dto.setDeviceIps(ips.stream().map(ip -> {
-            DeviceIpDTO ipDto = new DeviceIpDTO();
-            ipDto.setIpId(ip.getIpId());
-            ipDto.setIpAddress(ip.getIpAddress());
-            ipDto.setDeviceId(key); // 関連ID
-            ipDto.setCreateTime(ip.getCreateTime());
-            ipDto.setCreater(ip.getCreater());
-            ipDto.setUpdateTime(ip.getUpdateTime());
-            ipDto.setUpdater(ip.getUpdater());
-            return ipDto;
-        }).collect(Collectors.toList()));
+        dto.setDeviceIps(ips);
 
-        // モニターリストを設定
+        // モニターリストを設定（直接使用Monitor实体）
         List<Monitor> monitors = monitorMap.getOrDefault(key, new ArrayList<>());
-        dto.setMonitors(monitors.stream().map(m -> {
-            MonitorDTO mDto = new MonitorDTO();
-            mDto.setMonitorId(m.getMonitorId());
-            mDto.setMonitorName(m.getMonitorName());
-            mDto.setDeviceId(key); // 関連ID
-            mDto.setCreateTime(m.getCreateTime());
-            mDto.setCreater(m.getCreater());
-            mDto.setUpdateTime(m.getUpdateTime());
-            mDto.setUpdater(m.getUpdater());
-            return mDto;
-        }).collect(Collectors.toList()));
+        dto.setMonitors(monitors);
 
         return dto;
     }
 
     /**
-     * デバイスエンティティを基本情報のみのDTOに変換
+     * デバイスエンティティを基本情報のみのDTOに変換（DeviceFullDTO用）
      */
-    private DeviceDTO toBasicDTO(Device device) {
-        DeviceDTO dto = DeviceDTO.builder()
+    private DeviceFullDTO toFullBasicDTO(Device device) {
+        DeviceFullDTO dto = DeviceFullDTO.builder()
                 .deviceId(device.getDeviceId().trim())
                 .userId(device.getUserId())
-                .userInfo(device.getUser() != null ? UserDTO.builder()
-                        .userId(device.getUser().getUserId())
-                        .deptId(device.getUser().getDeptId())
-                        .userName(device.getUser().getUserName())
-                        .userType(DictMapper.toDTO(device.getUser().getUserTypeDict()))
-                        .createTime(device.getUser().getCreateTime())
-                        .creater(device.getUser().getCreater())
-                        .updateTime(device.getUser().getUpdateTime())
-                        .updater(device.getUser().getUpdater())
-                        .build() : null)
+                .name(device.getUser() != null ? device.getUser().getName() : null)
+                .deptId(device.getUser() != null ? device.getUser().getDeptId() : null)
                 .deviceModel(device.getDeviceModel())
                 .computerName(device.getComputerName())
                 .loginUsername(device.getLoginUsername())
                 .project(device.getProject())
                 .devRoom(device.getDevRoom())
                 .remark(device.getRemark())
+                .selfConfirmDict(DictMapper.toDTO(device.getSelfConfirmDict()))
                 .osDict(DictMapper.toDTO(device.getOsDict()))
                 .osId(device.getOsDict() != null ? device.getOsDict().getDictId() : null)
                 .memoryDict(DictMapper.toDTO(device.getMemoryDict()))
@@ -226,11 +210,12 @@ public class DeviceService {
                 .ssdId(device.getSsdDict() != null ? device.getSsdDict().getDictId() : null)
                 .hddDict(DictMapper.toDTO(device.getHddDict()))
                 .hddId(device.getHddDict() != null ? device.getHddDict().getDictId() : null)
-                .selfConfirmDict(DictMapper.toDTO(device.getSelfConfirmDict()))
                 .createTime(device.getCreateTime())
                 .creater(device.getCreater())
                 .updateTime(device.getUpdateTime())
                 .updater(device.getUpdater())
+                .monitors(new ArrayList<>())  // 默认空列表，将在toFullDTOWithRelations中设置
+                .deviceIps(new ArrayList<>())  // 默认空列表，将在toFullDTOWithRelations中设置
                 .build();
 
         return dto;

@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * ユーザーDTO
@@ -22,7 +21,7 @@ public class UserDTO {
 
     private String userId;        // ユーザーID
     private String deptId;        // 部署番号
-    private String userName;          // 氏名
+    private String name;          // 氏名
     private DictDTO userType;      // ユーザータイプID（辞書項目：USER_TYPE 関連）
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -32,9 +31,4 @@ public class UserDTO {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateTime; // 更新日時
     private String updater;       // 更新者
-
-    // パスワード，通常はDTOに含めないが、登録時などに必要
-    //private String password;
-
-    private List<DeviceDTO> devices;
 }
