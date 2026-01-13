@@ -20,28 +20,30 @@ import java.util.stream.Collectors;
 public class DeviceService {
     private final DeviceRepository deviceRepository;
 
-    // デバイス一覧（ページングとフィルタリング）
+    /**
+     * デバイス一覧取得（ページングとフィルタリング対応）
+     */
     public Page<DeviceDTO> list(String deviceName, String userId, String userName, String project, String devRoom, int page, int size) {
-        // ページ数の調整：0から始まるページ番号に変換
+        // ページ番号調整：1始まりから0始まりに変換
         page = page > 0 ? page - 1 : 0;
         Pageable pageable = PageRequest.of(page, size, Sort.by("deviceId").ascending());
 
-        // 获取符合条件的设备列表
+        // 条件に合致するデバイス一覧を取得
         List<Device> devices = deviceRepository.findByConditions(deviceName, userId, userName, project, devRoom);
         
-        // 获取总记录数
+        // 総レコード数を取得
         Long totalCount = deviceRepository.countByConditions(deviceName, userId, userName, project, devRoom);
         
         if (devices.isEmpty()) {
             return Page.empty(pageable);
         }
 
-        // 限制分页数量
+        // ページング処理
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), devices.size());
         List<Device> pagedDevices = devices.subList(start, end);
 
-        // 関連データをバッチでロード
+        // 関連データを一括ロード
         List<String> deviceIds = pagedDevices.stream()
                 .map(d -> d.getDeviceId().trim())
                 .collect(Collectors.toList());
@@ -57,7 +59,9 @@ public class DeviceService {
         return new PageImpl<>(dtoList, pageable, totalCount);
     }
 
-    // デバイス詳細クエリ
+    /**
+     * デバイス詳細情報取得
+     */
     public DeviceDTO detail(String deviceId) {
         if (!StringUtils.hasText(deviceId)) return null;
 
@@ -76,14 +80,18 @@ public class DeviceService {
         }
     }
 
-    // 単一ユーザーの全デバイスを取得
+    /**
+     * 単一ユーザーの全デバイスを取得
+     */
     public List<DeviceDTO> getDevicesByUserId(String userId) {
         if (!StringUtils.hasText(userId)) return new ArrayList<>();
         Map<String, List<DeviceDTO>> resultMap = getDeviceMapByUserIds(Collections.singletonList(userId.trim()));
         return resultMap.getOrDefault(userId.trim(), new ArrayList<>());
     }
 
-    // バッチでユーザーデバイスマッピングを取得
+    /**
+     * バッチ処理：ユーザーIDリストに対応するデバイスマッピングを取得
+     */
     public Map<String, List<DeviceDTO>> getDeviceMapByUserIds(List<String> userIds) {
         if (userIds == null || userIds.isEmpty()) return Collections.emptyMap();
 
@@ -102,12 +110,14 @@ public class DeviceService {
                 .collect(Collectors.groupingBy(DeviceDTO::getUserId));
     }
 
-    // 获取所有不重复的开发室名称
+    /**
+     * 全ての開発室名を取得（重複排除）
+     */
     public List<String> getAllDevRooms() {
         try {
             List<String> devRooms = deviceRepository.findDistinctDevRooms();
             
-            // 过滤空值并去除前后空格
+            // 空値をフィルタリングし、前後の空白をトリム
             return devRooms.stream()
                     .filter(StringUtils::hasText)
                     .map(String::trim)
@@ -115,17 +125,19 @@ public class DeviceService {
                     .sorted()
                     .collect(Collectors.toList());
         } catch (Exception e) {
-            log.error("获取开发室列表时出错", e);
+            log.error("開発室一覧取得中にエラーが発生しました", e);
             return Collections.emptyList();
         }
     }
 
-    // 获取所有不重复的项目名称
+    /**
+     * 全てのプロジェクト名を取得（重複排除）
+     */
     public List<String> getAllProjects() {
         try {
             List<String> projects = deviceRepository.findDistinctProjects();
             
-            // 过滤空值并去除前后空格
+            // 空値をフィルタリングし、前後の空白をトリム
             return projects.stream()
                     .filter(StringUtils::hasText)
                     .map(String::trim)
@@ -133,17 +145,21 @@ public class DeviceService {
                     .sorted()
                     .collect(Collectors.toList());
         } catch (Exception e) {
-            log.error("获取项目列表时出错", e);
+            log.error("プロジェクト一覧取得中にエラーが発生しました", e);
             return Collections.emptyList();
         }
     }
 
-    // UserServiceで呼び出し用：デバイス名またはユーザーIDでフィルタリングしてユニークなユーザーIDリストを取得
+    /**
+     * UserService呼び出し用：デバイス名またはユーザーIDでフィルタリングしてユニークなユーザーIDリストを取得
+     */
     public List<String> findUserIdsByCondition(String deviceName, String userId) {
         return deviceRepository.findUserIdsByCondition(deviceName, userId);
     }
 
-    // フィールド欠落防止
+    /**
+     * デバイスエンティティを関連データを含むDTOに変換（フィールド欠落防止）
+     */
     private DeviceDTO toDTOWithRelations(Device device, Map<String, List<DeviceIp>> ipMap, Map<String, List<Monitor>> monitorMap) {
         DeviceDTO dto = toBasicDTO(device);
         String key = device.getDeviceId().trim();
@@ -179,6 +195,9 @@ public class DeviceService {
         return dto;
     }
 
+    /**
+     * デバイスエンティティを基本情報のみのDTOに変換
+     */
     private DeviceDTO toBasicDTO(Device device) {
         DeviceDTO dto = DeviceDTO.builder()
                 .deviceId(device.getDeviceId().trim())
@@ -217,7 +236,9 @@ public class DeviceService {
         return dto;
     }
 
-    // プライベートヘルパークエリ、関連データを処理
+    /**
+     * ヘルパーメソッド：デバイスIDリストに対応するIP情報を取得
+     */
     private Map<String, List<DeviceIp>> getDeviceIpMap(List<String> deviceIds) {
         if (deviceIds.isEmpty()) return Collections.emptyMap();
         
@@ -231,6 +252,9 @@ public class DeviceService {
         return map;
     }
 
+    /**
+     * ヘルパーメソッド：デバイスIDリストに対応するモニター情報を取得
+     */
     private Map<String, List<Monitor>> getDeviceMonitorMap(List<String> deviceIds) {
         if (deviceIds.isEmpty()) return Collections.emptyMap();
         
