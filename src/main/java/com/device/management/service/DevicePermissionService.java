@@ -1,6 +1,7 @@
 package com.device.management.service;
 
 import com.device.management.dto.ApiResponse;
+import com.device.management.dto.DeviceUsagePermissionDTO;
 import com.device.management.dto.PermissionInsertDTO;
 import com.device.management.dto.PermissionsListDTO;
 import com.device.management.entity.*;
@@ -12,12 +13,14 @@ import com.device.management.security.JwtTokenProvider;
 import jakarta.annotation.Resource;
 import jakarta.persistence.criteria.*;
 import jakarta.validation.constraints.Size;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.Instant;
@@ -27,6 +30,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class DevicePermissionService {
     @Resource
@@ -131,12 +135,12 @@ public class DevicePermissionService {
     // エンティティのリストをDTOのリストに変換する
     private List<PermissionsListDTO> convertToDTOList(List<DevicePermission> permissions) {
         return permissions.stream()
-                .map(this::convertToDTO)
+                .map(this::convertToDTO1)
                 .collect(Collectors.toList());
     }
 
     // 単一のエンティティをDTOに変換する
-    private PermissionsListDTO convertToDTO(DevicePermission permission) {
+    private PermissionsListDTO convertToDTO1(DevicePermission permission) {
         if (permission == null) {
             return null;
         }
@@ -216,24 +220,200 @@ public class DevicePermissionService {
     }
 
 
-    public void deletePermissionById(Long id) {
-
-        System.out.println("デバイス使用権限の削除開始: id=" + id);
-
-        // 1. APIのLong型IDをデータベースのString型permissionIdにマッピング
-        String permissionId = String.valueOf(id);
-
+    @Transactional
+    /**
+     * IDに基づいてデバイス使用権限を削除
+     * @param id 権限ID（APIレイヤーのLong型）
+     */
+    public void deletePermissionById(String permissionId) {
         // 2. 権限の存在チェック
-        DevicePermission permission = deviceUsagePermissionRepository.findById(permissionId)
-                .orElseThrow(() -> new ResourceNotFoundException("権限が存在しません: " + id));
+        DevicePermission permission = devicePermissionRepository.findById(permissionId)
+                .orElseThrow(() -> new ResourceNotFoundException("権限が存在しません: " + permissionId));
 
         // 4. TODO: 関連リソースのチェック（他のテーブルをクエリする必要あり）
         // 模擬：権限IDに"TEST"が含まれている場合、関連があるものとみなす
         if (permissionId.contains("TEST")) {
-            throw new ConflictException("権限は既にリソースに紐づいているため、削除できません: " + id);
+            throw new ConflictException("権限は既にリソースに紐づいているため、削除できません: " + permissionId);
         }
 
         // 5. 物理削除の実行
-        deviceUsagePermissionRepository.delete(permission);
+        devicePermissionRepository.delete(permission);
+    }
+
+
+
+    /**
+     * IDに基づき使用権限の詳細情報を取得します。
+     *  1. 権限IDをパラメータとして受け取ります。
+     *  2. リポジトリ層を介して対応する権限エンティティを検索します。
+     *  3. 存在しない場合はリソース未検出例外をスローします。
+     *  4. エンティティオブジェクトをDTOオブジェクトに変換します。
+     *  5. DTOオブジェクトを呼び出し元に返します。
+     * @param permissionId 権限ID
+     * @return 権限詳細情報DTOオブジェクト
+     */
+    @Transactional(readOnly = true)
+    public DeviceUsagePermissionDTO findPermissionDetail(String permissionId) {
+        log.info("権限の詳細を確認する，permissionId: {}", permissionId);
+
+        //IDに基づいてデータベースから権限オブジェクトを取得する
+        DevicePermission permission = deviceUsagePermissionRepository.findById(permissionId)
+                .orElseThrow(() -> {
+                    log.error("権限情報が存在しません，permissionId: {}", permissionId);
+                    // 存在しない場合は例外をスローします。
+                    return new ResourceNotFoundException("権限情報が存在しません，permissionId: " + permissionId);
+                });
+
+        // エンティティオブジェクトをDTOオブジェクトに変換して返却する
+        return convertToDTO(permission);
+    }
+
+    /**
+     * フィールド単位で権限情報を更新します。
+     *  1. IDに基づき既存の権限エンティティを検索します。
+     *  2. 各パラメータに値があるか確認します（StringUtilsを使用して文字列判定を行います）。
+     *  3. 値があるパラメータを既存のエンティティに更新します。
+     *  4. 更新後のエンティティを保存します。
+     */
+    @Transactional
+    public void updatePermissionByFields(String permissionId, DeviceUsagePermissionDTO updateDTO) {
+        log.info("フィールドに基づいて権限情報を更新する，ID: {}", permissionId);
+
+        //既存の権限エンティティを取得します。
+        DevicePermission existing = devicePermissionRepository.findById(permissionId)
+                .orElseThrow(() -> new ResourceNotFoundException("権限情報が存在しません"));
+
+        //パラメータを一つずつ確認して更新する
+        // SmartITステータス更新
+        if (updateDTO.getSmartitStatusId()!=null) {
+            Dict smartitDict = dictRepository.findById(updateDTO.getSmartitStatusId())
+                    .orElseThrow(() -> new ResourceNotFoundException("SmartITステータスが存在しません"));
+            existing.setSmartitStatus(smartitDict);
+        }
+
+        if (StringUtils.hasText(updateDTO.getNoSmartitReason())) {
+            existing.setNoSmartitReason(updateDTO.getNoSmartitReason());
+        }
+
+        // USBステータス更新
+        if (updateDTO.getUsbStatusId()!=null) {
+            Dict usbDict = dictRepository.findById(updateDTO.getUsbStatusId())
+                    .orElseThrow(() -> new ResourceNotFoundException("USBステータスが存在しません"));
+            existing.setUsbStatus(usbDict);
+        }
+
+        if (StringUtils.hasText(updateDTO.getUsbReason())) {
+            existing.setUsbReason(updateDTO.getUsbReason());
+        }
+
+        // アンチウイルスステータス更新
+        if (updateDTO.getAntivirusStatusId()!=null) {
+            Dict antivirusDict = dictRepository.findById(updateDTO.getAntivirusStatusId())
+                    .orElseThrow(() -> new ResourceNotFoundException("アンチウイルスステータスが存在しません"));
+            existing.setAntivirusStatus(antivirusDict);
+        }
+
+        if (StringUtils.hasText(updateDTO.getNoSymantecReason())) {
+            existing.setNoSymantecReason(updateDTO.getNoSymantecReason());
+        }
+
+        // ドメインステータス更新
+        if (updateDTO.getDomainStatusId()!=null) {
+            Dict domainDict = dictRepository.findById(updateDTO.getDomainStatusId())
+                    .orElseThrow(() -> new ResourceNotFoundException("ドメインステータスが存在しません"));
+            existing.setDomainStatus(domainDict);
+        }
+
+        if (StringUtils.hasText(updateDTO.getDomainGroup())) {
+            existing.setDomainGroup(updateDTO.getDomainGroup());
+        }
+
+        if (StringUtils.hasText(updateDTO.getNoDomainReason())) {
+            existing.setNoDomainReason(updateDTO.getNoDomainReason());
+        }
+
+        if (StringUtils.hasText(updateDTO.getRemark())) {
+            existing.setRemark(updateDTO.getRemark());
+        }
+
+        //更新者を設定する（現在のユーザーを取得）
+        existing.setUpdater("JS111");
+
+        if (updateDTO.getUsbExpireDate() != null) {
+            existing.setUsbExpireDate(updateDTO.getUsbExpireDate());
+        }
+
+        //保存して更新
+        deviceUsagePermissionRepository.save(existing);
+        log.info("権限情報の更新が完了しました，permissionId: {}", permissionId);
+    }
+
+    /**
+     * DTOへの変換メソッド
+     * エンティティオブジェクトをDTOオブジェクトに変換する方法
+     * @param permission 権限エンティティオブジェクト
+     * @return 変換後のDTOオブジェクト
+     */
+    private DeviceUsagePermissionDTO convertToDTO(DevicePermission permission) {
+        DeviceUsagePermissionDTO dto = new DeviceUsagePermissionDTO();
+
+        // 権限基本IDを設定
+        dto.setPermissionId(permission.getPermissionId());
+
+        // デバイス情報マッピング
+        if (permission.getDevice() != null) {
+            //デバイス情報
+            dto.setDeviceId(permission.getDevice().getDeviceId());
+            dto.setComputerName(permission.getDevice().getComputerName());
+            dto.setDeviceModel(permission.getDevice().getDeviceModel());
+            dto.setProject(permission.getDevice().getProject());
+            dto.setDevRoom(permission.getDevice().getDevRoom());
+
+            // ユーザー情報
+            if (permission.getDevice().getUser() != null) {
+                dto.setUserId(permission.getDevice().getUser().getUserId());
+                dto.setUserName(permission.getDevice().getUser().getName());
+                dto.setDeptId(permission.getDevice().getUser().getDeptId());
+            }
+        }
+
+        // ドメインステータス情報
+        if (permission.getDomainStatus() != null) {
+            dto.setDomainStatusId(permission.getDomainStatus().getDictId());
+            dto.setDomainStatusName(permission.getDomainStatus().getDictItemName());
+        }
+        dto.setDomainGroup(permission.getDomainGroup());
+        dto.setNoDomainReason(permission.getNoDomainReason());
+
+        // SmartITステータス情報
+        if (permission.getSmartitStatus() != null) {
+            dto.setSmartitStatusId(permission.getSmartitStatus().getDictId());
+            dto.setSmartitStatusName(permission.getSmartitStatus().getDictItemName());
+        }
+        dto.setNoSmartitReason(permission.getNoSmartitReason());
+
+        // USBステータス情報
+        if (permission.getUsbStatus() != null) {
+            dto.setUsbStatusId(permission.getUsbStatus().getDictId());
+            dto.setUsbStatusName(permission.getUsbStatus().getDictItemName());
+        }
+        dto.setUsbReason(permission.getUsbReason());
+        dto.setUsbExpireDate(permission.getUsbExpireDate());
+
+        // アンチウイルスソフトのステータス情報
+        if (permission.getAntivirusStatus() != null) {
+            dto.setAntivirusStatusId(permission.getAntivirusStatus().getDictId());
+            dto.setAntivirusStatusName(permission.getAntivirusStatus().getDictItemName());
+        }
+        dto.setNoSymantecReason(permission.getNoSymantecReason());
+
+        //情報の作成と更新
+        dto.setRemark(permission.getRemark());
+        dto.setCreateTime(permission.getCreateTime());
+        dto.setCreater(permission.getCreater());
+        dto.setUpdateTime(permission.getUpdateTime());
+        dto.setUpdater(permission.getUpdater());
+
+        return dto;
     }
 }
