@@ -11,7 +11,8 @@ import java.util.Optional;
 @Repository
 public interface MonitorRepository extends JpaRepository<Monitor, String>{
     Boolean existsByMonitorName(String monitorName);
-    Monitor findByDeviceId(String DeviceId);
+//    Monitor findByDeviceId(String DeviceId);
+    List<Monitor> findByDeviceId(String DeviceId);
     Monitor findByMonitorName(String monitorName);
     Monitor findByMonitorId(Integer monitorId);
 }
