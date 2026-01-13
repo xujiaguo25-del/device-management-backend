@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * JWT 工具类
+ * JWT ツール類
  */
 @Slf4j
 @Component
@@ -28,7 +28,7 @@ public class JwtTokenProvider {
     private long jwtExpirationMs;
 
     /**
-     * 生成 JWT Token
+     *  JWT Tokenを生成
      */
     public String generateToken(String userId) {
         Map<String, Object> claims = new HashMap<>();
@@ -37,7 +37,7 @@ public class JwtTokenProvider {
     }
 
     /**
-     * 创建 Token
+     * トークンを作成
      */
     private String createToken(Map<String, Object> claims, String subject) {
         SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
@@ -51,7 +51,7 @@ public class JwtTokenProvider {
     }
 
     /**
-     * 获取 Token 中的用户ID
+     * TokenのユーザーIDを取得する
      */
     public String getUserIdFromToken(String token) {
         SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
@@ -64,7 +64,7 @@ public class JwtTokenProvider {
     }
 
     /**
-     * 验证 Token 是否有效
+     * トークンが有効であることを確認します
      */
     public boolean validateToken(String token) {
         try {
@@ -81,7 +81,7 @@ public class JwtTokenProvider {
     }
 
     /**
-     * 获取 Token 的所有声明
+     * トークンのすべての宣言を取得
      */
     public Claims getAllClaimsFromToken(String token) {
         SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
@@ -93,7 +93,7 @@ public class JwtTokenProvider {
     }
 
     /**
-     * Token 是否已过期
+     * トークンが期限切れかどうか
      */
     public boolean isTokenExpired(String token) {
         try {

@@ -4,37 +4,47 @@ import lombok.*;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class PermissionsListDTO {
+/*
+* 権限データ挿入用のオブジェクト
+* */
+public class PermissionInsertDTO {
     private String permissionId;
+
     private String deviceId;
-    private List<String> monitorNames;
-    private String computerName;
-    private List<String> ipAddress;
-    private String userId;
-    private String name;
-    private String deptId;
-    private String loginUsername;
-    private int domainStatus;
+
+    private Long domainStatus;
+
     private String domainGroup;
+
     private String noDomainReason;
-    private int smartitStatus;
+
+    private Long smartitStatus;
+
     private String noSmartitReason;
-    private int usbStatus;
+
+    private Long usbStatus;
+
     private String usbReason;
+
     private LocalDate usbExpireDate;
-    private int antivirusStatus;
+
+    private Long antivirusStatus;
+
     private String noSymantecReason;
+
     private String remark;
-    private LocalDateTime createTime;
+
+    private Instant createTime;
+
     private String creater;
-    private LocalDateTime updateTime;
+
+    private Instant updateTime;
+
     private String updater;
 }

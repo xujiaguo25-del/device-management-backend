@@ -5,12 +5,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 登录
+ * ログインレスポンス
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponse {
+public class LoginDto {
     private String token;
-    private UserDto userInfo;
+    private UserDto userDTO;
 }

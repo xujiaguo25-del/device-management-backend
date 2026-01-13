@@ -1,14 +1,13 @@
 package com.device.management.service;
 
 import com.device.management.dto.ApiResponse;
+import com.device.management.dto.PermissionInsertDTO;
 import com.device.management.dto.PermissionsListDTO;
-import com.device.management.entity.DeviceInfo;
-import com.device.management.entity.DevicePermission;
-import com.device.management.entity.User;
-import com.device.management.repository.DevicePermissionRepository;
-import com.device.management.repository.DeviceRepository;
-import com.device.management.repository.DictRepository;
-import com.device.management.repository.UserRepository;
+import com.device.management.entity.*;
+import com.device.management.exception.BusinessException;
+import com.device.management.exception.ConflictException;
+import com.device.management.exception.ResourceNotFoundException;
+import com.device.management.repository.*;
 import com.device.management.security.JwtTokenProvider;
 import jakarta.annotation.Resource;
 import jakarta.persistence.criteria.*;
@@ -21,8 +20,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,17 +32,40 @@ public class DevicePermissionService {
     @Resource
     DevicePermissionRepository devicePermissionRepository;
     @Resource
+    DeviceRepository deviceRepository;
+    @Resource
     private JwtTokenProvider jwtTokenProvider;
     @Resource
     private DictRepository dictRepository;
     @Resource
-    DeviceRepository deviceRepository;
-    @Resource
     private UserRepository userRepository;
+    @Resource
+    DeviceUsagePermissionRepository deviceUsagePermissionRepository;
+
+    public PermissionInsertDTO addPermissions(PermissionInsertDTO permissionInsertDTO) {
+        DeviceInfo deviceInfo = deviceRepository.findDeviceByDeviceId(permissionInsertDTO.getDeviceId());
+        if (deviceInfo == null) {
+            throw new BusinessException(30002, "デバイスが存在しません");
+        }
+
+        DevicePermission devicePermissions = devicePermissionRepository.findDevicePermissionsByDevice(deviceInfo);
+
+        if (devicePermissions != null) {
+            throw new BusinessException(30003, "デバイスにはすでに権限情報があります");
+        }
+
+        String permissionId = UUID.randomUUID().toString();
+
+        devicePermissionRepository.save(DevicePermission.builder().permissionId(permissionId).device(deviceInfo).domainStatus(Dict.builder().id(permissionInsertDTO.getDomainStatus()).build()).domainGroup(permissionInsertDTO.getDomainGroup()).noDomainReason(permissionInsertDTO.getNoDomainReason()).smartitStatus(Dict.builder().id(permissionInsertDTO.getSmartitStatus()).build()).noSmartitReason(permissionInsertDTO.getNoSmartitReason()).usbStatus(Dict.builder().id(permissionInsertDTO.getUsbStatus()).build()).usbReason(permissionInsertDTO.getUsbReason()).usbExpireDate(permissionInsertDTO.getUsbExpireDate()).antivirusStatus(Dict.builder().id(permissionInsertDTO.getAntivirusStatus()).build()).noSymantecReason(permissionInsertDTO.getNoSymantecReason()).remark(permissionInsertDTO.getRemark()).createTime(LocalDateTime.now())
+                .creater("JS2115").updateTime(LocalDateTime.now())
+                .updater("JS2115").build());
+        permissionInsertDTO.setPermissionId(permissionId);
+        return permissionInsertDTO;
+    }
 
     public ApiResponse<List<PermissionsListDTO>> getPermissions(Integer page, Integer size, User user, DeviceInfo deviceInfo) {
         // ページネーションパラメータを検証する
-        if (page == null || page < 0) {
+        if (page == null || page <= 0) {
             page = 1;
         }
         if (size == null || size <= 0) {
@@ -105,11 +130,9 @@ public class DevicePermissionService {
 
     // エンティティのリストをDTOのリストに変換する
     private List<PermissionsListDTO> convertToDTOList(List<DevicePermission> permissions) {
-
         return permissions.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
-
     }
 
     // 単一のエンティティをDTOに変換する
@@ -132,8 +155,8 @@ public class DevicePermissionService {
             dto.setDeptId(device.getUser().getDeptId());
 
             // 複数のIPアドレスを処理する - deviceIpsリストからすべてのIPアドレスを抽出する
-            if (device.getDeviceIps() != null && !device.getDeviceIps().isEmpty()) {
-                List<String> ipAddresses = device.getDeviceIps().stream()
+            if (device.getDeviceIp() != null && !device.getDeviceIp().isEmpty()) {
+                List<String> ipAddresses = device.getDeviceIp().stream()
                         .map(deviceIp -> deviceIp.getIpAddress())
                         .filter(ip -> ip != null && !ip.trim().isEmpty())
                         .collect(Collectors.toList());
@@ -143,8 +166,8 @@ public class DevicePermissionService {
             }
 
             // モニター ID の処理 - monitors リストからすべてのモニター ID を抽出
-            if (device.getMonitors() != null && !device.getMonitors().isEmpty()) {
-                List<@Size(max = 100) String> monitorNames = device.getMonitors().stream()
+            if (device.getMonitor() != null && !device.getMonitor().isEmpty()) {
+                List<@Size(max = 100) String> monitorNames = device.getMonitor().stream()
                         .map(monitorInfo -> monitorInfo.getMonitorName())
                         .filter(id -> id != null)
                         .collect(Collectors.toList());
@@ -190,5 +213,27 @@ public class DevicePermissionService {
         dto.setUpdater(permission.getUpdater());
 
         return dto;
+    }
+
+
+    public void deletePermissionById(Long id) {
+
+        System.out.println("デバイス使用権限の削除開始: id=" + id);
+
+        // 1. APIのLong型IDをデータベースのString型permissionIdにマッピング
+        String permissionId = String.valueOf(id);
+
+        // 2. 権限の存在チェック
+        DevicePermission permission = deviceUsagePermissionRepository.findById(permissionId)
+                .orElseThrow(() -> new ResourceNotFoundException("権限が存在しません: " + id));
+
+        // 4. TODO: 関連リソースのチェック（他のテーブルをクエリする必要あり）
+        // 模擬：権限IDに"TEST"が含まれている場合、関連があるものとみなす
+        if (permissionId.contains("TEST")) {
+            throw new ConflictException("権限は既にリソースに紐づいているため、削除できません: " + id);
+        }
+
+        // 5. 物理削除の実行
+        deviceUsagePermissionRepository.delete(permission);
     }
 }

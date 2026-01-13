@@ -6,17 +6,21 @@ import lombok.Setter;
 
 @Getter
 @Setter
+/*
+* 業務異常
+* */
 public class BusinessException extends RuntimeException {
     // 异常码
     private Integer code;
 
     public BusinessException(String message) {
         super(message);
-        this.code = 400; // 默认业务异常码
+        this.code = 400; // デフォルトのビジネス例外コード
     }
-    public BusinessException(int code,String message) {
+
+    public BusinessException(int code, String message) {
         super(message);
-        this.code = code; // 默认业务异常码
+        this.code = code;
     }
 
 }

@@ -1,30 +1,31 @@
 package com.device.management.controller;
 
 import com.device.management.dto.ApiResponse;
+import com.device.management.dto.DevicePermissionExcelVo;
+import com.device.management.dto.PermissionInsertDTO;
 import com.device.management.dto.PermissionsListDTO;
 import com.device.management.entity.DeviceInfo;
 import com.device.management.entity.User;
+import com.device.management.service.DevicePermissionExcelService;
 import com.device.management.service.DevicePermissionService;
+import com.device.management.service.DeviceUsagePermissionService;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
-
-/*功能	方法	端点	参数/请求体	说明
-列表	GET	/permissions	?page=1&size=10&deviceId=xxx&userId=xxx	-
-详情	GET	/permissions/{id}	-	-
-新增	POST	/permissions	Permission 对象	-
-编辑	PUT	/permissions/{id}	Permission 对象	-
-导出	GET	/permissions/export	-	返回 Excel 文件
-删除 DELETE	/permissions/{id}	-	-
-*/
 
 @RestController
 @RequestMapping("/permissions")
 public class DevicePermissionController {
     @Resource
     DevicePermissionService devicePermissionService;
+    @Resource
+    private DevicePermissionExcelService devicePermissionExcelService;
+    @Resource
+    private DeviceUsagePermissionService deviceUsagePermissionService;
 
     //権限一覧を照会します
     @GetMapping
@@ -34,7 +35,7 @@ public class DevicePermissionController {
             @RequestParam(required = false) String userId,
             @RequestParam(required = false) String deviceId) {
 
-        // 构建查询条件
+        // クエリ条件を構築する
         User user = null;
         if (StringUtils.hasText(userId)) {
             user = new User();
@@ -50,46 +51,28 @@ public class DevicePermissionController {
         return devicePermissionService.getPermissions(page, size, user, deviceInfo);
     }
 
-//    //権限を追加します
-//    @PostMapping
-//    public  ApiResponse<PermissionsDTO> addPermissions(
-//            @RequestBody PermissionsDTO devicePermission
-//    ){
-//        return devicePermissionService.addPermissions(devicePermission);
-//    }
-//
-//    //権限詳細
-//    @GetMapping(value = "/{id}")
-//    public ApiResponse<PermissionsDTO> getPermissions() {
-//        return null;
-//    }
-//
-//    //権限を更新します
-//    @PutMapping
-//    public ApiResponse<PermissionsDTO> updatePermissions(
-//            @RequestBody PermissionsDTO permissionsDTO
-//    ){
-//        return devicePermissionService.updatePermissions(permissionsDTO);
-//    }
-//
-//    //権限を削除します
-//    @DeleteMapping(value = "/{id}")
-//    public ApiResponse<Void> deletePermissions(
-//            @PathVariable("id") String id
-//    ){
-//        return devicePermissionService.deletePermissions(id);
-//    }
-//
-//    //権限をexcelファイル形式でエクスポートします
-//    @GetMapping(value = "/export")
-//    public ApiResponse<Void> exportPermissions(
-//            @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-//            @RequestParam(value = "size", required = false, defaultValue = "20") Integer size,
-//            @RequestParam(value = "userInfo", required = false) User user,
-//            @RequestParam(value = "deviceInfo", required = false) DeviceInfo deviceInfo,
-//            @RequestParam(value = "permissionInfo", required = false) String permissionInfo
-//    )
-//    {
-//        return devicePermissionService.exportPermissions(page,size,user,deviceInfo,permissionInfo);
-//    }
+    //権限を追加します
+    @PostMapping
+    public ApiResponse<?> addPermissions(@RequestBody PermissionInsertDTO devicePermission) {
+        return ApiResponse.success("権限追加成功", devicePermissionService.addPermissions(devicePermission));
+    }
+
+    //権限をexcelファイル形式でエクスポートします
+    @GetMapping(value = "/export")
+    public void exportExcel(HttpServletResponse response) throws IOException {
+        // データベースからデータを取得する
+        List<DevicePermissionExcelVo> dataList = devicePermissionExcelService.getDataFromDatabase();
+        // Excelのエクスポート
+        devicePermissionExcelService.exportDevicePermissionList(dataList, response);
+    }
+
+    /**
+     * OASドキュメントで指定された削除インターフェース - パス: /permissions/{id}
+     */
+    @DeleteMapping("/{id}")
+    public ApiResponse<?> deletePermission(@PathVariable("id") String permissionId) {
+        deviceUsagePermissionService.deletePermissionById(permissionId);
+
+        return ApiResponse.success("権限削除成功", permissionId);
+    }
 }

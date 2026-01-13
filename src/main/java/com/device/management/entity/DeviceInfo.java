@@ -9,10 +9,10 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "device_info")
 @AllArgsConstructor
@@ -50,15 +50,13 @@ public class DeviceInfo {
     @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "user_id")
     private User user;
 
-    // 设备IP地址（一对多）
     @OneToMany(mappedBy = "device", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private List<DeviceIp> deviceIps;
+    private List<DeviceIp> deviceIp;
 
-    // 设备显示器（一对多）
     @OneToMany(mappedBy = "device", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private List<MonitorInfo> monitors;
+    private List<MonitorInfo> monitor;
 
     @Column(name = "remark", length = Integer.MAX_VALUE)
     private String remark;
@@ -91,7 +89,7 @@ public class DeviceInfo {
     @NotNull
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "create_time", nullable = false)
-    private Instant createTime;
+    private LocalDateTime createTime;
 
     @Size(max = 100)
     @Column(name = "creater", length = 100)
@@ -100,7 +98,7 @@ public class DeviceInfo {
     @NotNull
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "update_time", nullable = false)
-    private Instant updateTime;
+    private LocalDateTime updateTime;
 
     @Size(max = 100)
     @Column(name = "updater", length = 100)
