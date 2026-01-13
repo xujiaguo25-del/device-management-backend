@@ -1,7 +1,9 @@
 package com.device.management.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -13,6 +15,7 @@ import java.util.Set;
  */
 @Data
 @Entity
+@NoArgsConstructor
 @Table(name = "device_info") // table name
 public class Device {
     @Id
@@ -110,5 +113,6 @@ public class Device {
 
     @OneToMany(mappedBy = "device", fetch = FetchType.LAZY)
     private Set<Monitor> monitorList = new HashSet<>();
+
 
 }

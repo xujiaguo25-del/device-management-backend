@@ -1,5 +1,7 @@
 package com.device.management.dto;
 
+import com.device.management.entity.DeviceIp;
+import com.device.management.entity.Monitor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -33,12 +35,12 @@ public class DeviceFullDTO {
     private String updater; //更新者 update
 
     // monitor
-    private List<MonitorDTO> monitors; // モニターリスト
+    private List<Monitor> monitors; // モニターリスト
 //    private String monitorName; // 'モニター名
 //    private Integer monitorId; // モニター番号 update
 
     //ip
-    private List<DeviceIpDTO> ipAddresses; // IPアドレスリスト
+    private List<DeviceIp> ipAddresses; // IPアドレスリスト
 //    private String ipAddress; //IPアドレス
 //    private Integer ipId; //IP番号 update
 
