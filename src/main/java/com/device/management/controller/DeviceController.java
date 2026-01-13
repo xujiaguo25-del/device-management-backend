@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/devices")
 @RequiredArgsConstructor
@@ -43,6 +45,23 @@ public class DeviceController {
     ) {
         return ApiResponse.success(
                 deviceService.detail(deviceId)
+        );
+    }
+            // 全ての重複しない開発室名を取得
+    // アクセス例：GET /api/devices/devroom
+    @GetMapping("/devroom")
+    public ApiResponse<List<String>> getAllDevRooms() {
+        return ApiResponse.success(
+                deviceService.getAllDevRooms()
+        );
+    }
+
+    // 全ての重複しないプロジェクト名を取得
+    // アクセス例：GET /api/devices/project
+    @GetMapping("/project")
+    public ApiResponse<List<String>> getAllProjects() {
+        return ApiResponse.success(
+                deviceService.getAllProjects()
         );
     }
 }
