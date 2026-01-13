@@ -179,31 +179,31 @@ public class DevicePermissionService {
 
         // 域状態
         if (permission.getDomainStatus() != null) {
-            dto.setDomainStatus(permission.getDomainStatus().getSort() != null ?
-                    permission.getDomainStatus().getSort() : 0);
+            dto.setDomainStatus(Math.toIntExact(permission.getDomainStatus().getId() != null ?
+                    permission.getDomainStatus().getId() : 0));
         }
         dto.setDomainGroup(permission.getDomainGroup());
         dto.setNoDomainReason(permission.getNoDomainReason());
 
         // Smartitの状態
         if (permission.getSmartitStatus() != null) {
-            dto.setSmartitStatus(permission.getSmartitStatus().getSort() != null ?
-                    permission.getSmartitStatus().getSort() : 0);
+            dto.setSmartitStatus(Math.toIntExact(permission.getSmartitStatus().getId() != null ?
+                    permission.getSmartitStatus().getId() : 0));
         }
         dto.setNoSmartitReason(permission.getNoSmartitReason());
 
         // USBの状態
         if (permission.getUsbStatus() != null) {
-            dto.setUsbStatus(permission.getUsbStatus().getSort() != null ?
-                    permission.getUsbStatus().getSort() : 0);
+            dto.setUsbStatus(Math.toIntExact(permission.getUsbStatus().getId() != null ?
+                    permission.getUsbStatus().getId() : 0));
         }
         dto.setUsbReason(permission.getUsbReason());
         dto.setUsbExpireDate(permission.getUsbExpireDate());
 
         // ウイルス対策の状態
         if (permission.getAntivirusStatus() != null) {
-            dto.setAntivirusStatus(permission.getAntivirusStatus().getSort() != null ?
-                    permission.getAntivirusStatus().getSort() : 0);
+            dto.setAntivirusStatus(Math.toIntExact(permission.getAntivirusStatus().getId() != null ?
+                    permission.getAntivirusStatus().getId() : 0));
         }
         dto.setNoSymantecReason(permission.getNoSymantecReason());
         dto.setRemark(permission.getRemark());
