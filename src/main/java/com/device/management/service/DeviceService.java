@@ -200,21 +200,21 @@ public class DeviceService {
                 .project(device.getProject())
                 .devRoom(device.getDevRoom())
                 .remark(device.getRemark())
-                .selfConfirmDict(DictDTO.fromEntity(device.getSelfConfirmDict()))  // 修改这里
-                .osDict(DictDTO.fromEntity(device.getOsDict()))  // 修改这里
+                .selfConfirmDict(DictDTO.fromEntity(device.getSelfConfirmDict()))
+                .osDict(DictDTO.fromEntity(device.getOsDict()))
                 .osId(device.getOsDict() != null ? device.getOsDict().getDictId() : null)
-                .memoryDict(DictDTO.fromEntity(device.getMemoryDict()))  // 修改这里
+                .memoryDict(DictDTO.fromEntity(device.getMemoryDict()))
                 .memoryId(device.getMemoryDict() != null ? device.getMemoryDict().getDictId() : null)
-                .ssdDict(DictDTO.fromEntity(device.getSsdDict()))  // 修改这里
+                .ssdDict(DictDTO.fromEntity(device.getSsdDict()))
                 .ssdId(device.getSsdDict() != null ? device.getSsdDict().getDictId() : null)
-                .hddDict(DictDTO.fromEntity(device.getHddDict()))  // 修改这里
+                .hddDict(DictDTO.fromEntity(device.getHddDict()))
                 .hddId(device.getHddDict() != null ? device.getHddDict().getDictId() : null)
                 .createTime(device.getCreateTime())
                 .creater(device.getCreater())
                 .updateTime(device.getUpdateTime())
                 .updater(device.getUpdater())
-                .monitors(new ArrayList<>())  // 默认空列表，将在toFullDTOWithRelations中设置
-                .deviceIps(new ArrayList<>())  // 默认空列表，将在toFullDTOWithRelations中设置
+                .monitors(new ArrayList<>())
+                .deviceIps(new ArrayList<>())
                 .build();
 
         return dto;
