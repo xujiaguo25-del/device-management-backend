@@ -1,71 +1,52 @@
+
 package com.device.management.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 
-@Data
 @Entity
-@Builder
-@AllArgsConstructor
+@Table(name = "dict")
+@Data
 @NoArgsConstructor
-@Table(name = "dict", schema = "public")
+@AllArgsConstructor
+@Builder
 public class Dict {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "dict_id", nullable = false)
-    private Long id;
+    @Column(name = "dict_id")
+    private Long dictId; // 主キー
 
-    @Size(max = 50)
-    @NotNull
-    @Column(name = "dict_type_code", nullable = false, length = 50)
-    private String dictTypeCode;
+    @Column(name = "dict_type_code", nullable = false)
+    private String dictTypeCode; // 辞書タイプコード
 
-    @Size(max = 100)
-    @NotNull
-    @Column(name = "dict_type_name", nullable = false, length = 100)
-    private String dictTypeName;
+    @Column(name = "dict_type_name", nullable = false)
+    private String dictTypeName; // 辞書タイプ名
 
-    @Column(name = "dict_type_description", length = Integer.MAX_VALUE)
-    private String dictTypeDescription;
+    @Column(name = "dict_type_description")
+    private String dictTypeDescription; // 辞書タイプ説明
 
-    @Size(max = 100)
-    @NotNull
-    @Column(name = "dict_item_name", nullable = false, length = 100)
-    private String dictItemName;
+    @Column(name = "dict_item_name", nullable = false)
+    private String dictItemName; // 辞書項目名
 
-    @ColumnDefault("0")
-    @Column(name = "sort")
-    private Integer sort;
+    @Column(name = "sort", columnDefinition = "int4 default 1")
+    private Integer sort; // ソート番号
 
-    @NotNull
-    @ColumnDefault("1")
-    @Column(name = "is_enabled", nullable = false)
-    private Short isEnabled;
+    @Column(name = "is_enabled", nullable = false, columnDefinition = "int2 default 1")
+    private Short isEnabled; // 有効フラグ
 
-    @NotNull
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "create_time", nullable = false)
-    private LocalDateTime createTime;
+    @Column(name = "create_time", nullable = false, columnDefinition = "timestamp(6) default CURRENT_TIMESTAMP")
+    private LocalDateTime createTime; // 作成時間
 
-    @Size(max = 100)
-    @Column(name = "creater", length = 100)
-    private String creater;
+    @Column(name = "creater")
+    private String creater; // 作成者
 
-    @NotNull
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "update_time", nullable = false)
-    private LocalDateTime updateTime;
+    @Column(name = "update_time", nullable = false, columnDefinition = "timestamp(6) default CURRENT_TIMESTAMP")
+    private LocalDateTime updateTime; // 更新時間
 
-    @Size(max = 100)
-    @Column(name = "updater", length = 100)
-    private String updater;
+    @Column(name = "updater")
+    private String updater; // 更新者
 }

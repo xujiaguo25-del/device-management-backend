@@ -1,55 +1,41 @@
 package com.device.management.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
+import lombok.*;
 import java.time.LocalDateTime;
 
-/**
- * ユーザーエンティティクラス
- */
+@Entity
+@Table(name = "users")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
 @Builder
-@Table(name = "users", schema = "public")
 public class User {
-
     @Id
-    @Column(name = "user_id", length = 50, nullable = false)
-    private String userId;
+    @Column(name = "user_id")
+    private String userId; // 従業員番号
 
-    @Column(name = "dept_id", length = 50, nullable = false)
-    private String deptId;
+    @Column(name = "dept_id")
+    private String deptId; // 部門
 
-    @Column(name = "name", length = 100, nullable = false)
-    private String name;
+    @Column(name = "name")
+    private String name; // 氏名
 
-    @ManyToOne
-    @JoinColumn(name = "user_type_id", referencedColumnName = "dict_id")
-    private Dict userType;
+    @Column(name = "user_type_id")
+    private Long userTypeId; // ユーザータイプID（dictテーブルと関連）
 
-    @Column(name = "password", length = 255, nullable = false)
-    private String password;
+    @Column(name = "password")
+    private String password; // 暗号化後のパスワード
 
-    @CreationTimestamp
-    @Column(name = "create_time", updatable = false)
-    private LocalDateTime createTime;
+    @Column(name = "create_time")
+    private LocalDateTime createTime; // 作成時間
 
-    @Column(name = "creater", length = 100)
-    private String creater;
+    @Column(name = "creater")
+    private String creater; // 作成者
 
-    @UpdateTimestamp
     @Column(name = "update_time")
-    private LocalDateTime updateTime;
+    private LocalDateTime updateTime; // 更新時間
 
-    @Column(name = "updater", length = 100)
-    private String updater;
-
+    @Column(name = "updater")
+    private String updater; // 更新者
 }

@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
+/**
+ * 認証例外
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

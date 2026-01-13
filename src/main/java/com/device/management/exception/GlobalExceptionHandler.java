@@ -4,22 +4,20 @@ import com.device.management.dto.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.NoHandlerFoundException;
 
 /**
- * グローバル例外処理
+ * グローバル例外ハンドラー：全てのController層でスローされる例外を一括処理
  */
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     /**
-     * 処理リソースに例外が見つかりません
+     * リソースが見つからない例外を処理
      */
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<?>> handleResourceNotFoundException(
@@ -30,19 +28,19 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 処理パラメータ検証例外
+     * パラメータ検証例外を処理
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<?>> handleValidationException(
             MethodArgumentNotValidException ex, WebRequest request) {
         String message = ex.getBindingResult().getFieldError().getDefaultMessage();
         log.error("Validation error: {}", message);
-        ApiResponse<?> response = ApiResponse.error(400, "参数验证失败: " + message);
+        ApiResponse<?> response = ApiResponse.error(400, "パラメータ検証に失敗しました: " + message);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     /**
-     * 处理认证失败异常
+     * 認証失敗例外を処理
      */
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ApiResponse<?>> handleUnauthorizedException(
@@ -52,27 +50,28 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
-
     /**
-    * 認証失敗例外の処理
-    * */
-    @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<ApiResponse<String>> handleBusinessException(
-            BusinessException ex, WebRequest request) {
-        log.error("Business error: {}", ex.getMessage());
-        ApiResponse<String> response = ApiResponse.error(ex.getCode(), ex.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+     * 復号化例外を処理
+     */
+    @ExceptionHandler(DecryptionException.class)
+    public ResponseEntity<ApiResponse<?>> handleDecryptionException(
+            DecryptionException ex, WebRequest request) {
+        log.warn("復号に失敗しました: {}", ex.getMessage());
+        int code = ex.getCode() != 0 ? ex.getCode() : 400;
+        String message = ex.getMessage() != null ? ex.getMessage() : "パスワードフォーマットが無効です";
+
+        ApiResponse<?> response = ApiResponse.error(code, message);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
-
     /**
-     * 他のすべての例外の処理
+     * その他の全ての例外を処理
      */
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(AllException.class)
     public ResponseEntity<ApiResponse<?>> handleGlobalException(
             Exception ex, WebRequest request) {
         log.error("Unexpected error: {}", ex.getMessage(), ex);
-        ApiResponse<?> response = ApiResponse.error(500, "サーバ内部エラー");
+        ApiResponse<?> response = ApiResponse.error(500, "サーバー内部エラー");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }
