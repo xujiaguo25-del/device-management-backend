@@ -66,12 +66,6 @@ public class SamplingCheckService {
         samplingCheckRepository.deleteById(samplingId);
     }
 
-    //レコードを削除（レコードが存在しなくてもエラーは出ません）
-    public void deleteById(String id) {
-        log.info("delete sampling check by id {}", id);
-        samplingCheckRepository.deleteById(id);
-    }
-
 
     //すべてのレコードを問い合せます（改ページしない）
     public List<SamplingCheckDTO> findAll() {

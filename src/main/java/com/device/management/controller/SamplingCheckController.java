@@ -1,8 +1,6 @@
 package com.device.management.controller;
 
 import com.device.management.dto.ApiResponse;
-import com.device.management.entity.SamplingCheck;
-import com.device.management.mapper.SamplingCheckMapper;
 import com.device.management.service.SamplingCheckService;
 import com.device.management.dto.SamplingCheckDTO;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,13 +14,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -87,7 +82,6 @@ public class SamplingCheckController {
         sheet.addMergedRegion(new CellRangeAddress(0, 1, 3, 3));
         sheet.addMergedRegion(new CellRangeAddress(0, 0, 4, 9));
         sheet.addMergedRegion(new CellRangeAddress(0, 1, 10, 10));
-        log.warn("Writed Table Head ");
     }
 
     //データベースレコードをテーブルに書き込む
@@ -119,7 +113,6 @@ public class SamplingCheckController {
             Optional<Boolean> op6 = Optional.ofNullable(samplingCheckDTO.getUsbInterface());
             if(op6.orElse(false)) row.createCell(9).setCellValue("○");
         }
-        log.warn("Writed Table Content ");
     }
 
 
