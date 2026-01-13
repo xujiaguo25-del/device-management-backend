@@ -890,16 +890,12 @@ public class DeviceService {
                 .userInfo(device.getUser() != null ? UserDto.builder()
                         .userId(device.getUser().getUserId())
                         .deptId(device.getUser().getDeptId())
-<<<<<<< HEAD
-                        .userName(device.getUser().getUserName())
-                        .userType(DictMapper.toDTO(device.getUser().getUserTypeDict()))
+                        .name(device.getUser().getName())
+                        .userTypeName(device.getUser().getUserType())
                         .createTime(device.getUser().getCreateTime())
                         .creater(device.getUser().getCreater())
                         .updateTime(device.getUser().getUpdateTime())
                         .updater(device.getUser().getUpdater())
-=======
-                        .name(device.getUser().getName())
->>>>>>> 65402563a80c61bad265496e8d9ce7e714206c6d
                         .build() : null)
                 .deviceModel(device.getDeviceModel())
                 .computerName(device.getComputerName())
