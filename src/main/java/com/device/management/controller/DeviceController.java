@@ -14,8 +14,10 @@ public class DeviceController {
 
     private final DeviceService deviceService;
 
-    // デバイス一覧取得（ページングとフィルタリング対応）
-    // アクセス例：GET /api/devices?userId=JS0105&page=1&size=10
+    /**
+     * デバイス一覧取得（ページングとフィルタリング対応）
+     * アクセス例：GET /api/devices?userId=JS0105&page=1&size=10
+     */
     @GetMapping
     public ApiResponse<Page<DeviceFullDTO>> list(
             @RequestParam(required = false) String deviceName,
@@ -23,19 +25,21 @@ public class DeviceController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return ApiResponse.success(
-                deviceService.list(deviceName, userId, page, size)
-        );
+        // GlobalExceptionHandler
+        Page<DeviceFullDTO> result = deviceService.list(deviceName, userId, page, size);
+        return ApiResponse.success(result);
     }
 
-    // デバイス詳細情報取得
-    // アクセス例：GET /api/devices/deviceId
+    /**
+     * デバイス詳細情報取得
+     * アクセス例：GET /api/devices/deviceId
+     */
     @GetMapping("/{deviceId}")
     public ApiResponse<DeviceFullDTO> detail(
             @PathVariable String deviceId
     ) {
-        return ApiResponse.success(
-                deviceService.detail(deviceId)
-        );
+        //GlobalExceptionHandler
+        DeviceFullDTO result = deviceService.detail(deviceId);
+        return ApiResponse.success(result);
     }
 }
