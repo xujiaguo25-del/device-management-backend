@@ -1,8 +1,10 @@
 package com.device.management.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -12,46 +14,38 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Dict {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "dict_id", columnDefinition = "bigint")
-    private Long dictId; // 辞書ID(プライマリキー)
+    @Column(name = "dict_id")
+    private Long dictId; // 主キー
 
-    @Column(name = "dict_type_code", nullable = false, length = 60)
+    @Column(name = "dict_type_code", nullable = false)
     private String dictTypeCode; // 辞書タイプコード
 
-    @Column(name = "dict_type_name", nullable = false, length = 100)
+    @Column(name = "dict_type_name", nullable = false)
     private String dictTypeName; // 辞書タイプ名
 
-    @Column(name = "dict_type_description", columnDefinition = "text")
+    @Column(name = "dict_type_description")
     private String dictTypeDescription; // 辞書タイプ説明
 
-    @Column(name = "dict_item_name", nullable = false, length = 100)
+    @Column(name = "dict_item_name", nullable = false)
     private String dictItemName; // 辞書項目名
 
-    @Column(name = "sort")
+    @Column(name = "sort", columnDefinition = "int4 default 1")
     private Integer sort; // ソート番号
 
-    @Column(name = "is_enabled", nullable = false, columnDefinition = "smallint")
-    private Short isEnabled; // 有効フラグ（0=無効、1=有効）
+    @Column(name = "is_enabled", nullable = false, columnDefinition = "int2 default 1")
+    private Short isEnabled; // 有効フラグ
 
-    @Column(name = "create_time", nullable = false, columnDefinition = "timestamp")
-    private LocalDateTime createTime; // 作成日時
+    @Column(name = "create_time", nullable = false, columnDefinition = "timestamp(6) default CURRENT_TIMESTAMP")
+    private LocalDateTime createTime; // 作成時間
 
-    @Column(name = "creater", length = 100)
+    @Column(name = "creater")
     private String creater; // 作成者
 
-    @Column(name = "update_time", nullable = false, columnDefinition = "timestamp")
-    private LocalDateTime updateTime; // 更新日時
+    @Column(name = "update_time", nullable = false, columnDefinition = "timestamp(6) default CURRENT_TIMESTAMP")
+    private LocalDateTime updateTime; // 更新時間
 
-    @Column(name = "updater", length = 100)
+    @Column(name = "updater")
     private String updater; // 更新者
-
-
-    //フル表示名を取得する（種別＋項目名）
-    public String getFullDisplayName() {
-        return dictTypeName + " - " + dictItemName;
-    }
 }

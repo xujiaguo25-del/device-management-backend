@@ -3,8 +3,6 @@ package com.device.management.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -40,21 +38,4 @@ public class User {
 
     @Column(name = "updater")
     private String updater; // 更新者
-
-    // ============= 関連関係 =============
-
-    // ユーザータイプ（辞書関連）
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_type_id", referencedColumnName = "dict_id",insertable = false, updatable = false)
-    private Dict userTypeDict; // ユーザタイプ（辞書項目：USER_TYPE 関連）
-
-    // ユーザーが所有するデバイス（1対多）
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private List<Device> devices = new ArrayList<>();
-
-
-
 }

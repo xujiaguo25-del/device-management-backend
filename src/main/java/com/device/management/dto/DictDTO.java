@@ -65,7 +65,6 @@ public class DictDTO {
                 .creater(dict.getCreater())
                 .updateTime(dict.getUpdateTime())
                 .updater(dict.getUpdater())
-                .fullDisplayName(dict.getFullDisplayName())
                 .build();
     }
 

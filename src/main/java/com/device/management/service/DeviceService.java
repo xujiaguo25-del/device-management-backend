@@ -300,6 +300,7 @@ public class DeviceService {
      * デバイス削除
      * @param deviceId デバイスID
      */
+    @Transactional
     public void deleteDevice(String deviceId) {
         log.info("Delete device with id: {}", deviceId);
 
@@ -307,6 +308,18 @@ public class DeviceService {
                 .orElseThrow(() -> new RuntimeException("Device not found, DeviceId: " + deviceId));
 
         samplingCheckRepository.deleteByDeviceId(deviceId);
+
+
+        List<Monitor> monitors = monitorRepository.findByDeviceId(deviceId);
+        if (!CollectionUtils.isEmpty(monitors)) {
+            monitorRepository.deleteAll(monitors);
+        }
+
+
+        List<DeviceIp> deviceIps = deviceIpRepository.findByDeviceId(deviceId);
+        if (!CollectionUtils.isEmpty(deviceIps)) {
+            deviceIpRepository.deleteAll(deviceIps);
+        }
 
         deviceRepository.delete(device);
 
@@ -318,6 +331,7 @@ public class DeviceService {
      * デバイス情報をExcel形式でエクスポート
      * @param response HTTPレスポンス
      */
+    @Transactional
     public void exportDevicesToExcel(HttpServletResponse response) {
 
         List<Device> devices = deviceRepository.findAll();
@@ -518,6 +532,7 @@ public class DeviceService {
             }
         }
     }
+
 
     /**
      * デバイス一覧取得（ページングとフィルタリング対応）

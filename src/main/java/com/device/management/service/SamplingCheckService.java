@@ -1,7 +1,7 @@
 package com.device.management.service;
 
-import com.device.management.entity.SamplingCheck;
 import com.device.management.dto.SamplingCheckDTO;
+import com.device.management.entity.SamplingCheck;
 import com.device.management.mapper.SamplingCheckMapper;
 import com.device.management.repository.SamplingCheckRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -103,6 +103,5 @@ public class SamplingCheckService {
         log.info("delete by device id {}", deviceId);
         samplingCheckRepository.deleteByDeviceId(deviceId);
     }
-
 
 }

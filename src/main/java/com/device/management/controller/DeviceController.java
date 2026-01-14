@@ -47,7 +47,7 @@ public class DeviceController {
     public ResponseEntity<Void> deleteDevice(@PathVariable String id) {
         log.info("删除设备，ID: {}", id);
 
-/*        deviceService.deleteDevice(id);*/
+        deviceService.deleteDevice(id);
 
         return ResponseEntity.noContent().build();
     }
