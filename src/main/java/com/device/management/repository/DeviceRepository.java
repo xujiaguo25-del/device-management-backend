@@ -1,6 +1,8 @@
 package com.device.management.repository;
 
 import com.device.management.entity.Device;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,9 +23,10 @@ public interface DeviceRepository extends JpaRepository<Device, String> {
             "LEFT JOIN FETCH d.selfConfirmDict " +
             "WHERE (:deviceName IS NULL OR d.computerName LIKE %:deviceName%) " +
             "AND (:userId IS NULL OR d.userId = :userId)")
-    List<Device> findByConditions(
+    Page<Device> findByConditionsWithPagination(
             @Param("deviceName") String deviceName,
-            @Param("userId") String userId
+            @Param("userId") String userId,
+            Pageable pageable
     );
 
     // 条件検索の総レコード数

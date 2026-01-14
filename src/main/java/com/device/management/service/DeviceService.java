@@ -26,7 +26,7 @@ public class DeviceService {
     private final DeviceRepository deviceRepository;
 
     /**
-     * デバイス一覧取得（ページングとフィルタリング対応）
+     * デバイス一覧取得（ページングとフィルタリング対応
      */
     @Transactional(readOnly = true)
     public Page<DeviceFullDTO> list(String deviceName, String userId, int page, int size) {
@@ -40,51 +40,41 @@ public class DeviceService {
             }
 
             // ページ番号調整：1始まりから0始まりに変換
-            page = page - 1; // page >= 1 已验证
+            page = page - 1;
             Pageable pageable = PageRequest.of(page, size, Sort.by("deviceId").ascending());
 
-            // 条件に合致するデバイス一覧を取得
-            List<Device> devices = deviceRepository.findByConditions(deviceName, userId);
-            
-            // 総レコード数を取得
-            Long totalCount = deviceRepository.countByConditions(deviceName, userId);
-            
+            Page<Device> devicePage = deviceRepository.findByConditionsWithPagination(
+                    deviceName, userId, pageable);
+
             // デバイスが見つからない場合の処理
-            if (devices.isEmpty()) {
-                // 検索条件に基づいてメッセージを構築
+            if (!devicePage.hasContent()) {
                 String searchCondition = buildSearchConditionMessage(deviceName, userId);
                 
-                // 検索条件がある場合は404エラーを返す
                 if (StringUtils.hasText(deviceName) || StringUtils.hasText(userId)) {
                     log.warn("指定された条件に一致するデバイスが見つかりません: {}", searchCondition);
                     throw new ResourceNotFoundException("指定された条件に一致するデバイスが見つかりません: " + searchCondition);
                 } else {
-                    // 検索条件がない場合は空のページを返す（正常応答）
                     log.info("デバイスが登録されていません");
                     return Page.empty(pageable);
                 }
             }
 
-            // ページング処理
-            int start = (int) pageable.getOffset();
-            int end = Math.min((start + pageable.getPageSize()), devices.size());
-            List<Device> pagedDevices = devices.subList(start, end);
-
-            // 関連データを一括ロード
-            List<String> deviceIds = pagedDevices.stream()
+            // 获取当前页的设备ID列表
+            List<String> deviceIds = devicePage.getContent().stream()
                     .map(d -> d.getDeviceId().trim())
                     .collect(Collectors.toList());
 
+            // 関連データを一括ロード
             Map<String, List<DeviceIp>> ipMap = getDeviceIpMap(deviceIds);
             Map<String, List<Monitor>> monitorMap = getDeviceMonitorMap(deviceIds);
 
             // DTOに変換
-            List<DeviceFullDTO> dtoList = pagedDevices.stream()
+            List<DeviceFullDTO> dtoList = devicePage.getContent().stream()
                     .map(device -> toFullDTOWithRelations(device, ipMap, monitorMap))
                     .collect(Collectors.toList());
 
-            log.debug("デバイス一覧を取得しました: 件数={}, 総数={}", dtoList.size(), totalCount);
-            return new PageImpl<>(dtoList, pageable, totalCount);
+            log.debug("デバイス一覧を取得しました: 件数={}, 総数={}", dtoList.size(), devicePage.getTotalElements());
+            return new PageImpl<>(dtoList, pageable, devicePage.getTotalElements());
             
         } catch (AllException | ResourceNotFoundException e) {
             // これらの例外は直接向上抛出
