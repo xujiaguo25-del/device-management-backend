@@ -1,3 +1,4 @@
+
 package com.device.management.entity;
 
 import jakarta.persistence.*;
