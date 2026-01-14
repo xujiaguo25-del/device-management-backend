@@ -7,6 +7,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * デバイス管理コントローラー
+ * 
+ * エンドポイント:
+ * - GET /devices: デバイス一覧取得（ページングとフィルタリング対応）
+ * - GET /devices/{deviceId}: デバイス詳細情報取得
+ */
 @RestController
 @RequestMapping("/devices")
 @RequiredArgsConstructor
@@ -15,7 +22,7 @@ public class DeviceController {
     private final DeviceService deviceService;
 
     /**
-     * デバイス一覧取得（ページングとフィルタリング対応）
+     * デバイス一覧取得（ページングとフィルタリング対応） 
      * アクセス例：GET /api/devices?userId=JS0105&page=1&size=10
      */
     @GetMapping
@@ -25,7 +32,7 @@ public class DeviceController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        // GlobalExceptionHandler
+        // Serviceを呼び出し、例外はGlobalExceptionHandlerが自動的に処理
         Page<DeviceFullDTO> result = deviceService.list(deviceName, userId, page, size);
         return ApiResponse.success(result);
     }
@@ -38,7 +45,7 @@ public class DeviceController {
     public ApiResponse<DeviceFullDTO> detail(
             @PathVariable String deviceId
     ) {
-        //GlobalExceptionHandler
+        // Serviceを呼び出し、例外はGlobalExceptionHandlerが自動的に処理
         DeviceFullDTO result = deviceService.detail(deviceId);
         return ApiResponse.success(result);
     }

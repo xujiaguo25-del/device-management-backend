@@ -31,7 +31,7 @@ public class DeviceService {
     @Transactional(readOnly = true)
     public Page<DeviceFullDTO> list(String deviceName, String userId, int page, int size) {
         try {
-            // 参数验证
+            // パラメータ検証
             if (page < 1) {
                 throw new AllException(400, "ページ番号は1以上である必要があります");
             }
@@ -49,9 +49,20 @@ public class DeviceService {
             // 総レコード数を取得
             Long totalCount = deviceRepository.countByConditions(deviceName, userId);
             
+            // デバイスが見つからない場合の処理
             if (devices.isEmpty()) {
-                log.info("条件に一致するデバイスが見つかりません: deviceName={}, userId={}", deviceName, userId);
-                return Page.empty(pageable);
+                // 検索条件に基づいてメッセージを構築
+                String searchCondition = buildSearchConditionMessage(deviceName, userId);
+                
+                // 検索条件がある場合は404エラーを返す
+                if (StringUtils.hasText(deviceName) || StringUtils.hasText(userId)) {
+                    log.warn("指定された条件に一致するデバイスが見つかりません: {}", searchCondition);
+                    throw new ResourceNotFoundException("指定された条件に一致するデバイスが見つかりません: " + searchCondition);
+                } else {
+                    // 検索条件がない場合は空のページを返す（正常応答）
+                    log.info("デバイスが登録されていません");
+                    return Page.empty(pageable);
+                }
             }
 
             // ページング処理
@@ -75,8 +86,8 @@ public class DeviceService {
             log.debug("デバイス一覧を取得しました: 件数={}, 総数={}", dtoList.size(), totalCount);
             return new PageImpl<>(dtoList, pageable, totalCount);
             
-        } catch (AllException e) {
-            // AllException 直接向上抛出
+        } catch (AllException | ResourceNotFoundException e) {
+            // これらの例外は直接向上抛出
             throw e;
         } catch (Exception e) {
             log.error("デバイス一覧取得中に予期せぬエラーが発生しました", e);
@@ -85,12 +96,26 @@ public class DeviceService {
     }
 
     /**
+     * 検索条件メッセージを構築
+     */
+    private String buildSearchConditionMessage(String deviceName, String userId) {
+        List<String> conditions = new ArrayList<>();
+        if (StringUtils.hasText(deviceName)) {
+            conditions.add("デバイス名: " + deviceName);
+        }
+        if (StringUtils.hasText(userId)) {
+            conditions.add("ユーザーID: " + userId);
+        }
+        return conditions.isEmpty() ? "条件なし" : String.join(", ", conditions);
+    }
+
+    /**
      * デバイス詳細情報取得
      */
     @Transactional(readOnly = true)
     public DeviceFullDTO detail(String deviceId) {
         try {
-            // 参数验证
+            // パラメータ検証
             if (!StringUtils.hasText(deviceId)) {
                 log.warn("デバイスIDが空です");
                 throw new AllException(400, "デバイスIDは必須です");
@@ -99,6 +124,7 @@ public class DeviceService {
             String trimmedDeviceId = deviceId.trim();
             Device device = deviceRepository.findByDeviceIdWithDicts(trimmedDeviceId);
             
+            // デバイスが見つからない場合はResourceNotFoundExceptionをスロー
             if (device == null) {
                 log.warn("デバイスが見つかりません: deviceId={}", trimmedDeviceId);
                 throw new ResourceNotFoundException("デバイスが見つかりません: " + trimmedDeviceId);
@@ -115,7 +141,7 @@ public class DeviceService {
             return result;
             
         } catch (ResourceNotFoundException | AllException e) {
-            // 这些异常直接向上抛出
+            // これらの例外は直接向上抛出
             throw e;
         } catch (Exception e) {
             log.error("デバイス詳細取得中に予期せぬエラーが発生しました: deviceId={}", deviceId, e);
