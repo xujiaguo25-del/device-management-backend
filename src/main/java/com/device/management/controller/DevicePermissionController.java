@@ -79,11 +79,9 @@ public class DevicePermissionController {
      * 4. APIレスポンスとして統一された ApiResponse にパッケージ化して返す
      */
     @GetMapping("/{permissionId}")
-    public ApiResponse<PermissionUpdateDTO> getPermissionDetail(@PathVariable String permissionId) {
+    public ApiResponse<?> getPermissionDetail(@PathVariable String permissionId) {
         //サービス層を呼び出してデータを取得する
-        PermissionUpdateDTO dto = devicePermissionService.findPermissionDetail(permissionId);
-        //統一されたレスポンス形式をカプセル化して返す
-        return ApiResponse.success("検索に成功しました", dto);
+        return  devicePermissionService.findPermissionDetail(permissionId);
     }
 
     /**
@@ -96,13 +94,11 @@ public class DevicePermissionController {
      * 4. 操作結果を返す
      */
     @PutMapping("/{permissionId}")
-    public ApiResponse<Void> updatePermission(
+    public ApiResponse<?> updatePermission(
             //更新する権限ID
             @PathVariable String permissionId,
             @RequestBody PermissionUpdateDTO updateDTO) {
 
-        devicePermissionService.updatePermissionByFields(permissionId, updateDTO);
-        //成功レスポンスを返す
-        return ApiResponse.success("更新に成功しました");
+        return devicePermissionService.updatePermissionByFields(permissionId, updateDTO);
     }
 }
