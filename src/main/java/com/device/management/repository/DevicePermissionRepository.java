@@ -1,7 +1,7 @@
 package com.device.management.repository;
 
 import com.device.management.dto.DevicePermissionExcelVo;
-import com.device.management.entity.DeviceInfo;
+import com.device.management.entity.Device;
 import com.device.management.entity.DevicePermission;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -14,14 +14,14 @@ import java.util.Optional;
 
 @Repository
 public interface DevicePermissionRepository extends JpaRepository<DevicePermission, String>, JpaSpecificationExecutor<DevicePermission>, QueryByExampleExecutor<DevicePermission> {
-    DevicePermission findDevicePermissionsByDevice(DeviceInfo device);
+    DevicePermission findDevicePermissionsByDevice(Device device);
 
-    @Query(value = "SELECT NEW com.device.management.dto.DevicePermissionExcelVo(" + "1L," + "d.deviceId," + "(SELECT STRING_AGG(m.monitorName, CHR(10)) FROM MonitorInfo m WHERE m.device.deviceId = d.deviceId)," + "d.computerName," + " (SELECT STRING_AGG(ip.ipAddress, CHR(10)) FROM DeviceIp ip where ip.device.deviceId = d.deviceId)," + "u.userId," + "u.name," + "u.deptId," + "d.loginUsername," + "dp.domainStatus," + "dp.domainGroup," + "dp.noDomainReason," + "dp.smartitStatus," + "dp.noSmartitReason," + "dp.usbStatus," + "dp.usbReason," + "dp.usbExpireDate," + "dp.antivirusStatus," + "dp.noSymantecReason," + "dp.remark" + ")" + "from  User u right join DeviceInfo d on u.userId = d.user.userId " + "left  join DevicePermission dp on   d.deviceId = dp.device.deviceId")
+    @Query(value = "SELECT NEW com.device.management.dto.DevicePermissionExcelVo(" + "1L," + "d.deviceId," + "(SELECT STRING_AGG(m.monitorName, CHR(10)) FROM MonitorInfo m WHERE m.device.deviceId = d.deviceId)," + "d.computerName," + " (SELECT STRING_AGG(ip.ipAddress, CHR(10)) FROM DeviceIp ip where ip.device.deviceId = d.deviceId)," + "u.userId," + "u.name," + "u.deptId," + "d.loginUsername," + "dp.domainStatus," + "dp.domainGroup," + "dp.noDomainReason," + "dp.smartitStatus," + "dp.noSmartitReason," + "dp.usbStatus," + "dp.usbReason," + "dp.usbExpireDate," + "dp.antivirusStatus," + "dp.noSymantecReason," + "dp.remark" + ")" + "from  User u right join Device d on u.userId = d.user.userId " + "left  join DevicePermission dp on   d.deviceId = dp.device.deviceId")
     //エクセルで必要な情報を検索して導き出します
     List<DevicePermissionExcelVo> findAllDevicePermissionExcel();
 
     @Query(
-        "SELECT dp FROM DevicePermission dp LEFT JOIN DeviceInfo d on dp.device.deviceId=d.deviceId LEFT JOIN User u on u .userId = d.user.userId  WHERE dp.permissionId = :permissionId and u.userId = :userId"
+        "SELECT dp FROM DevicePermission dp LEFT JOIN Device d on dp.device.deviceId=d.deviceId LEFT JOIN User u on u .userId = d.user.userId  WHERE dp.permissionId = :permissionId and u.userId = :userId"
     )
     Optional<DevicePermission> findDevicePermissionByPermissionIdAndUserId(String permissionId, String userId);
 
