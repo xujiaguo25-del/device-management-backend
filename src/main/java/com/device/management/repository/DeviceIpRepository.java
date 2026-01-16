@@ -4,6 +4,15 @@ import com.device.management.entity.DeviceIp;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
+
 @Repository
-public interface DeviceIpRepository extends JpaRepository<DeviceIp, Integer> {
+public interface DeviceIpRepository extends JpaRepository<DeviceIp, String>{
+    Boolean existsByIpAddress(String ipAddress);
+
+    DeviceIp findByIpAddress(String ipAddress);
+    List<DeviceIp> findByDeviceId(String DeviceId);
+    DeviceIp findByIpId(Integer ipId);
+
 }

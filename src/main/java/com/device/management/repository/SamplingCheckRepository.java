@@ -16,4 +16,6 @@ public interface SamplingCheckRepository  extends JpaRepository<SamplingCheck, S
     Page<SamplingCheck> findByDeviceId(String deviceId, Pageable pageable);
 
     Page<SamplingCheck> findByUserId(String userId, Pageable pageable);
+
+    void deleteByDeviceId(String deviceId);
 }
