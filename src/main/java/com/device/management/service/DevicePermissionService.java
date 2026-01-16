@@ -178,16 +178,22 @@ public class DevicePermissionService {
             dto.setDeptId(device.getUser().getDeptId());
 
             // 複数のIPアドレスを処理する - deviceIpsリストからすべてのIPアドレスを抽出する
-            if (device.getDeviceIp() != null && !device.getDeviceIp().isEmpty()) {
-                List<String> ipAddresses = device.getDeviceIp().stream().map(deviceIp -> deviceIp.getIpAddress()).filter(ip -> ip != null && !ip.trim().isEmpty()).collect(Collectors.toList());
+            if (device.getDeviceIps() != null && !device.getDeviceIps().isEmpty()) {
+                List<String> ipAddresses = device.getDeviceIps().stream()
+                        .map(deviceIp -> deviceIp.getIpAddress())
+                        .filter(ip -> ip != null && !ip.trim().isEmpty())
+                        .collect(Collectors.toList());
                 dto.setIpAddress(ipAddresses);
             } else {
                 dto.setIpAddress(new ArrayList<>()); // IPアドレスがない場合は、空のリストを返します
             }
 
-            // モニター ID の処理 - monitors リストからすべてのモニター ID を抽出
-            if (device.getMonitor() != null && !device.getMonitor().isEmpty()) {
-                List<@Size(max = 100) String> monitorNames = device.getMonitor().stream().map(monitorInfo -> monitorInfo.getMonitorName()).filter(id -> id != null).collect(Collectors.toList());
+            // モニター名の処理 - monitorInfosリストからすべてのモニター名を抽出
+            if (device.getMonitorInfos() != null && !device.getMonitorInfos().isEmpty()) {
+                List<@Size(max = 100) String> monitorNames = device.getMonitorInfos().stream()
+                        .map(monitor -> monitor.getMonitorName())
+                        .filter(name -> name != null && !name.trim().isEmpty())
+                        .collect(Collectors.toList());
                 dto.setMonitorNames(monitorNames);
             } else {
                 dto.setMonitorNames(new ArrayList<>()); // モニターがない場合は、空のリストを返します
