@@ -98,5 +98,10 @@ public class SamplingCheckService {
 
         return samplingCheckMapper.convertToDto(samplingChecks);                                         //SamplingCheckMapperを使用してentityをdtoに変換
     }
-}
 
+    public void deleteByDeviceId(String deviceId) {
+        log.info("delete by device id {}", deviceId);
+        samplingCheckRepository.deleteByDeviceId(deviceId);
+    }
+
+}
