@@ -113,7 +113,7 @@ public class SamplingCheckService {
         Sort sort = Sort.by( Sort.Order.asc("name"),  Sort.Order.desc("updateTime") );
         Pageable pageable = PageRequest.of(page - 1, size, sort);                //ページング要件の準備
         Page<SamplingCheck> samplingChecks;
-        
+
         if (deviceId != null && !deviceId.isEmpty() && userId != null && !userId.isEmpty()) {
             samplingChecks = samplingCheckRepository.findByDeviceIdAndUserId(deviceId, userId, pageable);  //デバイスIDとユーザIDで調べる
         } else if (deviceId != null && !deviceId.isEmpty()) {
@@ -129,7 +129,7 @@ public class SamplingCheckService {
         List<SamplingCheckDTO> contentWithMonitor = dtoPage.getContent().stream()
                 .peek(this::addMonitorInfo)
                 .collect(Collectors.toList());
-        
+
         return new PageImpl<>(contentWithMonitor, pageable, dtoPage.getTotalElements());
     }
 
@@ -266,11 +266,6 @@ public class SamplingCheckService {
             sheet.setColumnWidth(i, 3000);
         }
         sheet.setColumnWidth(10, 10000);
-    }
-
-    public void deleteByDeviceId(String deviceId) {
-        log.info("delete by device id {}", deviceId);
-        samplingCheckRepository.deleteByDeviceId(deviceId);
     }
 
 }

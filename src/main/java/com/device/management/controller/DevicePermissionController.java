@@ -1,7 +1,7 @@
 package com.device.management.controller;
 
 import com.device.management.dto.*;
-import com.device.management.entity.DeviceInfo;
+import com.device.management.entity.Device;
 import com.device.management.entity.User;
 import com.device.management.service.DevicePermissionExcelService;
 import com.device.management.service.DevicePermissionService;
@@ -36,9 +36,9 @@ public class DevicePermissionController {
             user.setUserId(userId);
         }
 
-        DeviceInfo deviceInfo = null;
+        Device deviceInfo = null;
         if (StringUtils.hasText(deviceId)) {
-            deviceInfo = new DeviceInfo();
+            deviceInfo = new Device();
             deviceInfo.setDeviceId(deviceId);
         }
 
