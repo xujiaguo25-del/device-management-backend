@@ -8,7 +8,6 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Getter
@@ -27,7 +26,7 @@ public class MonitorInfo {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "device_id", nullable = false)
-    private DeviceInfo device;
+    private Device device;
 
     @Size(max = 100)
     @Column(name = "monitor_name", length = 100)
