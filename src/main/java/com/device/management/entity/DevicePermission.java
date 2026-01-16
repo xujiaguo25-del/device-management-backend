@@ -1,7 +1,10 @@
 package com.device.management.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -11,6 +14,9 @@ import java.time.LocalDateTime;
  */
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "device_permission", schema = "public")
 public class DevicePermission {
 
@@ -90,10 +96,4 @@ public class DevicePermission {
     @Column(name = "antivirus_status_id")
     private Long antivirusStatusId;// アンチウイルス状態ID（辞書項目：ANTIVIRUS_STATUS関連）
 
-    // ============= 构造函数 =============
-
-    public DevicePermission() {
-        this.createTime = LocalDateTime.now();
-        this.updateTime = LocalDateTime.now();
-    }
 }

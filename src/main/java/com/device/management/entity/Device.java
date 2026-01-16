@@ -1,14 +1,18 @@
 package com.device.management.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * 機器オブジェクト
@@ -16,35 +20,43 @@ import java.util.Set;
 @Data
 @Entity
 @NoArgsConstructor
-@Table(name = "device_info") // table name
+@AllArgsConstructor
+@Builder
+@Table(name = "device_info")
 public class Device {
     @Id
-    @Column(name = "device_id", unique = true, nullable = false)
+    @Size(max = 50)
+    @Column(name = "device_id", unique = true, nullable = false, length = 50)
     private String deviceId; //機器番号
 
-    @Column(name = "device_model")
+    @Size(max = 100)
+    @Column(name = "device_model", length = 100)
     private String deviceModel; //ホストモデル
 
-    @Column(name = "computer_name")
+    @Size(max = 100)
+    @Column(name = "computer_name", length = 100)
     private String computerName; //コンピュータ名
 
-    @Column(name = "login_username")
+    @Size(max = 100)
+    @Column(name = "login_username", length = 100)
     private String loginUsername; //ログインユーザ名
 
-    @Column(name = "project")
+    @Size(max = 100)
+    @Column(name = "project", length = 100)
     private String project; //所属プロジェクト
 
-    @Column(name = "dev_room")
+    @Size(max = 100)
+    @Column(name = "dev_room", length = 100)
     private String devRoom; //所属開発室
 
     @Column(name = "user_id")
     private String userId; //従業員番号
 
-    @Column(name = "remark", columnDefinition = "text")
+    @Column(name = "remark", columnDefinition = "text", length = Integer.MAX_VALUE)
     private String remark; //備考
 
     @Column(name = "self_confirm_id", columnDefinition = "bigint")
-    private Integer selfConfirmId; //本人確認ID
+    private Long selfConfirmId; //本人確認ID
 
     @Column(name = "os_id", columnDefinition = "bigint")
     private Long osId; //OSID
@@ -78,38 +90,48 @@ public class Device {
     @JoinColumn(name = "hdd_id", referencedColumnName = "dict_id", insertable = false, updatable = false)
     private Dict hddDict; // HDD 辞書
 
-    @Column(name = "create_time", columnDefinition = "timestamp")
+    @NotNull
+    @ColumnDefault("CURRENT_TIMESTAMP")
+    @Column(name = "create_time", nullable = false, columnDefinition = "timestamp")
     private LocalDateTime createTime; //作成日時
 
-    @Column(name = "creater")
+    @Size(max = 100)
+    @Column(name = "creater", length = 100)
     private String creater; //作成者
 
-    @Column(name = "update_time", columnDefinition = "timestamp")
+    @NotNull
+    @ColumnDefault("CURRENT_TIMESTAMP")
+    @Column(name = "update_time", nullable = false, columnDefinition = "timestamp")
     private LocalDateTime updateTime; //更新日時
 
-    @Column(name = "updater")
+    @Size(max = 100)
+    @Column(name = "updater", length = 100)
     private String updater; //更新者
 
     // ============= 関連関係 =============
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.RESTRICT)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
     private User user;
 
-    @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    /**
+     * デバイスIPアドレスリスト（1対多）
+     */
+    @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<DeviceIp> deviceIps;
 
-    @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    /**
+     * モニターリスト（1対多）
+     */
+    @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Monitor> monitorInfos;
 
+    /**
+     * デバイス権限（1対1）
+     */
     @OneToOne(mappedBy = "device", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DevicePermission devicePermission;
-
-    @OneToMany(mappedBy = "device", fetch = FetchType.LAZY)
-    private Set<DeviceIp> ipList = new HashSet<>();
-
-    @OneToMany(mappedBy = "device", fetch = FetchType.LAZY)
-    private Set<Monitor> monitorList = new HashSet<>();
-
-
 }
