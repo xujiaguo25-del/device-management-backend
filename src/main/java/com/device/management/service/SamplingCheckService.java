@@ -8,7 +8,6 @@ import com.device.management.repository.MonitorInfoRepository;
 import com.device.management.repository.SamplingCheckRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.formula.functions.Column;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -36,7 +35,7 @@ public class SamplingCheckService {
     @Autowired
     private MonitorInfoRepository monitorInfoRepository;
 
-    //==================== 更新功能相关 ========================================
+    //==================== アップデート機能関連 ========================================
     //更新方法
     public SamplingCheckDTO update(String samplingId, SamplingCheckDTO dto) {
         if(!samplingCheckRepository.existsById(samplingId))  throw new RuntimeException("記録が存在しないため、更新できません");
@@ -48,7 +47,7 @@ public class SamplingCheckService {
         return samplingCheckMapper.convertToDto(saved);
     }
 
-    //==================== 新增功能相关 ========================================
+    //==================== 新機能関連 ========================================
     //追加方法
     public SamplingCheckDTO create(SamplingCheckDTO dto) {
         SamplingCheck entity = samplingCheckMapper.convertToEntity(dto);
@@ -61,7 +60,7 @@ public class SamplingCheckService {
     }
 
 
-    //==================== 删除功能相关 ========================================
+    //==================== 機能関連の削除 ========================================
     //記録を削除する（記録が存在しない場合はエラー）
     public void delete(String samplingId) {
         log.info("delete sampling check {}", samplingId);
@@ -76,7 +75,7 @@ public class SamplingCheckService {
         samplingCheckRepository.deleteByDeviceId(deviceId);
     }
 
-    //==================== 查找功能相关 ========================================
+    //==================== 機能関連の検索 ========================================
     //IDで検索
     public SamplingCheckDTO findById(String id) {
         log.info("find sampling check by id {}", id);
@@ -88,7 +87,7 @@ public class SamplingCheckService {
     public List<SamplingCheckDTO> findByReportId(String reportId) {
         log.info("find sampling check by reportId {}", reportId);
         List<SamplingCheck> samplingChecks = samplingCheckRepository.findByReportId(reportId);
-        // 转换为 DTO
+        //DTOに変換
         List<SamplingCheckDTO> dtoPage = samplingCheckMapper.convertToDto(samplingChecks);
 
         return dtoPage.stream()
@@ -100,7 +99,7 @@ public class SamplingCheckService {
         Sort sort = Sort.by( Sort.Order.asc("name"),  Sort.Order.desc("updateTime") );
         List<SamplingCheck> samplingChecks;
         samplingChecks = samplingCheckRepository.findAll(sort);                                  //制約なし
-        // 转换为 DTO
+        //DTOに変換
         List<SamplingCheckDTO> dtoPage = samplingCheckMapper.convertToDto(samplingChecks);
 
         return dtoPage.stream()
@@ -125,7 +124,7 @@ public class SamplingCheckService {
             samplingChecks = samplingCheckRepository.findAll(pageable);                                  //制約なし
         }
 
-        // 转换为 DTO 并填充显示器名称
+        //DTOに変換してディスプレイ名を塗りつぶす
         Page<SamplingCheckDTO> dtoPage = samplingCheckMapper.convertToDto(samplingChecks);
         List<SamplingCheckDTO> contentWithMonitor = dtoPage.getContent().stream()
                 .peek(this::addMonitorInfo)
@@ -135,9 +134,9 @@ public class SamplingCheckService {
     }
 
     private void addMonitorInfo(SamplingCheckDTO dto) {
-        // 查询该设备的所有显示器
+        // デバイスのすべてのディスプレイを問い合わせる
         List<MonitorInfo> monitors = monitorInfoRepository.findByDeviceId(dto.getDeviceId());
-        // 将所有显示器名称用分号连接
+        // すべてのモニタ名をセミコロンで接続
         if (!monitors.isEmpty()) {
             String monitorNames = monitors.stream()
                     .map(MonitorInfo::getMonitorName)
@@ -147,7 +146,7 @@ public class SamplingCheckService {
         }
     }
 
-    //==================== 导出功能相关 ========================================
+    //==================== エクスポート機能関連 ========================================
     public void exportAll(String reportCode, HttpServletResponse response) throws IOException {
         //ブックの作成
         Workbook workbook = new XSSFWorkbook();
@@ -158,7 +157,8 @@ public class SamplingCheckService {
         List<SamplingCheckDTO> samplingCheckDTOS;
         if (reportCode != null && !reportCode.isEmpty()) samplingCheckDTOS = findByReportId(reportCode);
         else samplingCheckDTOS = findAll();
-        setTableContent(workbook, sheet,1,samplingCheckDTOS);
+        setTableContent(sheet,1,samplingCheckDTOS);
+        setTableStyle(workbook, sheet);
 
         // レスポンスヘッダの設定
         String encodedFileName = URLEncoder.encode( "月度检查表.xlsx", StandardCharsets.UTF_8).replaceAll("\\+", "%20");
@@ -202,7 +202,7 @@ public class SamplingCheckService {
     }
 
     //データベースレコードをテーブルに書き込む
-    private void setTableContent(Workbook book,  Sheet sheet, int endRow, List<SamplingCheckDTO> samplingCheckDTOS) {
+    private void setTableContent(Sheet sheet,int endRow, List<SamplingCheckDTO> samplingCheckDTOS) {
         int rowNum = 0;
         for(SamplingCheckDTO samplingCheckDTO : samplingCheckDTOS) {
             Row row = sheet.createRow( ++endRow );
@@ -233,11 +233,13 @@ public class SamplingCheckService {
 
             Optional<Boolean> op6 = Optional.ofNullable(samplingCheckDTO.getUsbInterface());
             if(op6.orElse(false)) row.createCell(9).setCellValue("○");
-
         }
+    }
+
+    private void setTableStyle(Workbook book, Sheet sheet) {
         Font font = book.createFont();
-        font.setFontHeightInPoints((short) 12); // 字体大小 12pt
-        font.setFontName("宋体");               // 可选：字体
+        font.setFontHeightInPoints((short) 12);
+        font.setFontName("宋体");
         font.setBold(false);
 
         CellStyle style = book.createCellStyle();
