@@ -1,23 +1,18 @@
 package com.device.management.exception;
 
-
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 /**
- * 资源冲突异常（409）
- * 用于：设备ID重复、显示器被占用、IP地址被占用等场景
+ * リソース競合例外（409）
+ * 使用例：デバイスID重複、モニター名使用中、IPアドレス使用中等のシナリオ
+ *
+ * @author device-management
  */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class ResourceConflictException extends RuntimeException {
-    private int code = 409;
-    private String message;
 
     public ResourceConflictException(String message) {
-        this.message = message;
+        super(message);
+    }
+
+    public ResourceConflictException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

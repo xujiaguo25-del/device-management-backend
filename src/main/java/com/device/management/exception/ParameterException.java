@@ -1,11 +1,18 @@
 package com.device.management.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+/**
+ * パラメータ例外（400）
+ * パラメータ検証失敗、パラメータ空、パラメータ形式エラー等のシナリオ用
+ *
+ * @author device-management
+ */
+public class ParameterException extends RuntimeException {
 
-@ResponseStatus(HttpStatus.BAD_REQUEST)   // 让 Spring 返回 400
-public class ParameterException  extends RuntimeException {
-    public ParameterException (String msg) {
-        super(msg);
+    public ParameterException(String message) {
+        super(message);
+    }
+
+    public ParameterException(String message, Throwable cause) {
+        super(message, cause);
     }
 }
