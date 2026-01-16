@@ -31,7 +31,7 @@ public class DeviceFullDTO {
     private String devRoom; //所属開発室
     private String userId; //従業員番号
     private String remark; //備考
-    private Integer selfConfirmId; //本人確認ID
+    private Long selfConfirmId; //本人確認ID
     private Long osId; //OSID
     private Long memoryId; //メモリID
     private Long ssdId; //SSDID

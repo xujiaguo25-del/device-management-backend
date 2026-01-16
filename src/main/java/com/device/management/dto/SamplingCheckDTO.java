@@ -36,7 +36,7 @@ public class SamplingCheckDTO {
     private Boolean securityPatch;
     private Boolean antivirusProtection;
     private Boolean bootAuthentication;
-    
     //ディスプレイ名（sampling _ checkテーブルに存在しない）
     private String monitorName;
+
 }
