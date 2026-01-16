@@ -12,9 +12,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * 機器オブジェクト
@@ -117,29 +115,23 @@ public class Device {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
     private User user;
 
+    /**
+     * デバイスIPアドレスリスト（1対多）
+     */
     @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<DeviceIp> deviceIps;
 
+    /**
+     * モニターリスト（1対多）
+     */
     @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Monitor> monitorInfos;
 
-    // DeviceInfo 兼容的关联关系
-    @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private List<DeviceIp> deviceIp;
-
-    @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private List<MonitorInfo> monitor;
-
+    /**
+     * デバイス権限（1対1）
+     */
     @OneToOne(mappedBy = "device", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DevicePermission devicePermission;
-
-    @OneToMany(mappedBy = "device", fetch = FetchType.LAZY)
-    private Set<DeviceIp> ipList = new HashSet<>();
-
-    @OneToMany(mappedBy = "device", fetch = FetchType.LAZY)
-    private Set<Monitor> monitorList = new HashSet<>();
 }
