@@ -33,6 +33,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.device.management.dto.DeviceExcelDto;
+import java.util.Set;
+import java.util.HashSet;
+
+
 @Slf4j
 @Service
 public class DevicePermissionService {
@@ -462,4 +467,110 @@ public class DevicePermissionService {
         }
         return null;
     }
+
+
+    // 在 DevicePermissionService 类中添加以下方法
+
+    /**
+     * 批量从DeviceExcelDto导入设备权限信息
+     * 只使用deviceId，其他字段设为默认值
+     * @param excelDataList Excel数据列表
+     * @return API响应结果
+     */
+    @Transactional
+    public ApiResponse<String> batchImportPermissionFromExcel(List<DeviceExcelDto> excelDataList) {
+        log.info("批量导入设备权限信息，总数: {}", excelDataList.size());
+
+        if (excelDataList == null || excelDataList.isEmpty()) {
+            return ApiResponse.error(400, "Excel数据不能为空");
+        }
+
+        int successCount = 0;
+        int failCount = 0;
+        Set<String> processedDeviceIds = new HashSet<>(); // 防止重复处理
+        StringBuilder errorMessages = new StringBuilder();
+
+        for (int i = 0; i < excelDataList.size(); i++) {
+            DeviceExcelDto dto = excelDataList.get(i);
+
+            try {
+                // 验证设备ID是否存在
+                if (!StringUtils.hasText(dto.getDeviceId())) {
+                    failCount++;
+                    errorMessages.append("第").append(i + 1).append("行: 设备ID为空\n");
+                    continue;
+                }
+
+                // 检查是否已处理过此设备ID
+                if (processedDeviceIds.contains(dto.getDeviceId())) {
+                    continue; // 跳过重复的设备ID
+                }
+
+                // 验证设备是否存在
+                Device device = deviceRepository.findDeviceByDeviceId(dto.getDeviceId());
+                if (device == null) {
+                    failCount++;
+                    errorMessages.append("第").append(i + 1).append("行，设备ID: ")
+                            .append(dto.getDeviceId()).append(" - 设备不存在\n");
+                    continue;
+                }
+
+                // 检查设备是否已存在权限信息
+                DevicePermission existingPermission = devicePermissionRepository.findDevicePermissionsByDevice(device);
+                if (existingPermission != null) {
+                    failCount++;
+                    errorMessages.append("第").append(i + 1).append("行，设备ID: ")
+                            .append(dto.getDeviceId()).append(" - 设备已存在权限信息\n");
+                    continue;
+                }
+
+                // 创建权限记录
+                String permissionId = UUID.randomUUID().toString();
+
+                DevicePermission devicePermission = DevicePermission.builder()
+                        .permissionId(permissionId)
+                        .device(device)
+                        // 所有其他字段设为默认值或null
+                        .domainStatusId(null) // 域状态ID默认为null
+                        .domainGroup(null) // 域组默认为null
+                        .noDomainReason(null) // 非域原因默认为null
+                        .smartitStatusId(null) // SmartIT状态ID默认为null
+                        .noSmartitReason(null) // SmartIT原因默认为null
+                        .usbStatusId(null) // USB状态ID默认为null
+                        .usbReason(null) // USB原因默认为null
+                        .usbExpireDate(null) // USB过期日期默认为null
+                        .antivirusStatusId(null) // 防病毒状态ID默认为null
+                        .noSymantecReason(null) // 防病毒原因默认为null
+                        .remark(null) // 备注默认为null
+                        .createTime(LocalDateTime.now())
+                        .creater("SYSTEM") // 系统导入
+                        .updateTime(LocalDateTime.now())
+                        .updater("SYSTEM") // 系统导入
+                        .build();
+
+                // 保存权限信息
+                devicePermissionRepository.save(devicePermission);
+
+                // 添加到已处理集合
+                processedDeviceIds.add(dto.getDeviceId());
+                successCount++;
+
+            } catch (Exception e) {
+                failCount++;
+                errorMessages.append("第").append(i + 1).append("行，设备ID: ")
+                        .append(dto != null ? dto.getDeviceId() : "未知")
+                        .append(" - 异常: ").append(e.getMessage()).append("\n");
+                log.error("导入权限信息时发生异常", e);
+            }
+        }
+
+        String message = String.format("批量导入完成，成功: %d, 失败: %d", successCount, failCount);
+        if (failCount > 0) {
+            message += "\n错误详情:\n" + errorMessages.toString();
+            return ApiResponse.error(200, message); // 使用200状态码，但在消息中包含错误信息
+        }
+
+        return ApiResponse.success(message);
+    }
+
 }

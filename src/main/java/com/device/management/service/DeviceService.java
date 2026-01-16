@@ -66,8 +66,9 @@ public interface DeviceService {
     /**
      * 导入设备Excel数据
      * @param file Excel文件
+     * @param startRow 开始行
      * @return 导入结果
      */
-    ApiResponse<String> importDeviceExcel(MultipartFile file);
+    ApiResponse<String> importDeviceExcel(MultipartFile file, int startRow);
 
 }

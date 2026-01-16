@@ -2,8 +2,6 @@ package com.device.management.controller;
 
 import com.device.management.dto.ApiResponse;
 import com.device.management.service.SamplingCheckService;
-import com.device.management.dto.SamplingCheckExcelDto;
-import com.device.management.util.ExcelUtil;
 import com.device.management.dto.SamplingCheckDTO;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -11,14 +9,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping({"/security-checks", "/auth/security-checks"})
+@RequestMapping("/security-checks")
 public class SamplingCheckController {
     @Autowired
     private SamplingCheckService samplingCheckService;
@@ -102,18 +99,6 @@ public class SamplingCheckController {
             return ApiResponse.success("删除成功", null);                      //成功レスポンスを返す
         } catch (RuntimeException e) {
             return ApiResponse.error(404, "删除失败: " + e.getMessage());     //データが存在しません
-        }
-    }
-
-    @PostMapping("/import-preview")
-    public ApiResponse<List<SamplingCheckExcelDto>> importSamplingCheckPreview(
-            @RequestParam("file") MultipartFile file,
-            @RequestParam(name = "startRow", defaultValue = "11") int startRow) {
-        try {
-            List<SamplingCheckExcelDto> list = ExcelUtil.importExcel(file, SamplingCheckExcelDto.class, startRow);
-            return ApiResponse.success("解析成功", list);
-        } catch (Exception e) {
-            return ApiResponse.error(500, "解析失败: " + e.getMessage());
         }
     }
 }

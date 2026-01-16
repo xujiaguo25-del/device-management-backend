@@ -100,8 +100,17 @@ public class DeviceController {
     }
 
     @PostMapping("/import")
-    public ApiResponse<String> importExcel(@RequestParam("file") MultipartFile file) {
-        return deviceService.importDeviceExcel(file);
+    public ApiResponse<String> importExcel(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(name = "startRow", defaultValue = "3") int startRow) {
+     /*   try {
+            List<DeviceExcelDto> list = ExcelUtil.importExcel(file, DeviceExcelDto.class, startRow);
+            return ApiResponse.success("解析成功", list);
+        } catch (Exception e) {
+            return ApiResponse.error(500, "解析失败: " + e.getMessage());
+        }*/
+
+        return deviceService.importDeviceExcel(file, startRow);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.device.management.service;
 
+import com.device.management.dto.DeviceExcelDto;
 import com.device.management.dto.SamplingCheckDTO;
 import com.device.management.entity.MonitorInfo;
 import com.device.management.entity.SamplingCheck;
@@ -18,12 +19,15 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+
 
 @Service
 @Slf4j
@@ -266,6 +270,59 @@ public class SamplingCheckService {
             sheet.setColumnWidth(i, 3000);
         }
         sheet.setColumnWidth(10, 10000);
+    }
+
+
+    /**
+     * 批量导入设备权限信息
+     * @param deviceExcelDtos 设备Excel DTO列表
+     */
+    public void batchImport(List<DeviceExcelDto> deviceExcelDtos) {
+        if (deviceExcelDtos == null || deviceExcelDtos.isEmpty()) {
+            return;
+        }
+
+        List<SamplingCheck> entitiesToSave = deviceExcelDtos.stream()
+            .map(this::convertToDevicePermission)
+            .collect(Collectors.toList());
+
+        samplingCheckRepository.saveAll(entitiesToSave);
+    }
+
+    /**
+     * 将DeviceExcelDto转换为SamplingCheck实体，设置默认值
+     * @param deviceExcelDto 设备Excel DTO
+     * @return SamplingCheck实体
+     */
+    private SamplingCheck convertToDevicePermission(DeviceExcelDto deviceExcelDto) {
+        SamplingCheck entity = new SamplingCheck();
+
+        // 设置核心字段
+        entity.setUserId(deviceExcelDto.getUserId());           // 工号
+        entity.setName(deviceExcelDto.getUserName());              // 姓名
+        entity.setDeviceId(deviceExcelDto.getDeviceId());      // 设备ID
+
+        // 设置默认值
+        entity.setSamplingId(UUID.randomUUID().toString().replace("-", ""));
+        entity.setReportId("");                                // 报告ID设为空字符串或根据业务需求
+        entity.setUpdateDate(LocalDate.now());                 // 更新日期为当前日期
+        entity.setUpdateTime(LocalDateTime.now());             // 更新时间为当前时间
+        entity.setCreateTime(LocalDateTime.now());             // 创建时间为当前时间
+        entity.setUpdater("");                                 // 更新人设为空字符串
+        entity.setCreater("");                                 // 创建人设为空字符串
+
+        // 安全相关字段设为默认值（false表示未满足安全要求）
+        entity.setInstalledSoftware(false);
+        entity.setScreenSaverPwd(false);
+        entity.setUsbInterface(false);
+        entity.setSecurityPatch(false);
+        entity.setAntivirusProtection(false);
+        entity.setBootAuthentication(false);
+
+        // 处置措施设为空字符串
+        entity.setDisposalMeasures("");
+
+        return entity;
     }
 
 }

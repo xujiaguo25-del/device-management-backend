@@ -5,7 +5,6 @@ import com.device.management.dto.DeviceFullDTO;
 import com.device.management.dto.DictDTO;
 import com.device.management.entity.Device;
 import com.device.management.dto.DeviceExcelDto;
-import com.device.management.entity.DeviceInfo;
 import com.device.management.entity.DeviceIp;
 import com.device.management.entity.Monitor;
 import com.device.management.entity.User;
@@ -14,16 +13,18 @@ import com.device.management.exception.ParameterException;
 import com.device.management.exception.ResourceConflictException;
 import com.device.management.exception.ResourceNotFoundException;
 import com.device.management.enums.DictEnum;
-import com.device.management.repository.DeviceInfoRepository;
 import com.device.management.repository.DeviceIpRepository;
 import com.device.management.repository.DeviceRepository;
 import com.device.management.repository.MonitorRepository;
 import com.device.management.repository.SamplingCheckRepository;
 import com.device.management.repository.UserRepository;
+import com.device.management.service.DevicePermissionService;
 import com.device.management.service.DeviceService;
+import com.device.management.service.SamplingCheckService;
 import jakarta.transaction.Transactional;
 import com.device.management.util.ExcelUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.security.PermissionCheck;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.apache.commons.validator.routines.InetAddressValidator;
 import org.springframework.data.domain.Page;
@@ -34,13 +35,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.List;
 
 /**
  * デバイス管理サービス実装クラス
@@ -66,6 +65,12 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private DevicePermissionService permissionService;
+
+    @Autowired
+    private SamplingCheckService samplingCheckService;
 
     private static final InetAddressValidator IP_VALIDATOR = InetAddressValidator.getInstance();
     private static final int MAX_PAGE_SIZE = 100;
@@ -562,66 +567,152 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Override
     @org.springframework.transaction.annotation.Transactional(rollbackFor = Exception.class)
-    public ApiResponse<String> importDeviceExcel(MultipartFile file) {
+    public ApiResponse<String> importDeviceExcel(MultipartFile file, int startRow) {
         if (file.isEmpty()) {
             return new ApiResponse<>(400, "文件为空", null);
         }
 
-        try {
+               try {
             // 使用通用工具类解析Excel
-            List<DeviceExcelDto> excelDataList = ExcelUtil.importExcel(file, DeviceExcelDto.class);
+            List<DeviceExcelDto> excelDataList = ExcelUtil.importExcel(file, DeviceExcelDto.class,startRow);
+            List<DeviceExcelDto> normalizedList = preprocessExcelDtos(excelDataList);
 
-            saveDeviceData(excelDataList);
+            log.info("Excel数据解析完成:"+normalizedList);
+            saveDeviceData(normalizedList);
 
-            return new ApiResponse<>(200, "导入成功，共处理 " + excelDataList.size() + " 条数据", null);
+            return new ApiResponse<>(200, "导入成功，共处理 " + normalizedList.size() + " 条数据", null);
         } catch (Exception e) {
-            log.error("Excel解析失败", e);
-            return new ApiResponse<>(500, "Excel解析失败: " + e.getMessage(), null);
+            log.error("Excel导入失败", e);
+            return new ApiResponse<>(500, "Excel导入失败: " + e.getMessage(), null);
         }
     }
 
-    private void saveDeviceData(List<DeviceExcelDto> list) {
-        for (DeviceExcelDto dto : list) {
-            // 1. 保存 DeviceInfo
-            // 使用设备编号作为主键，如果为空则跳过
-            if (dto.getDeviceId() == null || dto.getDeviceId().isEmpty()) continue;
+private List<DeviceExcelDto> preprocessExcelDtos(List<DeviceExcelDto> input) {
+    if (input == null || input.isEmpty()) return Collections.emptyList();
+    List<DeviceExcelDto> out = new ArrayList<>();
+    String lastUserId = null;
+    String lastDeviceId = null;
 
-            DeviceInfo deviceInfo = new DeviceInfo();
-            deviceInfo.setDeviceId(dto.getDeviceId());
-            deviceInfo.setDeviceModel(dto.getDeviceModel());
-            deviceInfo.setComputerName(dto.getComputerName());
+    for (DeviceExcelDto dto : input) {
+        if (dto == null) continue;
 
-            // 优先使用 Excel 中的登录用户名，如果没有则使用 姓名
-            if (dto.getLoginUsername() != null && !dto.getLoginUsername().isEmpty()) {
-                deviceInfo.setLoginUsername(dto.getLoginUsername());
+        // 处理 "-" 值并 trim
+        dto.setUserId(processStringField(dto.getUserId()));
+        dto.setUserName(processStringField(dto.getUserName()));
+        dto.setDepartment(processStringField(dto.getDepartment()));
+        dto.setDeviceId(processStringField(dto.getDeviceId()));
+        dto.setMonitorDeviceId(processStringField(dto.getMonitorDeviceId()));
+        dto.setDeviceModel(processStringField(dto.getDeviceModel()));
+        dto.setComputerName(processStringField(dto.getComputerName()));
+        dto.setIpAddress(processStringField(dto.getIpAddress()));
+        dto.setOs(processStringField(dto.getOs()));
+        dto.setMemory(processStringField(dto.getMemory()));
+        dto.setSsd(processStringField(dto.getSsd()));
+        dto.setHdd(processStringField(dto.getHdd()));
+        dto.setLoginUsername(processStringField(dto.getLoginUsername()));
+        dto.setProject(processStringField(dto.getProject()));
+        dto.setDevRoom(processStringField(dto.getDevRoom()));
+        dto.setRemark(processStringField(dto.getRemark()));
+        dto.setSelfConfirm(processStringField(dto.getSelfConfirm()));
+
+        boolean hasUser = StringUtils.hasText(dto.getUserId()) || StringUtils.hasText(dto.getUserName()) || StringUtils.hasText(dto.getDepartment());
+        boolean hasDevice = StringUtils.hasText(dto.getDeviceId()) || StringUtils.hasText(dto.getMonitorDeviceId()) ||
+                StringUtils.hasText(dto.getDeviceModel()) || StringUtils.hasText(dto.getComputerName()) ||
+                StringUtils.hasText(dto.getIpAddress()) || StringUtils.hasText(dto.getLoginUsername()) ||
+                StringUtils.hasText(dto.getProject()) || StringUtils.hasText(dto.getDevRoom()) ||
+                StringUtils.hasText(dto.getRemark()) || StringUtils.hasText(dto.getOs()) ||
+                StringUtils.hasText(dto.getMemory()) || StringUtils.hasText(dto.getSsd()) ||
+                StringUtils.hasText(dto.getHdd());
+
+        if (!hasUser && !hasDevice) continue;
+
+        // 如果当前行有用户信息，则更新最后的用户信息
+        if (hasUser) {
+            lastUserId = dto.getUserId();
+        } else {
+            // 如果当前行没有用户信息，但之前有用户信息，则继承用户信息
+            if (StringUtils.hasText(lastUserId)) {
+                if (!StringUtils.hasText(dto.getUserId())) dto.setUserId(lastUserId);
+                if (!StringUtils.hasText(dto.getUserName())) dto.setUserName(dto.getUserId()); // 使用用户ID作为用户名
             } else {
-                deviceInfo.setLoginUsername(dto.getUserName());
+                continue;
+            }
+        }
+
+        // 设备ID继承逻辑：如果当前行没有设备ID但用户ID与上一行相同，则继承上一行的设备ID
+        if (!StringUtils.hasText(dto.getDeviceId()) &&
+            StringUtils.hasText(lastUserId) &&
+            lastUserId.equals(dto.getUserId()) &&
+            StringUtils.hasText(lastDeviceId)) {
+            dto.setDeviceId(lastDeviceId);
+        } else if (StringUtils.hasText(dto.getDeviceId())) {
+            // 如果当前行有设备ID，则更新lastDeviceId
+            lastDeviceId = dto.getDeviceId();
+        }
+
+        out.add(dto);
+    }
+    return out;
+}
+
+
+
+    /**
+     * 处理字符串字段：去除首尾空白并将"-"转换为空值
+     */
+    private String processStringField(String value) {
+        if (value == null || value.isEmpty()) {
+            return null;
+        }
+        String trimmedValue = value.trim();
+        return "-".equals(trimmedValue) ? null : trimmedValue;
+    }
+
+    /**
+     * 导入数据库
+     */
+
+   /* private void saveDeviceData(List<DeviceExcelDto> list) {
+        for (DeviceExcelDto dto : list) {
+            String deviceId = dto.getDeviceId() != null ? dto.getDeviceId().trim() : null;
+            String userId = dto.getUserId() != null ? dto.getUserId().trim() : null;
+            if (!StringUtils.hasText(userId) || !userRepository.findByUserId(userId).isPresent()) continue;
+
+            Device device = new Device();
+            device.setDeviceId(deviceId);
+            device.setDeviceModel(dto.getDeviceModel());
+            device.setComputerName(dto.getComputerName());
+
+            if (dto.getLoginUsername() != null && !dto.getLoginUsername().isEmpty()) {
+                device.setLoginUsername(dto.getLoginUsername());
+            } else {
+                device.setLoginUsername(dto.getUserName());
             }
 
-            deviceInfo.setUserId(dto.getUserId());
-            deviceInfo.setProject(dto.getDepartment()); // 暂时映射
-            deviceInfo.setRemark(dto.getRemark());
+            device.setUserId(userId);
+            device.setProject(dto.getProject());
+            device.setDevRoom(dto.getDevRoom());
+            device.setRemark(dto.getRemark());
 
-            // 映射字典字段
-            deviceInfo.setOsId(mapOsToId(dto.getOs()));
-            deviceInfo.setMemoryId(mapMemoryToId(dto.getMemory()));
-            deviceInfo.setSsdId(mapDiskToId(dto.getDisk()));
+            device.setOsId(mapOsToId(dto.getOs()));
+            device.setMemoryId(mapMemoryToId(dto.getMemory()));
+            device.setSsdId(mapSsdToId(dto.getSsd()));
+            device.setHddId(mapHddToId(dto.getHdd()));
+            device.setSelfConfirmId(mapSelfConfirmToId(dto.getSelfConfirm()));
 
-            deviceInfo.setCreateTime(LocalDateTime.now());
-            deviceInfo.setUpdateTime(LocalDateTime.now());
-            deviceInfo.setCreater("SYSTEM");
-            deviceInfo.setUpdater("SYSTEM");
+            device.setCreateTime(LocalDateTime.now());
+            device.setUpdateTime(LocalDateTime.now());
+            device.setCreater("SYSTEM");
+            device.setUpdater("SYSTEM");
 
-            deviceRepository.save(deviceInfo);
+            deviceRepository.save(device);
 
-            // 2. 保存 DeviceIp
             if (dto.getIpAddress() != null && !dto.getIpAddress().isEmpty()) {
-                // 处理可能有多个IP换行的情况
                 String[] ips = dto.getIpAddress().split("[\\n\\r,;]+");
                 for (String ip : ips) {
                     if (ip.trim().isEmpty()) continue;
                     DeviceIp deviceIp = new DeviceIp();
-                    deviceIp.setDeviceId(dto.getDeviceId());
+                    deviceIp.setDeviceId(deviceId);
                     deviceIp.setIpAddress(ip.trim());
                     deviceIp.setCreateTime(LocalDateTime.now());
                     deviceIp.setUpdateTime(LocalDateTime.now());
@@ -631,15 +722,137 @@ public class DeviceServiceImpl implements DeviceService {
                 }
             }
         }
+    }*/
+
+    private void saveDeviceData(List<DeviceExcelDto> list) {
+        for (DeviceExcelDto dto : list) {
+            String deviceId = dto.getDeviceId() != null ? dto.getDeviceId().trim() : null;
+            if (!StringUtils.hasText(deviceId)) continue;
+
+            String userId = dto.getUserId() != null ? dto.getUserId().trim() : null;
+            if (!StringUtils.hasText(userId)) continue;
+
+            // 检查用户是否存在，如果不存在则创建新用户
+            User user = userRepository.findByUserId(userId).orElse(null);
+            if (user == null) {
+                // 创建新用户
+                user = new User();
+                user.setUserId(userId);
+
+                // 设置用户名，优先使用userName，如果没有则使用loginUsername
+                if (StringUtils.hasText(dto.getUserName())) {
+                    user.setName(dto.getUserName().trim());
+                } else if (StringUtils.hasText(dto.getLoginUsername())) {
+                    // 如果没有提供用户名，尝试从登录用户名中提取
+                    user.setName(dto.getLoginUsername().trim());
+                } else {
+                    // 如果都没有，使用默认名称或设备ID相关信息
+                    user.setName("Imported User"); // 或者可以设置为其他默认值
+                }
+
+                // 设置部门信息
+                if (StringUtils.hasText(dto.getDepartment())) {
+                    user.setDeptId(dto.getDepartment().trim());
+                } else {
+                    user.setDeptId("UNKNOWN"); // 默认部门
+                }
+
+                // 设置为普通用户类型（根据您的业务需求调整）
+                user.setUserTypeId(DictEnum.USER_TYPE_USER.getDictId()); // 假设这是普通用户类型
+
+                // 设置默认密码或其他必要字段
+                // 注意：实际应用中应该设置一个临时密码并强制用户更改
+                user.setPassword("5npjufQ0AT0RkEDe6Rcnsw=="); // 默认密码，实际应用中需要更安全的处理
+
+                user.setCreateTime(LocalDateTime.now());
+                user.setUpdateTime(LocalDateTime.now());
+                user.setCreater("SYSTEM");
+                user.setUpdater("SYSTEM");
+
+                // 保存新用户
+                user = userRepository.save(user);
+            }
+
+            Device device = new Device();
+            device.setDeviceId(deviceId);
+            device.setDeviceModel(dto.getDeviceModel());
+            device.setComputerName(dto.getComputerName());
+
+            if (dto.getLoginUsername() != null && !dto.getLoginUsername().isEmpty()) {
+                device.setLoginUsername(dto.getLoginUsername());
+            } else {
+                device.setLoginUsername(dto.getUserName());
+            }
+
+            device.setUserId(userId);
+            device.setProject(dto.getProject());
+            device.setDevRoom(dto.getDevRoom());
+            device.setRemark(dto.getRemark());
+
+            device.setOsId(mapOsToId(dto.getOs()));
+            device.setMemoryId(mapMemoryToId(dto.getMemory()));
+            device.setSsdId(mapSsdToId(dto.getSsd()));
+            device.setHddId(mapHddToId(dto.getHdd()));
+            device.setSelfConfirmId(mapSelfConfirmToId(dto.getSelfConfirm()));
+
+            device.setCreateTime(LocalDateTime.now());
+            device.setUpdateTime(LocalDateTime.now());
+            device.setCreater("SYSTEM");
+            device.setUpdater("SYSTEM");
+
+            deviceRepository.save(device);
+            // 保存显示器信息（如果存在）
+            if (StringUtils.hasText(dto.getMonitorDeviceId())) {
+                // 处理可能的多个显示器（如果有分隔符的话）
+                String[] monitorNames = dto.getMonitorDeviceId().split("[\\n\\r,;]+");
+                for (String monitorName : monitorNames) {
+                    if (monitorName.trim().isEmpty()) continue;
+
+                    // 检查显示器是否已存在
+                    if (!monitorRepository.existsByMonitorName(monitorName.trim())) {
+                        Monitor monitor = new Monitor();
+                        monitor.setMonitorName(monitorName.trim());
+                        monitor.setDeviceId(deviceId);
+                        monitor.setCreateTime(LocalDateTime.now());
+                        monitor.setUpdateTime(LocalDateTime.now());
+                        monitor.setCreater("SYSTEM");
+                        monitor.setUpdater("SYSTEM");
+
+                        monitorRepository.save(monitor);
+                    }
+                }
+            }
+
+            // 保存IP地址信息
+            if (dto.getIpAddress() != null && !dto.getIpAddress().isEmpty()) {
+                String[] ips = dto.getIpAddress().split("[\\n\\r,;]+");
+                for (String ip : ips) {
+                    if (ip.trim().isEmpty()) continue;
+                    DeviceIp deviceIp = new DeviceIp();
+                    deviceIp.setDeviceId(deviceId);
+                    deviceIp.setIpAddress(ip.trim());
+                    deviceIp.setCreateTime(LocalDateTime.now());
+                    deviceIp.setUpdateTime(LocalDateTime.now());
+                    deviceIp.setCreater("SYSTEM");
+                    deviceIp.setUpdater("SYSTEM");
+                    deviceIpRepository.save(deviceIp);
+                }
+            }
+
+        }
+        permissionService.batchImportPermissionFromExcel(list);
+        samplingCheckService.batchImport( list);
     }
+
+
 
     // 辅助映射方法 - 根据 DictEnum 定义
     private Long mapOsToId(String osStr) {
         if (osStr == null) return null;
-        String lower = osStr.toLowerCase().replace(" ", "");
+        String lower = osStr.trim().toLowerCase().replace(" ", "");
         if (lower.contains("win") && lower.contains("10")) return DictEnum.OS_TYPE_WINDOWS_10.getDictId();
         if (lower.contains("win") && lower.contains("11")) return DictEnum.OS_TYPE_WINDOWS_11.getDictId();
-        if (lower.contains("mac")) return DictEnum.OS_TYPE_MACOS_VENTURA.getDictId();
+        if (lower.contains("mac") || lower.contains("macos")) return DictEnum.OS_TYPE_MACOS_VENTURA.getDictId();
         if (lower.contains("linux") || lower.contains("ubuntu")) return DictEnum.OS_TYPE_LINUX_UBUNTU_22_04.getDictId();
         return null;
     }
@@ -654,13 +867,50 @@ public class DeviceServiceImpl implements DeviceService {
         return null;
     }
 
-    private Long mapDiskToId(String diskStr) {
-        if (diskStr == null) return null;
-        String val = diskStr.replaceAll("[^0-9]", "");
-        if ("256".equals(val)) return DictEnum.SSD_SIZE_256GB.getDictId();
-        if ("512".equals(val)) return DictEnum.SSD_SIZE_512GB.getDictId();
-        if ("1000".equals(val) || "1".equals(val)) return DictEnum.SSD_SIZE_1TB.getDictId();
-        if ("2000".equals(val) || "2".equals(val)) return DictEnum.SSD_SIZE_2TB.getDictId();
+    private Long mapSsdToId(String ssdStr) {
+        if (ssdStr == null) return null;
+        Integer max = extractMaxNumber(ssdStr);
+        if (max == null) return null;
+        if (max == 256) return DictEnum.SSD_SIZE_256GB.getDictId();
+        if (max == 500) return DictEnum.SSD_SIZE_512GB.getDictId();
+        if (max == 512) return DictEnum.SSD_SIZE_512GB.getDictId();
+        if (max == 1000 || max == 1024 || max == 1) return DictEnum.SSD_SIZE_1TB.getDictId();
+        if (max == 2000 || max == 2048 || max == 2) return DictEnum.SSD_SIZE_2TB.getDictId();
         return null;
+    }
+
+    private Long mapHddToId(String hddStr) {
+        if (hddStr == null) return null;
+        Integer max = extractMaxNumber(hddStr);
+        if (max == null) return null;
+        if (max == 1000 || max == 1024 || max == 1) return DictEnum.HDD_SIZE_1TB.getDictId();
+        if (max == 2000 || max == 2048 || max == 2) return DictEnum.HDD_SIZE_2TB.getDictId();
+        if (max == 4000 || max == 4096 || max == 4) return DictEnum.HDD_SIZE_4TB.getDictId();
+        return null;
+    }
+
+    private Long mapSelfConfirmToId(String confirmStr) {
+        if (confirmStr == null) return null;
+        String s = confirmStr.trim().toLowerCase();
+        if ("1".equals(s) || "true".equals(s) || "yes".equals(s) || "y".equals(s) || s.contains("确认") || s.contains("已确认") || s.contains("確認") || s.contains("是")) {
+            return DictEnum.CONFIRM_STATUS_CONFIRMED.getDictId();
+        }
+        return DictEnum.CONFIRM_STATUS_UNCONFIRMED.getDictId();
+    }
+
+    private Integer extractMaxNumber(String text) {
+        String[] parts = text.trim().split("[^0-9]+");
+        Integer max = null;
+        for (String p : parts) {
+            if (p.isEmpty()) continue;
+            int n;
+            try {
+                n = Integer.parseInt(p);
+            } catch (NumberFormatException e) {
+                continue;
+            }
+            if (max == null || n > max) max = n;
+        }
+        return max;
     }
 }
