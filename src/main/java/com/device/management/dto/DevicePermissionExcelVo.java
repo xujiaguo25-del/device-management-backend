@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -12,7 +11,6 @@ public class DevicePermissionExcelVo {
 
     private Long number; //エクセル番号
     private String deviceId;
-    private Object monitorName;
     private String computerName;
     private Object ipAddress;
 
