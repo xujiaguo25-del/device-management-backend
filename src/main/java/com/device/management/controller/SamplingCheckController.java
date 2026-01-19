@@ -27,6 +27,13 @@ public class SamplingCheckController {
         samplingCheckService.exportAll(reportCode, response);
     }
 
+    @GetMapping("/init")
+    public ApiResponse<String> initSamplingChecks() {
+        samplingCheckService.initialize();
+        return ApiResponse.success("Sampling Checks Initialized");
+    }
+
+
     //wangjunxi
     //詳細情報の取得
     @GetMapping("/{sampling_id}")

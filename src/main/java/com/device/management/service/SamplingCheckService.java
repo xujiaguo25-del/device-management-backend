@@ -1,16 +1,21 @@
 package com.device.management.service;
 
 import com.device.management.dto.SamplingCheckDTO;
+import com.device.management.entity.Device;
 import com.device.management.entity.MonitorInfo;
 import com.device.management.entity.SamplingCheck;
+import com.device.management.entity.User;
 import com.device.management.mapper.SamplingCheckMapper;
+import com.device.management.repository.DeviceRepository;
 import com.device.management.repository.MonitorInfoRepository;
 import com.device.management.repository.SamplingCheckRepository;
+import com.device.management.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.mapstruct.control.MappingControl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -18,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -34,6 +40,10 @@ public class SamplingCheckService {
     private SamplingCheckMapper samplingCheckMapper;
     @Autowired
     private MonitorInfoRepository monitorInfoRepository;
+    @Autowired
+    private DeviceRepository deviceRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     //==================== アップデート機能関連 ========================================
     //更新方法
@@ -143,6 +153,36 @@ public class SamplingCheckService {
                     .filter(name -> name != null && !name.isEmpty())  // 过滤空值
                     .collect(Collectors.joining(";"));
             dto.setMonitorName(monitorNames);
+        }
+    }
+    //==================== データベース初期化機能関連 ===================================
+    public void initialize(){
+        List<Device> devices = deviceRepository.findAll();
+        for(Device device : devices){
+            //スキップ済み
+            boolean exists = samplingCheckRepository.existsByDeviceId(device.getDeviceId());
+            if(exists) continue;
+            //基本情報
+            SamplingCheckDTO dto = new SamplingCheckDTO();
+            dto.setReportId("");
+            dto.setUpdateDate(LocalDate.now());
+            dto.setDeviceId(device.getDeviceId());
+            dto.setUserId(device.getUserId());
+            Optional<User> opt = userRepository.findByUserId(device.getUserId());
+            String name = opt.isPresent() ? opt.get().getName() : "";
+            dto.setName(name);
+            //検査項目
+            dto.setUpdater("");
+            dto.setCreater("");
+            dto.setInstalledSoftware(false);
+            dto.setDisposalMeasures("");
+            dto.setScreenSaverPwd(false);
+            dto.setUsbInterface(false);
+            dto.setSecurityPatch(false);
+            dto.setAntivirusProtection(false);
+            dto.setBootAuthentication(false);
+
+            create(dto);
         }
     }
 
@@ -271,5 +311,6 @@ public class SamplingCheckService {
         }
         sheet.setColumnWidth(10, 10000);
     }
+
 
 }
