@@ -157,11 +157,9 @@ public class SamplingCheckService {
     }
     //==================== データベース初期化機能関連 ===================================
     public void initialize(){
+        samplingCheckRepository.deleteAll();
         List<Device> devices = deviceRepository.findAll();
         for(Device device : devices){
-            //スキップ済み
-            boolean exists = samplingCheckRepository.existsByDeviceId(device.getDeviceId());
-            if(exists) continue;
             //基本情報
             SamplingCheckDTO dto = new SamplingCheckDTO();
             dto.setReportId("");
