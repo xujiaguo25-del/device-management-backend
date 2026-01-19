@@ -100,10 +100,7 @@ public class DevicePermissionService {
         }
         if (size == null || size <= 0) {
             size = 10;
-        } else if (size > 20) {
-            size = 20;
         }
-
         // ページ分割オブジェクトを構築し、権限番号で並べる
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.ASC, "permissionId"));
 
