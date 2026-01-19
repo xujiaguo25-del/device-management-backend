@@ -26,9 +26,8 @@ import java.util.Map;
 public class DevicePermissionExcelService {
     // 列幅(文字数)を定義します
     private static final int[] COLUMN_WIDTHS = {8,   //编号
-            30,  //機器番号
+            40,  //機器番号
             20,  //コンピュータ名
-            20,  //機器番号
             25,  //IPアドレス
             10,  //社員番号
             10,  //名前
@@ -98,7 +97,7 @@ public class DevicePermissionExcelService {
      * 各種スタイルを作成する
      */
     private Map<String, CellStyle> createStyles(Workbook workbook) {
-        Map<String, CellStyle> styles = new java.util.HashMap<>();
+        Map<String, CellStyle> styles = new HashMap<>();
 
         // 2.表題のスタイル（背景は灰色、太の字）
         CellStyle headerStyle = workbook.createCellStyle();
@@ -167,20 +166,19 @@ public class DevicePermissionExcelService {
     private int buildExcelTemplate(Sheet sheet, Map<String, CellStyle> styles, List<DevicePermissionExcelVo> dataList) {
         int rowNum = 0;
 
-        //  6行目：大見出し（結合セル）
         Row row5 = sheet.createRow(rowNum++);
         createCell(row5, 0, "编号", styles.get("header"));
-        createMergedCell(sheet, row5, 1, 4, "设备", styles.get("header"));
-        createMergedCell(sheet, row5, 5, 8, "使用者/责任人", styles.get("header"));
-        createMergedCell(sheet, row5, 9, 11, "域", styles.get("header"));
-        createMergedCell(sheet, row5, 12, 13, "SmartIT安装", styles.get("header"));
-        createMergedCell(sheet, row5, 14, 16, "USB设备", styles.get("header"));
-        createMergedCell(sheet, row5, 17, 18, "防病毒", styles.get("header"));
-        createCell(row5, 19, "备注", styles.get("header"));
+        createMergedCell(sheet, row5, 1, 3, "设备", styles.get("header"));
+        createMergedCell(sheet, row5, 4, 7, "使用者/责任人", styles.get("header"));
+        createMergedCell(sheet, row5, 8, 10, "域", styles.get("header"));
+        createMergedCell(sheet, row5, 11, 12, "SmartIT安装", styles.get("header"));
+        createMergedCell(sheet, row5, 13, 15, "USB设备", styles.get("header"));
+        createMergedCell(sheet, row5, 16, 17, "防病毒", styles.get("header"));
+        createCell(row5, 18, "备注", styles.get("header"));
 
         // 詳細見出し
         Row row6 = sheet.createRow(rowNum++);
-        String[] headers = {"", "设备编号", "电脑名", "显示器", "IP地址", "工号", "姓名", "级别", "登录用户名", "域名", "域内组名", "不加域理由", "SmartIT状态", "不安装SmartIT理由", "USB状态", "USB开通理由", "使用截止日期", "连接状态", "无Symantec理由", ""};
+        String[] headers = {"", "设备编号", "电脑名", "IP地址", "工号", "姓名", "级别", "登录用户名", "域名", "域内组名", "不加域理由", "SmartIT状态", "不安装SmartIT理由", "USB状态", "USB开通理由", "使用截止日期", "连接状态", "无Symantec理由", ""};
 
         for (int i = 0; i < headers.length; i++) {
             Cell cell = row6.createCell(i);
@@ -211,34 +209,33 @@ public class DevicePermissionExcelService {
             //設備情報
             createCell(row, 1, item.getDeviceId(), styles.get("data"));
             createCell(row, 2, item.getComputerName(), styles.get("data"));
-            createCell(row, 3, item.getMonitorName() != null ? item.getMonitorName().toString() : "", styles.get("data"));
-            createCell(row, 4, item.getIpAddress() != null ? item.getIpAddress().toString() : "", styles.get("data"));
+            createCell(row, 3, item.getIpAddress() != null ? item.getIpAddress().toString() : "", styles.get("data"));
 
             //使用者情報
-            createCell(row, 5, item.getUserId(), styles.get("center"));
-            createCell(row, 6, item.getName(), styles.get("center"));
-            createCell(row, 7, item.getDeptId(), styles.get("center"));
-            createCell(row, 8, item.getLoginUsername(), styles.get("data"));
+            createCell(row, 4, item.getUserId(), styles.get("center"));
+            createCell(row, 5, item.getName(), styles.get("center"));
+            createCell(row, 6, item.getDeptId(), styles.get("center"));
+            createCell(row, 7, item.getLoginUsername(), styles.get("data"));
 
             //域情報
-            createCell(row, 9, getDictName(item.getDomainStatusId()), styles.get("center"));
-            createCell(row, 10, item.getDomainGroup(), styles.get("data"));
-            createCell(row, 11, item.getNoDomainReason(), styles.get("data"));
+            createCell(row, 8, getDictName(item.getDomainStatusId()), styles.get("center"));
+            createCell(row, 9, item.getDomainGroup(), styles.get("data"));
+            createCell(row, 10, item.getNoDomainReason(), styles.get("data"));
 
-            //SmartIT情報
-            createCell(row, 12, getDictName(item.getSmartitStatusId()), styles.get("center"));
-            createCell(row, 13, item.getNoSmartitReason(), styles.get("data"));
+            // SmartIT情報
+            createCell(row, 11, getDictName(item.getSmartitStatusId()), styles.get("center"));
+            createCell(row, 12, item.getNoSmartitReason(), styles.get("data"));
 
-            //USB情報
-            createCell(row, 14, getDictName(item.getUsbStatusId()), styles.get("center"));
-            createCell(row, 15, item.getUsbReason(), styles.get("data"));
-            createCell(row, 16, item.getUseExpireDate() != null ? item.getUseExpireDate().format(dateFormatter)  // LocalDate 直接调用 format 方法
-                    : "", styles.get("date"));
+            // USB情報
+            createCell(row, 13, getDictName(item.getUsbStatusId()), styles.get("center"));
+            createCell(row, 14, item.getUsbReason(), styles.get("data"));
+            createCell(row, 15, item.getUseExpireDate() != null ?
+                    item.getUseExpireDate().format(dateFormatter) : "", styles.get("date"));
 
             //その他情報
-            createCell(row, 17, getDictName(item.getAntivirusStatusId()), styles.get("center"));
-            createCell(row, 18, item.getNoSymantecReason(), styles.get("data"));
-            createCell(row, 19, item.getRemark(), styles.get("remark"));
+            createCell(row, 16, getDictName(item.getAntivirusStatusId()), styles.get("center"));
+            createCell(row, 17, item.getNoSymantecReason(), styles.get("data"));
+            createCell(row, 18, item.getRemark(), styles.get("remark"));
 
         }
 
@@ -272,8 +269,5 @@ public class DevicePermissionExcelService {
 
     public List<DevicePermissionExcelVo> getDataFromDatabase() {
         return devicePermissionRepository.findAllDevicePermissionExcel();
-
     }
-
-
 }
