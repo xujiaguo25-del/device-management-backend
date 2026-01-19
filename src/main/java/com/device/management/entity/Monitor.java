@@ -1,35 +1,34 @@
 package com.device.management.entity;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
- * DeviceIPオブジェクト
+ * monitorオブジェクト
  */
 @Data
 @Entity
-@Table(name = "device_ip")
+@Table(name = "monitor_info")
 @JsonIgnoreProperties({"device"})
-public class DeviceIp {
+public class Monitor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ip_id")
-    private Integer ipId; //IP番号
+    @Column(name = "monitor_id")
+    private Integer monitorId; // モニター番号
 
-    @Column(name = "ip_address", nullable = false, length = 45)
-    private String ipAddress; //IPアドレス
+    @Column(name = "monitor_name", nullable = false, length = 100)
+    private String monitorName; // 'モニター名
 
     @Column(name = "device_id", length = 50, nullable = false)
     private String deviceId; //機器番号
 
-    // device:ip（1：n）
+    // device:monitor（1:n）
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "device_id", referencedColumnName = "device_id", insertable = false, updatable = false)
-    private Device device; //機器番号（外部キー）
+    private Device device;//機器番号（外部キー）
 
     @Column(name = "create_time", columnDefinition = "timestamp")
     private LocalDateTime createTime; //作成日時
@@ -43,4 +42,3 @@ public class DeviceIp {
     @Column(name = "updater")
     private String updater; //更新者
 }
-

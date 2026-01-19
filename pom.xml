@@ -132,6 +132,26 @@
             <artifactId>commons-pool2</artifactId>
         </dependency>
 
+        <!-- Mapstruct(Entity -> DTO) -->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>1.5.5.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+            <version>1.5.5.Final</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--正则-->
+        <dependency>
+            <groupId>commons-validator</groupId>
+            <artifactId>commons-validator</artifactId>
+            <version>1.8.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
