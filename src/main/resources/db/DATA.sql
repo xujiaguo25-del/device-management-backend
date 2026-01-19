@@ -11,190 +11,6 @@ TRUNCATE TABLE
     users
 CASCADE;
 
--- dictテーブルにデータを挿入
--- ユーザータイプ
-INSERT INTO dict (dict_id, dict_type_code, dict_type_name, dict_item_name, sort, is_enabled, create_time) VALUES
-(11, 'USER_TYPE', 'ユーザータイプ', '管理者', 2, 1, CURRENT_TIMESTAMP),
-(12, 'USER_TYPE', 'ユーザータイプ', '一般ユーザー', 1, 1, CURRENT_TIMESTAMP);
-
--- OSタイプ
-INSERT INTO dict (dict_id, dict_type_code, dict_type_name, dict_item_name, sort, is_enabled, create_time) VALUES
-(201, 'OS_TYPE', 'オペレーティングシステムタイプ', 'Windows 7', 1, 1, CURRENT_TIMESTAMP),
-(202, 'OS_TYPE', 'オペレーティングシステムタイプ', 'Windows 10', 2, 1, CURRENT_TIMESTAMP),
-(203, 'OS_TYPE', 'オペレーティングシステムタイプ', 'Windows 11', 3, 1, CURRENT_TIMESTAMP),
-(204, 'OS_TYPE', 'オペレーティングシステムタイプ', 'Windows Server 2008', 4, 1, CURRENT_TIMESTAMP),
-(205, 'OS_TYPE', 'オペレーティングシステムタイプ', 'Windows Server 2016', 5, 1, CURRENT_TIMESTAMP),
-(206, 'OS_TYPE', 'オペレーティングシステムタイプ', 'Windows Server 2019', 6, 1, CURRENT_TIMESTAMP),
-(207, 'OS_TYPE', 'オペレーティングシステムタイプ', 'Windows Server 2022', 7, 1, CURRENT_TIMESTAMP),
-(208, 'OS_TYPE', 'オペレーティングシステムタイプ', 'Mac OS', 8, 1, CURRENT_TIMESTAMP),
-(209, 'OS_TYPE', 'オペレーティングシステムタイプ', 'Ubuntu', 9, 1, CURRENT_TIMESTAMP),
-(210, 'OS_TYPE', 'オペレーティングシステムタイプ', 'CentOS', 10, 1, CURRENT_TIMESTAMP);
-
--- メモリサイズ
-INSERT INTO dict (dict_id, dict_type_code, dict_type_name, dict_item_name, sort, is_enabled, create_time) VALUES
-(31, 'MEMORY_SIZE', 'メモリサイズ', '4GB', 1, 1, CURRENT_TIMESTAMP),
-(32, 'MEMORY_SIZE', 'メモリサイズ', '8GB', 2, 1, CURRENT_TIMESTAMP),
-(33, 'MEMORY_SIZE', 'メモリサイズ', '16GB', 3, 1, CURRENT_TIMESTAMP),
-(34, 'MEMORY_SIZE', 'メモリサイズ', '24GB', 4, 1, CURRENT_TIMESTAMP),
-(35, 'MEMORY_SIZE', 'メモリサイズ', '32GB', 5, 1, CURRENT_TIMESTAMP),
-(36, 'MEMORY_SIZE', 'メモリサイズ', '128GB', 6, 1, CURRENT_TIMESTAMP);
-
--- ソリッドステートドライブ容量
-INSERT INTO dict (dict_id, dict_type_code, dict_type_name, dict_item_name, sort, is_enabled, create_time) VALUES
-(41, 'SSD_SIZE', 'ソリッドステートドライブ容量', '256GB', 1, 1, CURRENT_TIMESTAMP),
-(42, 'SSD_SIZE', 'ソリッドステートドライブ容量', '500GB', 2, 1, CURRENT_TIMESTAMP),
-(43, 'SSD_SIZE', 'ソリッドステートドライブ容量', '512GB', 3, 1, CURRENT_TIMESTAMP),
-(44, 'SSD_SIZE', 'ソリッドステートドライブ容量', '1TB', 4, 1, CURRENT_TIMESTAMP);
-
--- ハードディスクドライブ容量
-INSERT INTO dict (dict_id, dict_type_code, dict_type_name, dict_item_name, sort, is_enabled, create_time) VALUES
-(51, 'HDD_SIZE', 'ハードディスクドライブ容量', '500GB', 1, 1, CURRENT_TIMESTAMP),
-(52, 'HDD_SIZE', 'ハードディスクドライブ容量', '1TB', 2, 1, CURRENT_TIMESTAMP),
-(53, 'HDD_SIZE', 'ハードディスクドライブ容量', '2TB', 3, 1, CURRENT_TIMESTAMP);
-
--- 確認ステータス
-INSERT INTO dict (dict_id, dict_type_code, dict_type_name, dict_item_name, sort, is_enabled, create_time) VALUES
-(62, 'CONFIRM_STATUS', '確認ステータス', '未確認', 1, 1, CURRENT_TIMESTAMP),
-(61, 'CONFIRM_STATUS', '確認ステータス', '確認済み', 2, 1, CURRENT_TIMESTAMP);
-
-
-
--- users テーブルへのデータ挿入
-INSERT INTO users (user_id, dept_id, name, user_type_id, password, create_time, creater, update_time, updater)
-VALUES 
--- DA04
-('JS0014', 'DA04', '林飞', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0020', 'DA04', '刘文丰', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0054', 'DA04', '朱德涛', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0105', 'DA04', '潘小琴', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0108', 'DA04', '陈国宝', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0129', 'DA04', '武志鹏', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0177', 'DA04', '曹向阳', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0199', 'DA04', '欧金龙', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0263', 'DA04', '王燕飞', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0266', 'DA04', '周仲山', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0291', 'DA04', '徐冬琴', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0298', 'DA04', '聂建军', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0300', 'DA04', '曹天扬', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0356', 'DA04', '卢淑美', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0426', 'DA04', '袁晓东', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0449', 'DA04', '李琪', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0572', 'DA04', '李行', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0596', 'DA04', '王晓舟', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0609', 'DA04', '张娟', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0611', 'DA04', '袁娟', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0619', 'DA04', '赵莉', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0627', 'DA04', '陈卫东', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0720', 'DA04', '莫尚勇', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0746', 'DA04', '张炎', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0751', 'DA04', '孙博', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0798', 'DA04', '陈辰', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0800', 'DA04', '董鸣辉', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0833', 'DA04', '杨爱玉', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0842', 'DA04', '张卫华', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0942', 'DA04', '许加国', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0958', 'DA04', '杨皓伟', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1023', 'DA04', '李文昊', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1029', 'DA04', '马晓明', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1061', 'DA04', '赵康2', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1075', 'DA04', '汪海燕', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1148', 'DA04', '蔡翔宇', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1150', 'DA04', '陈殊熠', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1174', 'DA04', '罗佳', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1180', 'DA04', '孙鹏', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1239', 'DA04', '康博成', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1244', 'DA04', '潘宇', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1246', 'DA04', '王邵赟', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1285', 'DA04', '王冠杰', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1307', 'DA04', '邓怿泽', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1339', 'DA04', '王子晗', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1347', 'DA04', '张欢', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1359', 'DA04', '罗翔', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1363', 'DA04', '应加俊', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1402', 'DA04', '王孟洛', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1435', 'DA04', '贾乃康', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1436', 'DA04', '姜榕', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1510', 'DA04', '章捷', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1514', 'DA04', '李文佳', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1519', 'DA04', '潘箬婷', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1527', 'DA04', '丁楠', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1555', 'DA04', '华丰', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1564', 'DA04', '丁飞鸿', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1565', 'DA04', '杜记航', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1569', 'DA04', '汪坦', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1599', 'DA04', '曲家志', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1607', 'DA04', '施炜玮', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1613', 'DA04', '杨杨', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1640', 'DA04', '朱国威', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1663', 'DA04', '庄子泓', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1683', 'DA04', '刘乃伟', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1695', 'DA04', '居千涛', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1697', 'DA04', '卞春荣', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1715', 'DA04', '赵祥富', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1719', 'DA04', '刘皖豫', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1720', 'DA04', '何江龙', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1736', 'DA04', '李润哲', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1757', 'DA04', '李纪飞', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1761', 'DA04', '王闯', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1809', 'DA04', '李智勇', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1812', 'DA04', '陈信地', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1840', 'DA04', '马泽原', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1843', 'DA04', '徐欣', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1866', 'DA04', '肖道一', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1873', 'DA04', '宋柳叶', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1882', 'DA04', '李宝林', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1888', 'DA04', '马强', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1902', 'DA04', '胡寒池', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS2045', 'DA04', '杨祥坤', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS2050', 'DA04', '李芷栅', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS2053', 'DA04', '王天昊', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS2060', 'DA04', '唐凯2', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JSXP406', 'DA04', '李勇', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JSXP438', 'DA04', '陈传真', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JSXP446', 'DA04', '陆建周', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS2047', 'DA04', '王天润', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JSXP454', 'DA04', '张慧慧', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS2176', 'DA04', '高雨彤', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS2177', 'DA04', '赵晨云', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS2187', 'DA04', '田季伟', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1926', 'DA04', '祁文轩', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1939', 'DA04', '吴智雄', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1941', 'DA04', '左恩', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1973', 'DA04', '王昱', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1981', 'DA04', '张攀', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1982', 'DA04', '李兴旺', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1992', 'DA04', '母丽丽', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1996', 'DA04', '顾航睿', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS2005', 'DA04', '陈诺', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS2008', 'DA04', '高鑫', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS2019', 'DA04', '王小龙', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS2024', 'DA04', '何启明', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS2034', 'DA04', '刘子俊', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS2037', 'DA04', '蔡文强', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS2178', 'DA04', '姜成杰', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JSXP536', 'DA04', '孙毅', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JSXP538', 'DA04', '陆语涵', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JSXP539', 'DA04', '季荷飞', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JSXP541', 'DA04', '戴明', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JSXP551', 'DA04', '曹光友', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JSSX077', 'DA04', '黄羽轩', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
--- DA02
-('JS0898', 'DA02', '徐睿', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1158', 'DA02', '胡浩磊', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS2056', 'DA02', '陆跃跃', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0226', 'DA02', '吴正明', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0296', 'DA02', '朱亚明', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS0941', 'DA02', '何桢', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1672', 'DA02', '孙萧', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1699', 'DA02', '陈楠钢', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS1929', 'DA02', '顾新宇', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS2167', 'DA02', '陈兆伟', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS2171', 'DA02', '田梵君', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('JS2172', 'DA02', '卢国颖', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
--- DA05
-('JS1137', 'DA05', '陆红非', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('SH726', 'DA05', '何渊', 12, '123456', CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin');
-
 -- DA04部門のすべてのデバイス情報をdevice_infoテーブルに挿入
 -- 注意：空の値（"_"、"-"、""）はすべてNULLとして処理
 -- 確認ステータスはすべて「未確認」（dict_id=24）に設定
@@ -326,9 +142,6 @@ INSERT INTO device_info (device_id, device_model, computer_name, login_username,
 -- 杨皓伟のデバイス（JS0958）
 ('HYRON-220914 PC-DC-055', 'dell-5000', 'S2D-yanghw-PC4', 'yanghw', 'D204-TRSW', 'M2-A-02', 'JS0958', '电脑名无修改权限', 62, 203, 33, 44, NULL, CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
 
--- 马晓明のデバイス（JS1029）
-('HYRON-191107 PC-DC-024', 'dell-5070', 'NRTU-maxm-PC', 'maxm-nrtu', NULL, '6F', 'JS1029', '外借', 62, 202, 33, NULL, 52, CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-
 -- 赵康2のデバイス（JS1061）
 ('230621-029(暂)', 'dell-5070', 'DA04-zhaokang2-PC', 'zhaokang2', 'MTI-SC-MW', 'M2-A-02', 'JS1061', 'IP设置了加速，换IP后部分软件不能用，所以暂时还用2段的这个IP', 62, 202, 35, 44, 52, CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
 
@@ -346,9 +159,6 @@ INSERT INTO device_info (device_id, device_model, computer_name, login_username,
 
 -- 孙鹏のデバイス（JS1180）
 ('HYRON-190605 PC-DC-054', 'dell-5050', 'DA04-sunpeng-pc', 'sunpeng', 'イーグル', 'M2-A-05', 'JS1180', NULL, 62, 202, 33, 42, NULL, CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-
--- 康博成のデバイス（JS1239）
-('HYRON-241223 PC-DC-010', 'dell-7020', 'DA04-KANGBC-PC2', 'kangbc', 'D311支援', NULL, 'JS1239', NULL, 62, 202, 33, 42, NULL, CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
 
 -- 潘宇のデバイス（JS1244）
 ('HYRON-211217 PC-DC-044', 'dell-5090', 'S2D-panyu-PC', 'panyu', 'イーグル', 'M2-A-05', 'JS1244', '无修改PC名权限', 62, 202, 35, 43, NULL, CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
@@ -389,7 +199,6 @@ INSERT INTO device_info (device_id, device_model, computer_name, login_username,
 
 -- 章捷のデバイス（JS1510）
 ('HYRON-251201 PC-DC-016', 'Pro Tower QCT1250', 'DA04-ZHANGJIE-PC2', 'zhangjie-nrtu', 'D204-NRTU', 'M5-A-09', 'JS1510', NULL, 62, 203, 33, 42, NULL, CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-('HYRON-201102 PC-DC-013', 'dell-5080', NULL, NULL, NULL, NULL, 'JS1510', '章捷旧电脑，已初始化', 62, 202, 33, NULL, 52, CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
 
 -- 潘箬婷のデバイス（JS1519）
 ('HYRON-191107 PC-DC-010', 'dell-5070', 'DA04-PANRT-PC', 'panrt', 'MTI-TECH-DC', 'M2-A-03', 'JS1519', NULL, 62, 202, 33, NULL, 52, CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
@@ -405,9 +214,6 @@ INSERT INTO device_info (device_id, device_model, computer_name, login_username,
 
 -- 杜记航のデバイス（JS1565）
 ('HYRON-220914 PC-DC-051', 'dell-5000', 'DA04-LUNA-PC10', 'dujh', 'MTI-TECH-LUNA', 'M2-A-03', 'JS1565', NULL, 62, 202, 33, 41, NULL, CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-
--- 汪坦のデバイス（JS1569）
-('HYRON-190605 PC-DC-014', 'dell-5050', 'DA04-WANGTAN-PC', 'wangtan-nrtu', 'D311支援', NULL, 'JS1569', '外借', 62, 202, 33, NULL, 52, CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
 
 -- 曲家志のデバイス（JS1599）
 ('HYRON-210118 PC-DC-001', 'dell-5080', 'DA04-qujz-PC', 'qujz', 'MTI-SC-MW', 'M2-A-02', 'JS1599', NULL, 62, 202, 33, 42, 52, CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
@@ -428,9 +234,6 @@ INSERT INTO device_info (device_id, device_model, computer_name, login_username,
 -- 刘乃伟のデバイス（JS1683）
 ('HYRON-220914 PC-DC-054', 'dell-5000', 'DA04-LIUNW-PC6', 'liunw', 'D204-NRTU', 'M5-A-09', 'JS1683', '10F', 62, 202, 33, 41, NULL, CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
 
--- 居千涛のデバイス（JS1695）
-('HYRON-210621 PC-DC-028', 'dell-5080', 'HYRON-JS-JUQT', 'juqt', 'POSI再構築', NULL, 'JS1695', '外借', 62, 202, 33, NULL, 52, CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-
 -- 卞春荣のデバイス（JS1697）
 ('HYRON-220914 PC-DC-052', 'dell-5000', 'DA04-LUNA-PC08', 'biancr', 'MTI-TECH-LUNA', 'M2-A-03', 'JS1697', NULL, 62, 202, 33, 41, NULL, CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
 
@@ -449,24 +252,12 @@ INSERT INTO device_info (device_id, device_model, computer_name, login_username,
 -- 李纪飞のデバイス（JS1757）
 ('HYRON-241118 PC-DC-001', 'dell-7010', 'DA04-LIJF-PC2', 'lijf', 'MTI-TECH-DC', 'M2-A-03', 'JS1757', NULL, 62, 203, 33, 43, NULL, CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
 
--- 王闯のデバイス（JS1761）
-('HYRON-210621 PC-DC-030', 'dell-5080', 'DA04-WANGC-PC', 'wangchuang', 'R&D+SBI', '6F', 'JS1761', '外借', 62, 202, 33, NULL, 52, CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-
 -- 李智勇のデバイス（JS1809）
 ('HYRON-240828 PC-DC-007', 'dell-7010', 'DA04-lizy2-PC2', 'lizy2', 'MTI-健診-DX', 'M2-A-03', 'JS1809', NULL, 62, 203, 33, 43, NULL, CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-
--- 陈信地のデバイス（JS1812）
-('HYRON-231127 PC-DC-006', 'optiplex', 'DA04-CHENXD', 'chenxd-nrtu', NULL, NULL, 'JS1812', '外借', 62, 203, 33, 42, NULL, CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
 
 -- 马泽原のデバイス（JS1840）
 ('HYRON-221129 PC-DC-069', 'dell-5000', 'DESKTOP-B08J4HA', 'mazy', NULL, 'M5', 'JS1840', '外借', 62, 202, 33, 43, NULL, CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
 ('HYRON-181112 PC-DC-002', NULL, NULL, NULL, NULL, '6F', 'JS1840', '已归还', 62, 203, 33, 42, 52, CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-
--- 徐欣のデバイス（JS1843）
-('HYRON-231127 PC-DC-010', 'optiplex', 'DA04-XUXIN-PC', 'xuxin-nrtu', NULL, NULL, 'JS1843', '外借', 62, 203, 33, 42, NULL, CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-
--- 肖道一のデバイス（JS1866）
-('HYRON-190217 PC-DC-006', 'dell-5050', 'DA04-xiaody-PC', 'xiaody', 'D309支援', NULL, 'JS1866', '外借', 62, 202, 33, NULL, 52, CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
 
 -- 宋柳叶のデバイス（JS1873）
 ('HYRON-220414 PC-DC-049', 'dell-5090', 'DA04-SONGLY-PC', 'songly', 'MTI-SC-AMUSE', 'M2-A-02', 'JS1873', NULL, 62, 202, 33, 41, NULL, CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
@@ -497,9 +288,6 @@ INSERT INTO device_info (device_id, device_model, computer_name, login_username,
 
 -- 王天润のデバイス（JS2047）
 ('HYRON-220926 PC-DC-007', 'dell-5000', 'DA04-WANGTR-PC3', 'wangtr-nrtu', 'D204-NRTU', 'M5-A-09', 'JS2047', NULL, 62, 202, 33, 42, NULL, CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
-
--- 张慧慧のデバイス（JSXP454）
-('HYRON-221129 PC-DC-030', 'dell-5000', 'DA04-ZHANGHH-PC', 'zhanghh2', NULL, 'M5-A-09', 'JSXP454', '外借', 62, 202, 33, 43, 51, CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
 
 -- 高雨彤のデバイス（JS2176）
 ('HYRON-221129 PC-DC-068', 'optiplex', 'DA04-GAOYT-PC', 'gaoyt', 'D204-TRSW', 'M2-A-02', 'JS2176', NULL, 62, 203, 33, 42, NULL, CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin'),
@@ -617,6 +405,20 @@ INSERT INTO device_info (device_id, device_model, computer_name, login_username,
 
 -- 何渊のデバイス (DA05部門)（SH726）
 ('HYRON-250123 nobo-001', NULL, NULL, 'heyuan', 'D204-TRSW', 'M2-A-02', 'SH726', '南京笔记本', 62, 203, 33, 44, NULL, CURRENT_TIMESTAMP, 'admin', CURRENT_TIMESTAMP, 'admin');
+
+-- device_ip テーブルの作成とデータ挿入
+DROP TABLE IF EXISTS device_ip;
+DROP SEQUENCE IF EXISTS device_ip_ip_id_seq CASCADE;
+CREATE SEQUENCE device_ip_ip_id_seq;
+CREATE TABLE device_ip (
+    ip_id integer PRIMARY KEY DEFAULT nextval('device_ip_ip_id_seq'),
+    device_id character varying(50) REFERENCES device_info(device_id),
+    ip_address character varying(50),
+    create_time timestamp(6) without time zone,
+    creater character varying(100),
+    update_time timestamp(6) without time zone,
+    updater character varying(100)
+);
 
 --device_ip テーブルへのデータ挿入
 INSERT INTO device_ip (device_id, ip_address, create_time, update_time, creater, updater) VALUES 
@@ -830,9 +632,6 @@ INSERT INTO device_ip (device_id, ip_address, create_time, update_time, creater,
 ('HYRON-220914 PC-DC-055', '172.28.101.11', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 ('HYRON-220914 PC-DC-055', '172.28.101.131', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
--- JS1029 马晓明のデバイス
-('HYRON-191107 PC-DC-024', '173.28.100.141', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
-
 -- JS1061 赵康2のデバイス
 ('230621-029(暂)', '10.6.2.247', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
@@ -854,9 +653,6 @@ INSERT INTO device_ip (device_id, ip_address, create_time, update_time, creater,
 -- JS1180 孙鹏のデバイス
 ('HYRON-190605 PC-DC-054', '10.6.1.245', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 ('HYRON-190605 PC-DC-054', '10.6.2.254', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
-
--- JS1239 康博成のデバイス
-('HYRON-241223 PC-DC-010', '10.6.1.95', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- JS1244 潘宇のデバイス
 ('HYRON-211217 PC-DC-044', '10.6.1.59', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
@@ -900,9 +696,6 @@ INSERT INTO device_ip (device_id, ip_address, create_time, update_time, creater,
 ('HYRON-171017 PC-DC-006', '10.6.1.159', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 ('HYRON-171017 PC-DC-006', '10.6.3.218', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
--- JS1435 贾乃康のデバイス2
-('HYRON-240828 PC-DC-018', '192.168.203.106', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
-
 -- JS1436 姜榕のデバイス
 ('HYRON-240828 PC-DC-001', '192.168.203.109', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
@@ -925,9 +718,6 @@ INSERT INTO device_ip (device_id, ip_address, create_time, update_time, creater,
 ('HYRON-220914 PC-DC-051', '10.6.1.77', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 ('HYRON-220914 PC-DC-051', '10.6.1.242', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
--- JS1569 汪坦のデバイス
-('HYRON-190605 PC-DC-014', '173.28.100.132', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
-
 -- JS1599 曲家志のデバイス1
 ('HYRON-210118 PC-DC-001', '10.6.1.63', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
@@ -948,9 +738,6 @@ INSERT INTO device_ip (device_id, ip_address, create_time, update_time, creater,
 
 -- JS1683 刘乃伟のデバイス
 ('HYRON-220914 PC-DC-054', '172.28.100.147', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
-
--- JS1695 居千涛のデバイス
-('HYRON-210621 PC-DC-028', '192.168.203.108', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- JS1697 卞春荣のデバイス
 ('HYRON-220914 PC-DC-052', '10.6.1.109', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
@@ -976,24 +763,12 @@ INSERT INTO device_ip (device_id, ip_address, create_time, update_time, creater,
 -- JS1757 李纪飞のデバイス
 ('HYRON-241118 PC-DC-001', '10.6.1.61', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
--- JS1761 王闯のデバイス
-('HYRON-210621 PC-DC-030', '172.28.100.154', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
-
 -- JS1809 李智勇のデバイス
 ('HYRON-240828 PC-DC-007', '10.6.1.93', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
-
--- JS1812 陈信地のデバイス
-('HYRON-231127 PC-DC-006', '173.28.100.123', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- JS1840 马泽原のデバイス1
 ('HYRON-221129 PC-DC-069', '10.6.1.69', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 ('HYRON-221129 PC-DC-069', '10.6.3.216', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
-
--- JS1843 徐欣のデバイス
-('HYRON-231127 PC-DC-010', '173.28.100.122', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
-
--- JS1866 肖道一のデバイス
-('HYRON-190217 PC-DC-006', '174.28.100.103', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- JS1873 宋柳叶のデバイス
 ('HYRON-220414 PC-DC-049', '10.6.1.84', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
@@ -1023,11 +798,7 @@ INSERT INTO device_ip (device_id, ip_address, create_time, update_time, creater,
 ('HYRON-231127 PC-DC-003', '172.28.100.186', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- JS2047 王天润のデバイス
-('HYRON-220926 PC-DC-007', '10.6.1.141', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 ('HYRON-220926 PC-DC-007', '173.28.100.145', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
-
--- JSXP454 张慧慧のデバイス
-('HYRON-221129 PC-DC-030', '172.177.171.105', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- JS2176 高雨彤のデバイス
 ('HYRON-221129 PC-DC-068', '172.28.101.136', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
@@ -1076,19 +847,15 @@ INSERT INTO device_ip (device_id, ip_address, create_time, update_time, creater,
 ('HYRON-241118 PC-DC-039', '173.28.100.150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- JS2008 高鑫のデバイス
-('HYRON-241118 PC-DC-003', '10.6.1.137', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 ('HYRON-241118 PC-DC-003', '173.28.100.146', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- JS2019 王小龙のデバイス
-('HYRON-241118 PC-DC-042', '174.28.100.14', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
-('HYRON-241118 PC-DC-042', '174.28.100.134', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 ('HYRON-241118 PC-DC-042', '10.6.1.97', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- JS2024 何启明のデバイス
 ('HYRON-241118 PC-DC-041', '172.28.100.166', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- JS2034 刘子俊のデバイス
-('HYRON-241118 PC-DC-043', '173.28.100.124', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 ('HYRON-241118 PC-DC-043', '173.28.100.148', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- JS2037 蔡文强のデバイス
@@ -1150,7 +917,6 @@ INSERT INTO device_ip (device_id, ip_address, create_time, update_time, creater,
 ('HYRON-211217 PC-DC-056', '10.6.2.233', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- JS2167 陈兆伟のデバイス
-('HYRON-151020 PC-DC-002', '10.6.2.32', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 ('HYRON-151020 PC-DC-002', '10.6.1.180', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- JS2171 田梵君のデバイス
@@ -1170,553 +936,527 @@ INSERT INTO device_ip (device_id, ip_address, create_time, update_time, creater,
 -- 1人あたり複数の設備があるため、各設備ごとに1行挿入する
 -- monitor_id は自動採番、device_id は「ホスト設備番号」、monitor_name は「モニター設備番号」
 
+DROP TABLE IF EXISTS monitor_info;
+DROP SEQUENCE IF EXISTS monitor_info_monitor_id_seq CASCADE;
+CREATE SEQUENCE monitor_info_monitor_id_seq;
+CREATE TABLE monitor_info (
+    monitor_id integer PRIMARY KEY DEFAULT nextval('monitor_info_monitor_id_seq'),
+    device_id character varying(50) REFERENCES device_info(device_id),
+    monitor_name character varying(100),
+    create_time timestamp(6) without time zone,
+    creater character varying(100),
+    update_time timestamp(6) without time zone,
+    updater character varying(100)
+);
+
 INSERT INTO monitor_info (device_id, monitor_name, create_time, update_time, creater, updater) VALUES
 
 -- 林飞 (JS0014)
-('HYRON-221129 PC-DC-089', 'HYRON-241118 Minitor-131', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-211217 PC-DC-058', 'HYRON-151127 PC-DC-004JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-221129 PC-DC-089', 'HYRON-241118 Minitor-131', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-211217 PC-DC-058', 'HYRON-151127 PC-DC-004JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 刘文丰 (JS0020)
-('HYRON-221129 PC-DC-055', 'HYRON-221129 PC-DC-055', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-221129 PC-DC-055', 'HYRON-241118 Minitor-075', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-221129 PC-DC-055', 'HYRON-221129 PC-DC-055', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-221129 PC-DC-055', 'HYRON-241118 Minitor-075', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 朱德涛 (JS0054)
-('hyron-220914 pc-dc-053', 'HYRON-241118 Minitor-076', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('hyron-220914 pc-dc-053', 'HYRON-241118 Minitor-076', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 潘小琴 (JS0105)
-('HYRON-211029 MAC-001', 'HYRON-171017 PC-DC-006JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-240828 PC-DC-002', 'HYRON-240826 Minitor-009', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-241118 PC-DC-020', 'HYRON-170620 PC-DC-007', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-211029 MAC-001', 'HYRON-171017 PC-DC-006JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-240828 PC-DC-002', 'HYRON-240826 Minitor-009', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-241118 PC-DC-020', 'HYRON-170620 PC-DC-007', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 陈国宝 (JS0108)
-('HYRON-211217 PC-DC-046', 'HYRON-240729 Minitor-001', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-211217 PC-DC-046', 'HYRON-211217 PC-DC-046', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-200902 PC-DC-001', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-220622 PC-DC-001', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-220622 PC-DC-002', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('hyron-230828 nobo-001', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-221018 PC-DC-022', 'HYRON-181112 PC-DC-001JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('hyron-120412 pc-dc-007', 'hyron-101027 pc-dc-005', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-240416 PC-DC-020', 'HYRON-240826 Minitor-007', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-211217 PC-DC-046', 'HYRON-240729 Minitor-001', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-211217 PC-DC-046', 'HYRON-211217 PC-DC-046', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-200902 PC-DC-001', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-220622 PC-DC-001', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-220622 PC-DC-002', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('hyron-230828 nobo-001', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-221018 PC-DC-022', 'HYRON-181112 PC-DC-001JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('hyron-120412 pc-dc-007', 'hyron-101027 pc-dc-005', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-240416 PC-DC-020', 'HYRON-240826 Minitor-007', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 武志鹏 (JS0129)
-('HYRON-211217 PC-DC-041', 'HYRON-211217 PC-DC-041', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-211217 PC-DC-041', 'HYRON-250604 Minitor-183', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-211217 PC-DC-041', 'HYRON-211217 PC-DC-041', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-211217 PC-DC-041', 'HYRON-250604 Minitor-183', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 曹向阳 (JS0177)
-('HYRON-211217 PC-DC-045', 'HYRON-211217 PC-DC-045', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-191107 PC-DC-025', 'HYRON-250604 Minitor-184', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-211217 PC-DC-045', 'HYRON-211217 PC-DC-045', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-191107 PC-DC-025', 'HYRON-250604 Minitor-184', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 欧金龙 (JS0199)
-('HYRON-220914 PC-DC-056', 'HYRON-241118 Minitor-077', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-2020703 PC-iMac-001', 'HYRON-2020703 PC-iMac-001', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-210118 PC-DC-034', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-220914 PC-DC-056', 'HYRON-241118 Minitor-077', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-2020703 PC-iMac-001', 'HYRON-2020703 PC-iMac-001', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-210118 PC-DC-034', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 王燕飞 (JS0263)
-('HYRON-231127 PC-DC-008', 'HYRON-201102 PC-DC-008JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-231127 PC-DC-008', 'HYRON-250604 Minitor-185', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-231127 PC-DC-008', 'HYRON-201102 PC-DC-008JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-231127 PC-DC-008', 'HYRON-250604 Minitor-185', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 周仲山 (JS0266)
-('HYRON-230705 nobo-001', 'HYRON-240619 Minitor-001', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-230705 nobo-001', 'HYRON-240619 Minitor-001', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 徐冬琴 (JS0291)
-('HYRON-211217 PC-DC-043', 'HYRON-241118 Minitor-083', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-211217 PC-DC-043', 'HYRON-241118 Minitor-083', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 聂建军 (JS0298)
-('HYRON-131216 PC-DC-028', 'HYRON-131216 PC-DC-028JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-211217 PC-DC-040', 'HYRON-211217 PC-DC-040', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-211217 PC-DC-040', 'HYRON-241118 Minitor-078', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-210305 PC-DC-011', 'HYRON-220914 PC-DC-052', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('hyron-130408 nobo-001', 'hyron-130408 nobo-001', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-131216 PC-DC-028', 'HYRON-131216 PC-DC-028JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-211217 PC-DC-040', 'HYRON-211217 PC-DC-040', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-211217 PC-DC-040', 'HYRON-241118 Minitor-078', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-210305 PC-DC-011', 'HYRON-220914 PC-DC-052', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('hyron-130408 nobo-001', 'hyron-130408 nobo-001', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 曹天扬 (JS0300)
-('HYRON-181210 PC-DC-016', 'HYRON-241118 Minitor-079', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-181210 PC-DC-016', 'HYRON-241118 Minitor-079', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 卢淑美 (JS0356)
-('HYRON-160818 PC-DC-011', 'HYRON-160818 PC-DC-011', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-150813 PC-DC-009', '-', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('hyron-120412 pc-dc-018', 'hyron-110104 pc-dc-001', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-191107 PC-DC-012', 'HYRON-241118 Minitor-084', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('hyron-120412 pc-dc-013', '-', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-160818 PC-DC-011', 'HYRON-160818 PC-DC-011', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-150813 PC-DC-009', '-', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('hyron-120412 pc-dc-018', 'hyron-110104 pc-dc-001', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-191107 PC-DC-012', 'HYRON-241118 Minitor-084', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('hyron-120412 pc-dc-013', '-', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 袁晓东 (JS0426)
-('HYRON-200106 MACMINI-001', 'HYRON-160818 PC-DC-018', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-211217 PC-DC-050', 'HYRON-241118 Minitor-080', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-211217 PC-DC-050', 'HYRON-211217 PC-DC-047', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-151127 PC-DC-006', 'HYRON-151127 PC-DC-006JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-240828 PC-DC-005', 'HYRON-240826 Minitor-010', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-220414 PC-DC-047', 'HYRON-220414 PC-DC-047', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-200106 MACMINI-001', 'HYRON-160818 PC-DC-018', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-211217 PC-DC-050', 'HYRON-241118 Minitor-080', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-211217 PC-DC-050', 'HYRON-211217 PC-DC-047', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-151127 PC-DC-006', 'HYRON-151127 PC-DC-006JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-240828 PC-DC-005', 'HYRON-240826 Minitor-010', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-220414 PC-DC-047', 'HYRON-220414 PC-DC-047', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 李琪 (JS0449)
-('HYRON-221129 PC-DC-042', 'HYRON-241118 Minitor-081', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-161205 PC-DC-001', 'HYRON-161205 PC-DC-001', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-221129 PC-DC-042', 'HYRON-241118 Minitor-081', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-161205 PC-DC-001', 'HYRON-161205 PC-DC-001', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 李行 (JS0572)
-('HYRON-181112 PC-DC-025', 'HYRON-250604 Minitor-186', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-181112 PC-DC-025', 'HYRON-250604 Minitor-186', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 王晓舟 (JS0596)
-('HYRON-240416 PC-DC-017', 'HYRON-240826 Minitor-004', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-240416 PC-DC-017', 'HYRON-240826 Minitor-004', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 张娟 (JS0609)
-('HYRON-240828 PC-DC-011', 'HYRON-241118 Minitor-085', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-241118 PC-DC-009', 'HYRON-221129 PC-DC-050', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-240828 PC-DC-011', 'HYRON-241118 Minitor-085', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-241118 PC-DC-009', 'HYRON-221129 PC-DC-050', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 袁娟 (JS0611)
-('HYRON-211217 PC-DC-038', 'HYRON-241118 Minitor-086', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-211217 PC-DC-038', 'HYRON-181112 PC-DC-021JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-211217 PC-DC-038', 'HYRON-241118 Minitor-086', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-211217 PC-DC-038', 'HYRON-181112 PC-DC-021JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 赵莉 (JS0619)
-('HYRON-221129 PC-DC-041', 'HYRON-221129 PC-DC-041', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-221129 PC-DC-041', 'HYRON-241118 Minitor-087', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-171221 PC-DC-014', 'HYRON-220926 PC-DC-023', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('Hyron-191107 nobo-001', 'Hyron-191107 nobo-001', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-131216 PC-DC-014', '-', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-221129 PC-DC-041', 'HYRON-221129 PC-DC-041', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-221129 PC-DC-041', 'HYRON-241118 Minitor-087', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-171221 PC-DC-014', 'HYRON-220926 PC-DC-023', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('Hyron-191107 nobo-001', 'Hyron-191107 nobo-001', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-131216 PC-DC-014', '-', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 陈卫东 (JS0627)
-('HYRON-190605 PD-DC-017', 'HYRON-241118 Minitor-088', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-190605 PD-DC-017', 'HYRON-190605 PD-DC-017', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-190605 PD-DC-017', 'HYRON-241118 Minitor-088', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-190605 PD-DC-017', 'HYRON-190605 PD-DC-017', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 莫尚勇 (JS0720)
-('HYRON-221129 PC-DC-043', 'HYRON-221129 PC-DC-043', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-221129 PC-DC-043', 'HYRON-241118 Minitor-082', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('Longtoo-131219 Nobo-004', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-221129 PC-DC-043', 'HYRON-221129 PC-DC-043', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-221129 PC-DC-043', 'HYRON-241118 Minitor-082', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('Longtoo-131219 Nobo-004', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 张炎 (JS0746)
-('HYRON-221129 PC-DC-050', 'HYRON-221129 PC-DC-050', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-221129 PC-DC-050', 'HYRON-250604 Minitor-187', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-221129 PC-DC-050', 'HYRON-221129 PC-DC-050', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-221129 PC-DC-050', 'HYRON-250604 Minitor-187', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 孙博 (JS0751)
-('HYRON-240828 PC-DC-010', 'HYRON-241118 Minitor-127', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-240828 PC-DC-010', 'HYRON-241118 Minitor-127', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 陈辰 (JS0798)
-('HYRON-241118 PC-DC-002', 'HYRON-181112 PC-DC-013', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-241118 PC-DC-002', 'HYRON-250604 Minitor-188', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-241118 PC-DC-002', 'HYRON-181112 PC-DC-013', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-241118 PC-DC-002', 'HYRON-250604 Minitor-188', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 董鸣辉 (JS0800)
-('HYRON-211217 PC-DC-027', 'HYRON-241118 Minitor-089', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-170620 PC-DC-008', 'HYRON-160818 PC-DC-006', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('hyron-130920 PC-DC-013', '100623-002', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-231127 PC-DC-007', 'HYRON-241118 Minitor-089', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-211217 PC-DC-027', 'HYRON-241118 Minitor-089', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-170620 PC-DC-008', 'HYRON-160818 PC-DC-006', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('hyron-130920 PC-DC-013', '100623-002', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-231127 PC-DC-007', 'HYRON-241118 Minitor-089', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 杨爱玉 (JS0833)
-('HYRON-240416 PC-DC-015', 'HYRON-240826 Minitor-002', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-240416 PC-DC-016', 'HYRON-240826 Minitor-003', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-240416 PC-DC-015', 'HYRON-240826 Minitor-002', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-240416 PC-DC-016', 'HYRON-240826 Minitor-003', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 张卫华 (JS0842)
-('HYRON-240828 PC-DC-006', 'HYRON-240826 Monitor-011', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-240828 PC-DC-006', 'HYRON-240826 Monitor-011', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 许加国 (JS0942)
-('HYRON-220914 PC-DC-049', 'HYRON-160818 PC-DC-018', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-220914 PC-DC-049', 'HYRON-160818 PC-DC-018', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 杨皓伟 (JS0958)
-('HYRON-220914 PC-DC-055', 'HYRON-241118 Minitor-091', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-
--- 李文昊 (JS1023)
-(NULL, 'HYRON-250604 Minitor-189', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-
--- 马晓明 (JS1029)
-('HYRON-191107 PC-DC-024', 'HYRON-191107 PC-DC-024JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-191107 PC-DC-024', 'HYRON-250604 Minitor-190', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-220914 PC-DC-055', 'HYRON-241118 Minitor-091', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 赵康2 (JS1061)
-('230621-029(暂)', 'HYRON-191107 PC-DC-023JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('230621-029(暂)', 'HYRON-250604 Minitor-191', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('230621-029(暂)', 'HYRON-191107 PC-DC-023JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('230621-029(暂)', 'HYRON-250604 Minitor-191', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 汪海燕 (JS1075)
-('HYRON-211217 PC-DC-047', 'HYRON-210118 PC-DC-040', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-211217 PC-DC-047', 'HYRON-210118 PC-DC-040', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 蔡翔宇 (JS1148)
-('HYRON-210621 PC-DC-010', 'HYRON-241118 Minitor-090', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-210621 PC-DC-010', 'HYRON-241118 Minitor-090', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 陈殊熠 (JS1150)
-('HYRON-211217 PC-DC-020', 'HYRON-211217 PC-DC-020', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-211217 PC-DC-020', 'HYRON-250604 Minitor-192', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-211217 PC-DC-020', 'HYRON-211217 PC-DC-020', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-211217 PC-DC-020', 'HYRON-250604 Minitor-192', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 罗佳 (JS1174)
-('HYRON-240828 PC-DC-012', 'HYRON-241118 Minitor-128', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-240828 PC-DC-012', 'HYRON-241118 Minitor-128', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 孙鹏 (JS1180)
-('HYRON-190605 PC-DC-054', 'HYRON-241118 Minitor-094', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-
--- 康博成 (JS1239)
-('HYRON-241223 PC-DC-010', 'HYRON-241118 Monitor-050', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-190605 PC-DC-054', 'HYRON-241118 Minitor-094', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 潘宇 (JS1244)
-('HYRON-211217 PC-DC-044', 'HYRON-211217 PC-DC-044', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-211217 PC-DC-044', 'HYRON-250604 Minitor-193', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-211217 PC-DC-044', 'HYRON-211217 PC-DC-044', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-211217 PC-DC-044', 'HYRON-250604 Minitor-193', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 王邵赟 (JS1246)
-('HYRON-210805 PC-DC-006', 'HYRON-241118 Minitor-093', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-211220 MAC-001', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-221018 PC-DC-021', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-210805 PC-DC-006', 'HYRON-241118 Minitor-093', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-211220 MAC-001', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-221018 PC-DC-021', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 王冠杰 (JS1285)
-('HYRON-210118 PC-DC-024', 'HYRON-171221 PC-DC-027JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-210118 PC-DC-024', 'HYRON-250604 Minitor-194', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-210118 PC-DC-024', 'HYRON-171221 PC-DC-027JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-210118 PC-DC-024', 'HYRON-250604 Minitor-194', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 邓怿泽 (JS1307)
-('HYRON-220414 PC-DC-040', 'HYRON-220414 PC-DC-040', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-220414 PC-DC-040', 'HYRON-250604 Minitor-195', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-220414 PC-DC-040', 'HYRON-220414 PC-DC-040', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-220414 PC-DC-040', 'HYRON-250604 Minitor-195', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 王子晗 (JS1339)
-('HYRON-220926 PC-DC-021', 'HYRON-250604 Minitor-196', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-220926 PC-DC-021', 'HYRON-250604 Minitor-196', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 张欢 (JS1347)
-('HYRON-211217 PC-DC-019', 'HYRON-211217 PC-DC-019', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-211217 PC-DC-019', 'HYRON-250604 Minitor-197', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-211217 PC-DC-019', 'HYRON-211217 PC-DC-019', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-211217 PC-DC-019', 'HYRON-250604 Minitor-197', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 罗翔 (JS1359)
-('HYRON-220926 PC-DC-008', 'HYRON-220926 PC-DC-008', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-220926 PC-DC-008', 'HYRON-250604 Minitor-198', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('hyron-190805 macmini-001', 'HYRON-190217 PC-DC-010', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-220926 PC-DC-008', 'HYRON-220926 PC-DC-008', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-220926 PC-DC-008', 'HYRON-250604 Minitor-198', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('hyron-190805 macmini-001', 'HYRON-190217 PC-DC-010', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 应加俊 (JS1363)
-('HYRON-231127 PC-DC-004', 'HYRON-221129 PC-DC-007', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-231127 PC-DC-004', 'HYRON-250604 Minitor-199', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-231127 PC-DC-004', 'HYRON-221129 PC-DC-007', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-231127 PC-DC-004', 'HYRON-250604 Minitor-199', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 王孟洛 (JS1402)
-('HYRON-210621 PD-DC-018', 'HYRON-210621 PD-DC-018 DELL', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-210621 PD-DC-018', 'HYRON-250604 Minitor-202', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-210621 PD-DC-018', 'HYRON-210621 PD-DC-018 DELL', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-210621 PD-DC-018', 'HYRON-250604 Minitor-202', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 贾乃康 (JS1435)
-('HYRON-171017 PC-DC-006', 'HYRON-220414 PC-DC-044', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-240828 PC-DC-018', 'HYRON-241118 Minitor-129', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-171017 PC-DC-006', 'HYRON-220414 PC-DC-044', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 姜榕 (JS1436)
-('HYRON-240828 PC-DC-001', 'HYRON-240826 Minitor-008', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-240828 PC-DC-001', 'HYRON-240826 Minitor-008', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 章捷 (JS1510)
-('HYRON-251201 PC-DC-016', 'HYRON-201102 PC-DC-013JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-251201 PC-DC-016', 'HYRON-241118 Minitor-092', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-201102 PC-DC-013', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-251201 PC-DC-016', 'HYRON-201102 PC-DC-013JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-251201 PC-DC-016', 'HYRON-241118 Minitor-092', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 李文佳 (JS1514) - 日本出差中，无设备
 
 -- 潘箬婷 (JS1519)
-('HYRON-191107 PC-DC-010', 'HYRON-250604 Minitor-200', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-191107 PC-DC-010', 'HYRON-250604 Minitor-200', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 丁楠 (JS1527)
-('HYRON-221129 PC-DC-071', 'HYRON-250604 Minitor-203', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-221129 PC-DC-071', 'HYRON-250604 Minitor-203', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 华丰 (JS1555)
-('HYRON-240416 PC-DC-019', 'HYRON-240826 Minitor-005', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-240416 PC-DC-019', 'HYRON-240826 Minitor-005', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 丁飞鸿 (JS1564)
-('HYRON-221129 PC-DC-070', 'HYRON-250604 Minitor-204', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-221129 PC-DC-070', 'HYRON-221129 PC-DC-070', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-221129 PC-DC-070', 'HYRON-250604 Minitor-204', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-221129 PC-DC-070', 'HYRON-221129 PC-DC-070', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 杜记航 (JS1565)
-('HYRON-220914 PC-DC-051', 'HYRON-250604 Minitor-205', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-
--- 汪坦 (JS1569)
-('HYRON-190605 PC-DC-014', 'HYRON-190605 PC-DC-014JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-190605 PC-DC-014', 'HYRON-250604 Minitor-206', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-220914 PC-DC-051', 'HYRON-250604 Minitor-205', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 曲家志 (JS1599)
-('HYRON-210118 PC-DC-001', 'HYRON-250604 Minitor-207', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-171017 PC-DC-020', 'HYRON-190217 PC-DC-010', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-210118 PC-DC-001', 'HYRON-250604 Minitor-207', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-171017 PC-DC-020', 'HYRON-190217 PC-DC-010', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 施炜玮 (JS1607)
-('HYRON-210118 PC-DC-012', 'HYRON-250604 Minitor-208', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-210118 PC-DC-012', 'HYRON-250604 Minitor-208', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 杨杨 (JS1613)
-('HYRON-220926 PC-DC-009', 'HYRON-220926 PC-DC-009', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-220926 PC-DC-009', 'HYRON-250604 Minitor-209', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-220926 PC-DC-009', 'HYRON-220926 PC-DC-009', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-220926 PC-DC-009', 'HYRON-250604 Minitor-209', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 朱国威 (JS1640)
-('HYRON-231127 PC-DC-002', 'HYRON-250604 Minitor-210', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-231127 PC-DC-002', 'HYRON-250604 Minitor-210', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 庄子泓 (JS1663)
-('HYRON-191107 PC-DC-031', 'HYRON-171017 PC-DC-007JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-191107 PC-DC-031', 'HYRON-171017 PC-DC-007JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 刘乃伟 (JS1683)
-('HYRON-220914 PC-DC-054', 'HYRON-220914 PC-DC-054', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-220914 PC-DC-054', 'HYRON-250604 Minitor-211', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-
--- 居千涛 (JS1695)
-('HYRON-210621 PC-DC-028', 'HYRON-210621 PC-DC-028 DELL', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-210621 PC-DC-028', 'HYRON-250604 Minitor-212', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-220914 PC-DC-054', 'HYRON-220914 PC-DC-054', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-220914 PC-DC-054', 'HYRON-250604 Minitor-211', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 卞春荣 (JS1697)
-('HYRON-220914 PC-DC-052', 'HYRON-220914 PC-DC-052', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-220914 PC-DC-052', 'HYRON-250604 Minitor-213', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-220914 PC-DC-052', 'HYRON-220914 PC-DC-052', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-220914 PC-DC-052', 'HYRON-250604 Minitor-213', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 赵祥富 (JS1715)
-('HYRON-221129 PC-DC-044', 'HYRON-250604 Minitor-214', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-221129 PC-DC-044', 'HYRON-250604 Minitor-214', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 刘皖豫 (JS1719)
-('HYRON-240416 PC-DC-014', 'HYRON-240826 Minitor-001', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-240416 PC-DC-014', 'HYRON-240826 Minitor-001', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 何江龙 (JS1720)
-('HYRON-220926 PC-DC-023', 'HYRON-220926 PC-DC-023', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-220926 PC-DC-023', 'HYRON-250604 Minitor-215', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-(NULL, 'HYRON-200306 MONITOR-001', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-(NULL, 'Hyron-201119 Monitor-001', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-(NULL, 'Hyron-201119 Monitor-002', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-(NULL, '苹果mc374 nobo-001', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-220926 PC-DC-023', 'HYRON-220926 PC-DC-023', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-220926 PC-DC-023', 'HYRON-250604 Minitor-215', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+(NULL, 'HYRON-200306 MONITOR-001', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+(NULL, 'Hyron-201119 Monitor-001', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+(NULL, 'Hyron-201119 Monitor-002', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+(NULL, '苹果mc374 nobo-001', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 李润哲 (JS1736)
-('HYRON-220125 PC-DC-017', 'HYRON-181210 PC-DC-020JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-220125 PC-DC-017', 'HYRON-250604 Minitor-216', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-220125 PC-DC-017', 'HYRON-181210 PC-DC-020JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-220125 PC-DC-017', 'HYRON-250604 Minitor-216', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 李纪飞 (JS1757)
-('HYRON-241118 PC-DC-001', 'HYRON-221129 PC-DC-042', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-241118 PC-DC-001', 'HYRON-250604 Minitor-217', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-
--- 王闯 (JS1761)
-('HYRON-210621 PC-DC-030', 'HYRON-210621 PC-DC-030', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-241118 PC-DC-001', 'HYRON-221129 PC-DC-042', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-241118 PC-DC-001', 'HYRON-250604 Minitor-217', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 李智勇 (JS1809)
-('HYRON-240828 PC-DC-007', 'HYRON-240826 Minitor-012', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-
--- 陈信地 (JS1812)
-('HYRON-231127 PC-DC-006', 'hyron-120412 pc-dc-020', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-240828 PC-DC-007', 'HYRON-240826 Minitor-012', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 马泽原 (JS1840)
-('HYRON-221129 PC-DC-069', 'HYRON-221129 PC-DC-069', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-181112 PC-DC-002', 'HYRON-191107 PC-DC-029JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-
--- 徐欣 (JS1843)
-('HYRON-231127 PC-DC-010', 'HYRON-160818 PC-DC-016', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-
--- 肖道一 (JS1866)
-('HYRON-190217 PC-DC-006', 'HYRON-191107 PC-DC-039', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-221129 PC-DC-069', 'HYRON-221129 PC-DC-069', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-181112 PC-DC-002', 'HYRON-191107 PC-DC-029JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 宋柳叶 (JS1873)
-('HYRON-220414 PC-DC-049', 'HYRON-210118 PC-DC-048 DELL', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-220414 PC-DC-049', 'HYRON-210118 PC-DC-048 DELL', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 李宝林 (JS1882)
-('HYRON-170425 PC-DC-006', 'HYRON-181112 PC-DC-037JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-
--- 马强 (JS1888) - 外借，无设备信息
-
--- 胡寒池 (JS1902) - 外借，无设备信息
+('HYRON-170425 PC-DC-006', 'HYRON-181112 PC-DC-037JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 杨祥坤 (JS2045)
-('230621-027(暂)', 'HYRON-181112 PC-DC-015JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('230621-027(暂)', 'HYRON-181112 PC-DC-015JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 李芷栅 (JS2050)
-('HYRON-210125 PC-DC-015', 'HYRON-221129 PC-DC-051', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-210125 PC-DC-015', 'HYRON-221129 PC-DC-051', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 王天昊 (JS2053)
-('HYRON-221129 PC-DC-007', 'HYRON-140304 PC-DC-006JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-221129 PC-DC-007', 'HYRON-140304 PC-DC-006JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 唐凯2 (JS2060)
-('HYRON-220414 PC-DC-043', 'HYRON-250604 Minitor-201', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-220414 PC-DC-043', 'HYRON-250604 Minitor-201', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 李勇 (JSXP406)
-('HYRON-221129 PC-DC-051', 'HYRON-221129 PC-DC-075', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-221129 PC-DC-051', 'HYRON-221129 PC-DC-075', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 陈传真 (JSXP438)
-('HYRON-210118 PC-DC-033', 'HYRON-150813 PC-DC-010JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-210118 PC-DC-033', 'HYRON-150813 PC-DC-010JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 陆建周 (JSXP446)
-('HYRON-231127 PC-DC-003', 'HYRON-190605 PC-DC-016JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-231127 PC-DC-003', 'HYRON-190605 PC-DC-016JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 王天润 (JS2047)
-('HYRON-220926 PC-DC-007', 'HYRON-220926 PC-DC-007', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-
--- 张慧慧 (JSXP454)
-('HYRON-221129 PC-DC-030', 'HYRON-191217 PC-DC-028JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-220926 PC-DC-007', 'HYRON-220926 PC-DC-007', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 高雨彤 (JS2176)
-('HYRON-221129 PC-DC-068', 'HYRON-210118 PC-DC-015JDELL', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-221129 PC-DC-068', 'HYRON-210118 PC-DC-015JDELL', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 赵晨云 (JS2177)
-('HYRON-220914 PC-DC-050', 'HYRON-220914 PC-DC-050', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-220914 PC-DC-050', 'HYRON-220914 PC-DC-050', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 田季伟 (JS2187)
-('HYRON-240828 PC-DC-009', 'HYRON-240826 Minitor-014', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-240828 PC-DC-009', 'HYRON-240826 Minitor-014', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 祁文轩 (JS1926)
-('HYRON-241118 PC-DC-005', 'HYRON-220914 PC-DC-055', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-241118 PC-DC-005', 'HYRON-220914 PC-DC-055', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 吴智雄 (JS1939)
-('HYRON-181112 PC-DC-013', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-240416 PC-DC-001', 'HYRON-221129 PC-DC-029', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-251201 PC-DC-015', 'HYRON-221129 PC-DC-072', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-181112 PC-DC-013', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-240416 PC-DC-001', 'HYRON-221129 PC-DC-029', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-251201 PC-DC-015', 'HYRON-221129 PC-DC-072', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 左恩 (JS1941)
-('HYRON-241118 PC-DC-006', 'HYRON-191107 PC-DC-011JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-241118 PC-DC-006', 'HYRON-191107 PC-DC-011JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 王昱 (JS1973)
-('HYRON-241118 PC-DC-040', 'HYRON-191107 PC-DC-019JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-241118 PC-DC-040', 'HYRON-191107 PC-DC-019JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 张攀 (JS1981)
-('HYRON-241118 PC-DC-068', 'HYRON-181210 PC-DC-014JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-241118 PC-DC-068', 'HYRON-181210 PC-DC-014JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 李兴旺 (JS1982)
-('HYRON-241118 PC-DC-008', 'HYRON-221129 PC-DC-009', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-241118 PC-DC-008', 'HYRON-221129 PC-DC-009', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 母丽丽 (JS1992)
-('HYRON-241118 PC-DC-004', 'HYRON-220914 PC-DC-056', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-241118 PC-DC-004', 'HYRON-220914 PC-DC-056', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 顾航睿 (JS1996)
-('HYRON-241118 PC-DC-007', 'HYRON-191107 PC-DC-030JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-241118 PC-DC-007', 'HYRON-191107 PC-DC-030JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 陈诺 (JS2005)
-('HYRON-241118 PC-DC-039', 'HYRON-220914 PC-DC-053', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-241118 PC-DC-039', 'HYRON-220914 PC-DC-053', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 高鑫 (JS2008)
-('HYRON-241118 PC-DC-003', 'HYRON-181210 PC-DC-016JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-241118 PC-DC-003', 'HYRON-181210 PC-DC-016JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 王小龙 (JS2019)
-('HYRON-241118 PC-DC-042', 'HYRON-211217 PC-DC-043', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-241118 PC-DC-042', 'HYRON-211217 PC-DC-043', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 何启明 (JS2024)
-('HYRON-241118 PC-DC-041', 'HYRON-131216 PC-DC-014JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-241118 PC-DC-041', 'HYRON-131216 PC-DC-014JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 刘子俊 (JS2034)
-('HYRON-241118 PC-DC-043', 'HYRON-211217 PC-DC-027', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-241118 PC-DC-043', 'HYRON-211217 PC-DC-027', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 蔡文强 (JS2037)
-('HYRON-211217 PC-DC-042', 'HYRON-171017 PC-DC-020JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-211217 PC-DC-042', 'HYRON-171017 PC-DC-020JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 姜成杰 (JS2178)
-('HYRON-191217 PC-DC-006', 'HYRON-191217 PC-DC-006JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-191217 PC-DC-006', 'HYRON-191217 PC-DC-006JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 孙毅 (JSXP536)
-('HYRON-210118 PC-DC-015', 'HYRON--110704 PC-DC-017', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-210118 PC-DC-015', 'HYRON--110704 PC-DC-017', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 陆语涵 (JSXP538)
-('HYRON-221129 PC-DC-019', 'HYRON-170904 PC-DC-004JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-221129 PC-DC-019', 'HYRON-170904 PC-DC-004JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 季荷飞 (JSXP539)
-('HYRON-220914 PC-DC-011', 'HYRON-171221 PC-DC-032JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-220914 PC-DC-011', 'HYRON-171221 PC-DC-032JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 戴明 (JSXP541)
-('HYRON-210621 PC-DC-021', 'HYRON-220414 PC-DC-043', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-210621 PC-DC-021', 'HYRON-220414 PC-DC-043', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 曹光友 (JSXP551)
-('HYRON-210118 PC-DC-027', 'HYRON-220914 PC-DC-051', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-210118 PC-DC-027', 'HYRON-220914 PC-DC-051', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 黄羽轩 (JSSX077)
-('HYRON-190605 PC-DC-016', 'HYRON-201102 PC-DC-017JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-190605 PC-DC-016', 'HYRON-201102 PC-DC-017JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 徐睿 (JS0898) - DA02部門
-('HYRON-210125 PC-DC-005', '210125 PC-DC-005', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-210125 PC-DC-005', '250604 Monitor-082', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-210125 PC-DC-005', '210125 PC-DC-005', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-210125 PC-DC-005', '250604 Monitor-082', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 胡浩磊 (JS1158) - DA02部門
-('HYRON-220414 PC-DC-042', 'HYRON-250604 Minitor-095', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-220414 PC-DC-042', 'HYRON-250604 Minitor-095', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 陆跃跃 (JS2056) - DA02部門
-('HYRON-240416 PC-DC-018', 'HYRON-240826 Minitor-006', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-240416 PC-DC-018', 'HYRON-240826 Minitor-006', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 吴正明 (JS0226) - DA02部門
-('HYRON-240416 PC-DC-012', 'HYRON-241118 Minitor-033', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-221129 PC-DC-048', 'HYRON-220926 PC-DC-021', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-240416 PC-DC-012', 'HYRON-241118 Minitor-033', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-221129 PC-DC-048', 'HYRON-220926 PC-DC-021', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 朱亚明 (JS0296) - DA02部門
-('HYRON-211217 PC-DC-057', 'HYRON-241118 Minitor-034', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-211217 PC-DC-057', 'HYRON-241118 Minitor-034', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 何桢 (JS0941) - DA02部門
-('HYRON-220414 PC-DC-044', 'HYRON-250604 Minitor-086', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-220414 PC-DC-044', 'HYRON-250604 Minitor-086', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 孙萧 (JS1672) - DA02部門
-('HYRON-240416 PC-DC-013', 'HYRON-221129 PC-DC-090', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-240416 PC-DC-013', 'HYRON-221129 PC-DC-090', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 陈楠钢 (JS1699) - DA02部門
-('HYRON-220926 PC-DC-006', 'HYRON-220926 PC-DC-006', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-220926 PC-DC-006', 'HYRON-220926 PC-DC-006', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 顾新宇 (JS1929) - DA02部門
-('HYRON-211217 PC-DC-056', 'HYRON-220926 PC-DC-005', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-211217 PC-DC-056', 'HYRON-220926 PC-DC-005', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 陈兆伟 (JS2167) - DA02部門
-('HYRON-151020 PC-DC-002', '-', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-151020 PC-DC-002', '-', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 田梵君 (JS2171) - DA02部門
-('HYRON-170904 PC-DC-009', 'HYRON-211217 PC-DC-022', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-170904 PC-DC-009', 'HYRON-211217 PC-DC-022', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 卢国颖 (JS2171) - DA02部門
-('HYRON-160818 PC-DC-016', 'HYRON-210621 PC-DC-029', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-160818 PC-DC-016', 'HYRON-210621 PC-DC-029', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 陆红非 (JS1137) - DA05部門
-('HYRON-240828 PC-DC-008', 'HYRON-240826 Minitor-013', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-240828 PC-DC-008', 'HYRON-240826 Minitor-013', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 何渊 (SH726) - DA05部門
-('HYRON-250123 nobo-001', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-250123 nobo-001', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 -- 母丽丽 (JS1992)
-('HYRON-241118 PC-DC-004', 'HYRON-220914 PC-DC-056', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-241118 PC-DC-004', 'HYRON-220914 PC-DC-056', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 顾航睿 (JS1996)
-('HYRON-241118 PC-DC-007', 'HYRON-191107 PC-DC-030JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'ADMIN', 'ADMIN'),
+('HYRON-241118 PC-DC-007', 'HYRON-191107 PC-DC-030JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'admin', 'admin'),
 
 -- 陈诺 (JS2005)
-('HYRON-241118 PC-DC-039', 'HYRON-220914 PC-DC-053',CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-241118 PC-DC-039', 'HYRON-220914 PC-DC-053',CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 高鑫 (JS2008)
-('HYRON-241118 PC-DC-003', 'HYRON-181210 PC-DC-016JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'ADMIN', 'ADMIN'),
+('HYRON-241118 PC-DC-003', 'HYRON-181210 PC-DC-016JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'admin', 'admin'),
 
 -- 王小龙 (JS2019)
-('HYRON-241118 PC-DC-042', 'HYRON-211217 PC-DC-043', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'ADMIN', 'ADMIN'),
+('HYRON-241118 PC-DC-042', 'HYRON-211217 PC-DC-043', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'admin', 'admin'),
 
 -- 何启明 (JS2024)
-('HYRON-241118 PC-DC-041', 'HYRON-131216 PC-DC-014JD',CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-241118 PC-DC-041', 'HYRON-131216 PC-DC-014JD',CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 刘子俊 (JS2034)
-('HYRON-241118 PC-DC-043', 'HYRON-211217 PC-DC-027', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-241118 PC-DC-043', 'HYRON-211217 PC-DC-027', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 蔡文强 (JS2037)
-('HYRON-211217 PC-DC-042', 'HYRON-171017 PC-DC-020JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-211217 PC-DC-042', 'HYRON-171017 PC-DC-020JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 姜成杰 (JS2178)
-('HYRON-191217 PC-DC-006', 'HYRON-191217 PC-DC-006JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-191217 PC-DC-006', 'HYRON-191217 PC-DC-006JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 孙毅 (JSXP536)
-('HYRON-210118 PC-DC-015', 'HYRON--110704 PC-DC-017', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-210118 PC-DC-015', 'HYRON--110704 PC-DC-017', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 -- 陆语涵 (JSXP538)
-('HYRON-221129 PC-DC-019', 'HYRON-170904 PC-DC-004JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-221129 PC-DC-019', 'HYRON-170904 PC-DC-004JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 季荷飞 (JSXP539)
-('HYRON-220914 PC-DC-011', 'HYRON-171221 PC-DC-032JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-220914 PC-DC-011', 'HYRON-171221 PC-DC-032JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 戴明 (JSXP541)
-('HYRON-210621 PC-DC-021', 'HYRON-220414 PC-DC-043', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-210621 PC-DC-021', 'HYRON-220414 PC-DC-043', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 曹光友 (JSXP551)
-('HYRON-210118 PC-DC-027', 'HYRON-220914 PC-DC-051', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),   
+('HYRON-210118 PC-DC-027', 'HYRON-220914 PC-DC-051', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),   
 -- 黄羽轩 (JSSX077)
-('HYRON-190605 PC-DC-016', 'HYRON-201102 PC-DC-017JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-190605 PC-DC-016', 'HYRON-201102 PC-DC-017JD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 徐睿 (JS0898) - DA02部門
-('HYRON-210125 PC-DC-005', '210125 PC-DC-005', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
-('HYRON-210125 PC-DC-005', '250604 Monitor-082', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-210125 PC-DC-005', '210125 PC-DC-005', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
+('HYRON-210125 PC-DC-005', '250604 Monitor-082', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 胡浩磊 (JS1158) - DA02部門
-('HYRON-220414 PC-DC-042', 'HYRON-250604 Minitor-095', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-220414 PC-DC-042', 'HYRON-250604 Minitor-095', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 陆跃跃 (JS2056) - DA02部門
-('HYRON-240416 PC-DC-018', 'HYRON-240826 Minitor-006', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'ADMIN', 'ADMIN'),
+('HYRON-240416 PC-DC-018', 'HYRON-240826 Minitor-006', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'admin', 'admin'),
 
 -- 吴正明 (JS0226) - DA02部門
-('HYRON-240416 PC-DC-012', 'HYRON-241118 Minitor-033', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'ADMIN', 'ADMIN'),
-('HYRON-221129 PC-DC-048', 'HYRON-220926 PC-DC-021', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-240416 PC-DC-012', 'HYRON-241118 Minitor-033', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'admin', 'admin'),
+('HYRON-221129 PC-DC-048', 'HYRON-220926 PC-DC-021', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 -- 朱亚明 (JS0296) - DA02部門
-('HYRON-211217 PC-DC-057', 'HYRON-241118 Minitor-034', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-211217 PC-DC-057', 'HYRON-241118 Minitor-034', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 何桢 (JS0941) - DA02部門
-('HYRON-220414 PC-DC-044', 'HYRON-250604 Minitor-086', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-220414 PC-DC-044', 'HYRON-250604 Minitor-086', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 孙萧 (JS1672) - DA02部門
-('HYRON-240416 PC-DC-013', 'HYRON-221129 PC-DC-090', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-240416 PC-DC-013', 'HYRON-221129 PC-DC-090', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 陈楠钢 (JS1699) - DA02部門
-('HYRON-220926 PC-DC-006', 'HYRON-220926 PC-DC-006', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),   
+('HYRON-220926 PC-DC-006', 'HYRON-220926 PC-DC-006', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),   
 -- 顾新宇 (JS1929) - DA02部門
-('HYRON-211217 PC-DC-056', 'HYRON-220926 PC-DC-005', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-211217 PC-DC-056', 'HYRON-220926 PC-DC-005', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 陈兆伟 (JS2167) - DA02部門
-('HYRON-151020 PC-DC-002', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'ADMIN', 'ADMIN'),
+('HYRON-151020 PC-DC-002', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'admin', 'admin'),
 
 -- 田梵君 (JS2171) - DA02部門
-('HYRON-170904 PC-DC-009', 'HYRON-211217 PC-DC-022', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'ADMIN', 'ADMIN'),
+('HYRON-170904 PC-DC-009', 'HYRON-211217 PC-DC-022', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,'admin', 'admin'),
 
 -- 卢国颖 (JS2172) - DA02部門
-('HYRON-160818 PC-DC-016', 'HYRON-210621 PC-DC-029', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-160818 PC-DC-016', 'HYRON-210621 PC-DC-029', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 陆红非 (JS1137) - DA05部門
-('HYRON-240828 PC-DC-008', 'HYRON-240826 Minitor-013', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN'),
+('HYRON-240828 PC-DC-008', 'HYRON-240826 Minitor-013', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin'),
 
 -- 何渊 (SH726) - DA05部門
-('HYRON-250123 nobo-001', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN', 'ADMIN');
+('HYRON-250123 nobo-001', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin');
