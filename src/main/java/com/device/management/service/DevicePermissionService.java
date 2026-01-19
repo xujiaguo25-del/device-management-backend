@@ -344,10 +344,8 @@ public class DevicePermissionService {
             dictRepository.findById(updateDTO.getDomainStatus()).orElseThrow(() -> new ResourceNotFoundException("ドメインステータスが存在しません"));
             existing.setDomainStatusId(updateDTO.getDomainStatus());
         }
-
-        if (StringUtils.hasText(updateDTO.getDomainGroup())) {
-            existing.setDomainGroup(updateDTO.getDomainGroup());
-        }
+        
+        existing.setDomainGroup(updateDTO.getDomainGroup());
 
         if (StringUtils.hasText(updateDTO.getNoDomainReason())) {
             existing.setNoDomainReason(updateDTO.getNoDomainReason());
