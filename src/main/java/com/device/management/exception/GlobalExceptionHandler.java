@@ -145,4 +145,15 @@ public class GlobalExceptionHandler {
         ApiResponse<?> response = ApiResponse.error(500, "服务器内部错误: " + ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+
+    @ExceptionHandler(StackOverflowError.class)
+    public ResponseEntity<ApiResponse<?>> handleStackOverflow(
+            StackOverflowError ex, WebRequest request) {
+
+        log.error("Stack overflow error occurred: ", ex);
+        ApiResponse<?> errorResponse = ApiResponse.error(500,"Request processing failed due to stack overflow"+ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(errorResponse);
+    }
+
 }
