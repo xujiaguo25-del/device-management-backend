@@ -5,10 +5,8 @@ TRUNCATE TABLE
     device_info,
     device_ip,
     device_permission,
-    dict,
     monitor_info,
-    sampling_check,
-    users
+    sampling_check
 CASCADE;
 
 -- DA04部門のすべてのデバイス情報をdevice_infoテーブルに挿入
@@ -1460,3 +1458,4 @@ INSERT INTO monitor_info (device_id, monitor_name, create_time, update_time, cre
 
 -- 何渊 (SH726) - DA05部門
 ('HYRON-250123 nobo-001', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin');
+
