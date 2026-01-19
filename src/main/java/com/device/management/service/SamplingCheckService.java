@@ -209,10 +209,14 @@ public class SamplingCheckService {
             row.createCell(0).setCellValue( ++rowNum );
             row.createCell(1).setCellValue( samplingCheckDTO.getUserId());
             row.createCell(2).setCellValue( samplingCheckDTO.getName());
-            String monitorName = Arrays.stream(samplingCheckDTO.getMonitorName().split(";"))
-                    .map(name-> name + "（显示器）")
-                    .collect(Collectors.joining("\n"));
-            String finalDeviceId = samplingCheckDTO.getDeviceId() + "\n" + monitorName;
+            String finalMonitorName = "";
+            String monitorName = samplingCheckDTO.getMonitorName();
+            if(monitorName != null && !monitorName.isEmpty()) {
+                finalMonitorName = Arrays.stream(samplingCheckDTO.getMonitorName().split(";"))
+                        .map(name-> name + "（显示器）")
+                        .collect(Collectors.joining("\n"));
+            }
+            String finalDeviceId = samplingCheckDTO.getDeviceId() + "\n" + finalMonitorName;
             row.createCell(3).setCellValue( finalDeviceId );
             row.createCell(10).setCellValue( samplingCheckDTO.getDisposalMeasures());
             //OptionクラスでNULL値の可能性のあるフィールドを処理する
