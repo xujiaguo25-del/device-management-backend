@@ -118,6 +118,11 @@ public class DeviceServiceImpl implements DeviceService {
             throw new ParameterException("リクエストボディは空にできません");
         }
 
+        // リクエストボディにdeviceIdが含まれている場合、パスパラメータのdeviceIdと一致することを検証
+        if (StringUtils.hasText(dto.getDeviceId()) && !deviceId.trim().equals(dto.getDeviceId().trim())) {
+            throw new ParameterException("パスパラメータのデバイスID(" + deviceId + ")とリクエストボディのデバイスID(" + dto.getDeviceId() + ")が一致しません。更新時はリクエストボディにdeviceIdを含める必要はありません");
+        }
+
         // デバイス存在チェック
         Device existDevice = deviceRepository.findById(deviceId)
                 .orElseThrow(() -> new ResourceNotFoundException("デバイスが存在しません: " + deviceId));
@@ -128,17 +133,20 @@ public class DeviceServiceImpl implements DeviceService {
         // 古いモニターとIPを先に削除し、その後新しいものを検証（既存データの競合回避）
         deleteMonitorsByDeviceId(deviceId);
         deleteDeviceIpsByDeviceId(deviceId);
-
+        
+        // Hibernateセッションをフラッシュして、削除操作を確実に反映
+        deviceRepository.flush();
+        
         // 新しいモニターとIPを検証（古いデータが削除されたため、他のデバイスによる占有を正しく検証可能）
         validateMonitors(dto.getMonitorsInput(), null);
         validateDeviceIps(dto.getDeviceIpsInput(), null);
 
-        // デバイス及び関連データ更新
-        Device entity = convertToDeviceEntity(dto);
-        entity.setCreateTime(existDevice.getCreateTime());
-        entity.setUpdateTime(LocalDateTime.now());
-        Device saved = deviceRepository.save(entity);
+        // 既存のDeviceエンティティを直接更新（新しいエンティティを作成しない）
+        updateDeviceEntity(existDevice, dto);
+        existDevice.setUpdateTime(LocalDateTime.now());
+        Device saved = deviceRepository.save(existDevice);
 
+        // 新しいモニターとIPを保存
         List<Monitor> monitors = saveMonitors(dto.getMonitorsInput(), saved.getDeviceId(), dto.getUpdater(), dto.getUpdater());
         List<DeviceIp> ips = saveDeviceIps(dto.getDeviceIpsInput(), saved.getDeviceId(), dto.getUpdater(), dto.getUpdater());
 
@@ -375,6 +383,32 @@ public class DeviceServiceImpl implements DeviceService {
         device.setCreater(dto.getCreater());
         device.setUpdater(dto.getUpdater());
         return device;
+    }
+
+    /**
+     * 既存のDeviceエンティティをDTOの値で更新
+     * 更新時に新しいエンティティを作成せず、既存のエンティティを直接更新することで、
+     * HibernateのorphanRemoval関連のエラーを回避
+     * 
+     * 注意：deviceIdは更新しない（パスパラメータから取得した値を使用）
+     */
+    private void updateDeviceEntity(Device existingDevice, DeviceFullDTO dto) {
+        // deviceIdは更新しない（パスパラメータで指定されたIDを使用）
+        existingDevice.setDeviceModel(dto.getDeviceModel());
+        existingDevice.setComputerName(dto.getComputerName());
+        existingDevice.setLoginUsername(dto.getLoginUsername());
+        existingDevice.setProject(dto.getProject());
+        existingDevice.setDevRoom(dto.getDevRoom());
+        existingDevice.setUserId(dto.getUserId());
+        existingDevice.setRemark(dto.getRemark());
+        existingDevice.setSelfConfirmId(dto.getSelfConfirmId());
+        existingDevice.setOsId(dto.getOsId());
+        existingDevice.setMemoryId(dto.getMemoryId());
+        existingDevice.setSsdId(dto.getSsdId());
+        existingDevice.setHddId(dto.getHddId());
+        if (StringUtils.hasText(dto.getUpdater())) {
+            existingDevice.setUpdater(dto.getUpdater());
+        }
     }
 
     /**
