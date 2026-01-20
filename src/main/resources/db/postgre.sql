@@ -600,7 +600,8 @@ INSERT INTO public.dict VALUES (32, 'MEMORY_SIZE', 'メモリサイズ', 'デバ
 INSERT INTO public.dict VALUES (33, 'MEMORY_SIZE', 'メモリサイズ', 'デバイスの物理メモリ容量', '16GB', 3, 1, '2026-01-04 23:43:32.500961', 'admin', '2026-01-04 23:46:52.712702', 'admin') ON CONFLICT DO NOTHING;
 INSERT INTO public.dict VALUES (34, 'MEMORY_SIZE', 'メモリサイズ', 'デバイスの物理メモリ容量', '24GB', 4, 1, '2026-01-04 23:43:32.500961', 'admin', '2026-01-04 23:46:54.987654', 'admin') ON CONFLICT DO NOTHING;
 INSERT INTO public.dict VALUES (35, 'MEMORY_SIZE', 'メモリサイズ', 'デバイスの物理メモリ容量', '32GB', 5, 1, '2026-01-04 23:43:32.500961', 'admin', '2026-01-04 23:46:55.123456', 'admin') ON CONFLICT DO NOTHING;
-INSERT INTO public.dict VALUES (36, 'MEMORY_SIZE', 'メモリサイズ', 'デバイスの物理メモリ容量', '128GB', 6, 1, '2026-01-04 23:43:32.500961', 'admin', '2026-01-04 23:46:56.654321', 'admin') ON CONFLICT DO NOTHING;
+INSERT INTO public.dict VALUES (36, 'MEMORY_SIZE', 'メモリサイズ', 'デバイスの物理メモリ容量', '64GB', 6, 1, '2026-01-04 23:43:32.500961', 'admin', '2026-01-04 23:46:56.654321', 'admin') ON CONFLICT DO NOTHING;
+INSERT INTO public.dict VALUES (37, 'MEMORY_SIZE', 'メモリサイズ', 'デバイスの物理メモリ容量', '128GB', 7, 1, '2026-01-04 23:43:32.500961', 'admin', '2026-01-04 23:46:56.654321', 'admin') ON CONFLICT DO NOTHING;
 INSERT INTO public.dict VALUES (41, 'SSD_SIZE', 'ソリッドステートドライブ容量', 'デバイスのSSDストレージ容量', '256GB', 1, 1, '2026-01-04 23:43:32.501325', 'admin', '2026-01-04 23:46:48.431263', 'admin') ON CONFLICT DO NOTHING;
 INSERT INTO public.dict VALUES (42, 'SSD_SIZE', 'ソリッドステートドライブ容量', 'デバイスのSSDストレージ容量', '500GB', 2, 1, '2026-01-04 23:43:32.501325', 'admin', '2026-01-04 23:46:49.123456', 'admin') ON CONFLICT DO NOTHING;
 INSERT INTO public.dict VALUES (43, 'SSD_SIZE', 'ソリッドステートドライブ容量', 'デバイスのSSDストレージ容量', '512GB', 3, 1, '2026-01-04 23:43:32.501325', 'admin', '2026-01-04 23:46:45.355822', 'admin') ON CONFLICT DO NOTHING;
