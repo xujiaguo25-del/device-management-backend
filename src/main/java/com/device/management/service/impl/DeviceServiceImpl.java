@@ -747,8 +747,8 @@ public class DeviceServiceImpl implements DeviceService {
             Device device = deviceRepository.findById(deviceId).orElse(null);
             boolean isNewDevice = false;
             if (device == null) {
-                isNewDevice = true; // 标记为新设备
-                hasNewRecords = true; // 标记有新记录
+                isNewDevice = true;
+                hasNewRecords = true;
 
                 device = new Device();
                 device.setDeviceId(deviceId);
