@@ -3,6 +3,8 @@ package com.device.management.service;
 import com.device.management.dto.ApiResponse;
 import com.device.management.dto.DeviceFullDTO;
 import org.springframework.data.domain.Page;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * デバイス管理サービスインターフェース
@@ -60,5 +62,13 @@ public interface DeviceService {
      * @return デバイス詳細情報
      */
     ApiResponse<DeviceFullDTO> detail(String deviceId);
+
+    /**
+     * デバイスExcelデータをインポート
+     * @param file Excelファイル
+     * @param startRow 開始行
+     * @return インポート結果
+     */
+    ApiResponse<String> importDeviceExcel(MultipartFile file, int startRow);
 
 }

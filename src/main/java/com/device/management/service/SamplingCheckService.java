@@ -1,5 +1,6 @@
 package com.device.management.service;
 
+import com.device.management.dto.DeviceExcelDto;
 import com.device.management.dto.SamplingCheckDTO;
 import com.device.management.entity.Device;
 import com.device.management.entity.MonitorInfo;
@@ -30,6 +31,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+
 
 @Service
 @Slf4j
@@ -308,6 +311,59 @@ public class SamplingCheckService {
             sheet.setColumnWidth(i, 3000);
         }
         sheet.setColumnWidth(10, 10000);
+    }
+
+
+    /**
+     * デバイス権限情報を一括インポート
+     * @param deviceExcelDtos デバイスExcel DTOリスト
+     */
+    public void batchImport(List<DeviceExcelDto> deviceExcelDtos) {
+        if (deviceExcelDtos == null || deviceExcelDtos.isEmpty()) {
+            return;
+        }
+
+        List<SamplingCheck> entitiesToSave = deviceExcelDtos.stream()
+            .map(this::convertToDevicePermission)
+            .collect(Collectors.toList());
+
+        samplingCheckRepository.saveAll(entitiesToSave);
+    }
+
+    /**
+     * DeviceExcelDtoをSamplingCheckエンティティに変換し、デフォルト値を設定
+     * @param deviceExcelDto デバイスExcel DTO
+     * @return SamplingCheckエンティティ
+     */
+    private SamplingCheck convertToDevicePermission(DeviceExcelDto deviceExcelDto) {
+        SamplingCheck entity = new SamplingCheck();
+
+        // コアフィールドを設定
+        entity.setUserId(deviceExcelDto.getUserId());
+        entity.setName(deviceExcelDto.getUserName());
+        entity.setDeviceId(deviceExcelDto.getDeviceId());
+
+        // デフォルト値を設定
+        entity.setSamplingId(UUID.randomUUID().toString().replace("-", ""));
+        entity.setReportId("");
+        entity.setUpdateDate(LocalDate.now());
+        entity.setUpdateTime(LocalDateTime.now());
+        entity.setCreateTime(LocalDateTime.now());
+        entity.setUpdater("");
+        entity.setCreater("");
+
+        // セキュリティ関連フィールドをデフォルト値に設定（falseはセキュリティ要件を満たしていないことを示す）
+        entity.setInstalledSoftware(false);
+        entity.setScreenSaverPwd(false);
+        entity.setUsbInterface(false);
+        entity.setSecurityPatch(false);
+        entity.setAntivirusProtection(false);
+        entity.setBootAuthentication(false);
+
+        // 処置措置を空文字列に設定
+        entity.setDisposalMeasures("");
+
+        return entity;
     }
 
 

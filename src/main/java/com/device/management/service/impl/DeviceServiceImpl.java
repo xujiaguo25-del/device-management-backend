@@ -4,6 +4,7 @@ import com.device.management.dto.ApiResponse;
 import com.device.management.dto.DeviceFullDTO;
 import com.device.management.dto.DictDTO;
 import com.device.management.entity.Device;
+import com.device.management.dto.DeviceExcelDto;
 import com.device.management.entity.DeviceIp;
 import com.device.management.entity.Monitor;
 import com.device.management.entity.User;
@@ -11,14 +12,19 @@ import com.device.management.exception.InvalidIpAddressException;
 import com.device.management.exception.ParameterException;
 import com.device.management.exception.ResourceConflictException;
 import com.device.management.exception.ResourceNotFoundException;
+import com.device.management.enums.DictEnum;
 import com.device.management.repository.DeviceIpRepository;
 import com.device.management.repository.DeviceRepository;
 import com.device.management.repository.MonitorRepository;
 import com.device.management.repository.SamplingCheckRepository;
 import com.device.management.repository.UserRepository;
+import com.device.management.service.DevicePermissionService;
 import com.device.management.service.DeviceService;
+import com.device.management.service.SamplingCheckService;
 import jakarta.transaction.Transactional;
+import com.device.management.util.ExcelUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.security.PermissionCheck;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.apache.commons.validator.routines.InetAddressValidator;
 import org.springframework.data.domain.Page;
@@ -29,6 +35,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -46,18 +53,24 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Autowired
     private DeviceRepository deviceRepository;
-    
+
     @Autowired
     private MonitorRepository monitorRepository;
-    
+
     @Autowired
     private DeviceIpRepository deviceIpRepository;
-    
+
     @Autowired
     private SamplingCheckRepository samplingCheckRepository;
-    
+
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private DevicePermissionService permissionService;
+
+    @Autowired
+    private SamplingCheckService samplingCheckService;
 
     private static final InetAddressValidator IP_VALIDATOR = InetAddressValidator.getInstance();
     private static final int MAX_PAGE_SIZE = 100;
@@ -469,14 +482,14 @@ public class DeviceServiceImpl implements DeviceService {
                 .monitorsInput(Collections.emptyList())
                 .deviceIpsInput(Collections.emptyList())
                 .build();
-        
+
         // 辞書データ設定
         dto.setSelfConfirmDict(DictDTO.fromEntity(device.getSelfConfirmDict()));
         dto.setOsDict(DictDTO.fromEntity(device.getOsDict()));
         dto.setMemoryDict(DictDTO.fromEntity(device.getMemoryDict()));
         dto.setSsdDict(DictDTO.fromEntity(device.getSsdDict()));
         dto.setHddDict(DictDTO.fromEntity(device.getHddDict()));
-        
+
         return dto;
     }
 
@@ -584,5 +597,313 @@ public class DeviceServiceImpl implements DeviceService {
             }
         }
         return map;
+    }
+
+    @Override
+    @org.springframework.transaction.annotation.Transactional(rollbackFor = Exception.class)
+    public ApiResponse<String> importDeviceExcel(MultipartFile file, int startRow) {
+        if (file.isEmpty()) {
+            return new ApiResponse<>(400, "ファイル内容が空です", null);
+        }
+
+               try {
+                   // 汎用ユーティリティクラスを使用してExcelを解析する
+            List<DeviceExcelDto> excelDataList = ExcelUtil.importExcel(file, DeviceExcelDto.class,startRow);
+            List<DeviceExcelDto> normalizedList = preprocessExcelDtos(excelDataList);
+
+            log.info("Excelデータの解析が完了しました："+normalizedList);
+            saveDeviceData(normalizedList);
+
+            return new ApiResponse<>(200, "インポートに成功しました、合計処理：" + normalizedList.size() + " 条数据", null);
+        } catch (Exception e) {
+            log.error("Excelインポートに失敗しました", e);
+            return new ApiResponse<>(500, "Excelインポートに失敗しました：" + e.getMessage(), null);
+        }
+    }
+
+    private List<DeviceExcelDto> preprocessExcelDtos(List<DeviceExcelDto> input) {
+        if (input == null || input.isEmpty()) return Collections.emptyList();
+        List<DeviceExcelDto> out = new ArrayList<>();
+        String lastUserId = null;
+        String lastDeviceId = null;
+
+        for (DeviceExcelDto dto : input) {
+            if (dto == null) continue;
+
+            // "-"値を処理し、trimを実行する
+            dto.setUserId(processStringField(dto.getUserId()));
+            dto.setUserName(processStringField(dto.getUserName()));
+            dto.setDepartment(processStringField(dto.getDepartment()));
+            dto.setDeviceId(processStringField(dto.getDeviceId()));
+            dto.setMonitorDeviceId(processStringField(dto.getMonitorDeviceId()));
+            dto.setDeviceModel(processStringField(dto.getDeviceModel()));
+            dto.setComputerName(processStringField(dto.getComputerName()));
+            dto.setIpAddress(processStringField(dto.getIpAddress()));
+            dto.setOs(processStringField(dto.getOs()));
+            dto.setMemory(processStringField(dto.getMemory()));
+            dto.setSsd(processStringField(dto.getSsd()));
+            dto.setHdd(processStringField(dto.getHdd()));
+            dto.setLoginUsername(processStringField(dto.getLoginUsername()));
+            dto.setProject(processStringField(dto.getProject()));
+            dto.setDevRoom(processStringField(dto.getDevRoom()));
+            dto.setRemark(processStringField(dto.getRemark()));
+            dto.setSelfConfirm(processStringField(dto.getSelfConfirm()));
+
+            boolean hasUser = StringUtils.hasText(dto.getUserId()) || StringUtils.hasText(dto.getUserName()) || StringUtils.hasText(dto.getDepartment());
+            boolean hasDevice = StringUtils.hasText(dto.getDeviceId()) || StringUtils.hasText(dto.getMonitorDeviceId()) ||
+                    StringUtils.hasText(dto.getDeviceModel()) || StringUtils.hasText(dto.getComputerName()) ||
+                    StringUtils.hasText(dto.getIpAddress()) || StringUtils.hasText(dto.getLoginUsername()) ||
+                    StringUtils.hasText(dto.getProject()) || StringUtils.hasText(dto.getDevRoom()) ||
+                    StringUtils.hasText(dto.getRemark()) || StringUtils.hasText(dto.getOs()) ||
+                    StringUtils.hasText(dto.getMemory()) || StringUtils.hasText(dto.getSsd()) ||
+                    StringUtils.hasText(dto.getHdd());
+
+            if (!hasUser && !hasDevice) continue;
+
+            // 現在行にユーザー情報がある場合、最終ユーザー情報を更新
+            if (hasUser) {
+                lastUserId = dto.getUserId();
+            } else {
+                // 現在行にユーザー情報なし、かつ前に存在する場合、ユーザー情報を継承
+                if (StringUtils.hasText(lastUserId)) {
+                    if (!StringUtils.hasText(dto.getUserId())) dto.setUserId(lastUserId);
+                    if (!StringUtils.hasText(dto.getUserName())) dto.setUserName(dto.getUserId()); // 使用用户ID作为用户名
+                } else {
+                    continue;
+                }
+            }
+
+            // デバイスID継承ロジック：現在行にデバイスIDなし、かつユーザーIDが前行と同一の場合、前行のデバイスIDを継承
+            if (!StringUtils.hasText(dto.getDeviceId()) &&
+                StringUtils.hasText(lastUserId) &&
+                lastUserId.equals(dto.getUserId()) &&
+                StringUtils.hasText(lastDeviceId)) {
+                dto.setDeviceId(lastDeviceId);
+            } else if (StringUtils.hasText(dto.getDeviceId())) {
+                // 現在行にデバイスIDが存在する場合、lastDeviceIdを更新
+                lastDeviceId = dto.getDeviceId();
+            }
+
+            out.add(dto);
+        }
+        return out;
+    }
+
+
+    private void saveDeviceData(List<DeviceExcelDto> list) {
+        boolean hasNewRecords = false;
+
+        for (DeviceExcelDto dto : list) {
+            String deviceId = dto.getDeviceId() != null ? dto.getDeviceId().trim() : null;
+            if (!StringUtils.hasText(deviceId)) continue;
+
+            String userId = dto.getUserId() != null ? dto.getUserId().trim() : null;
+            if (!StringUtils.hasText(userId)) continue;
+
+            // ユーザーの存在を確認、存在しない場合は新規作成
+            User user = userRepository.findByUserId(userId).orElse(null);
+            boolean isNewUser = false;
+            if (user == null) {
+                isNewUser = true;
+                hasNewRecords = true;
+
+                // 新規ユーザーを作成
+                user = new User();
+                user.setUserId(userId);
+
+                // ユーザー名を設定、優先的にuserNameを使用、ない場合はloginUsernameを使用
+                if (StringUtils.hasText(dto.getUserName())) {
+                    user.setName(dto.getUserName().trim());
+                } else if (StringUtils.hasText(dto.getLoginUsername())) {
+                    // ユーザー名が指定されていない場合、ログインユーザー名から抽出を試みる
+                    user.setName(dto.getLoginUsername().trim());
+                } else {
+                    // いずれもない場合、デフォルト名またはデバイスID関連情報を使用
+                    user.setName("Imported User"); // またはその他のデフォルト値を設定可能
+                }
+
+                // 部署情報を設定
+                if (StringUtils.hasText(dto.getDepartment())) {
+                    user.setDeptId(dto.getDepartment().trim());
+                } else {
+                    user.setDeptId("UNKNOWN"); // デフォルト部署
+                }
+
+                // 一般ユーザータイプに設定
+                user.setUserTypeId(DictEnum.USER_TYPE_USER.getDictId());
+
+                // デフォルトパスワードまたはその他の必須フィールドを設定
+                user.setPassword("5npjufQ0AT0RkEDe6Rcnsw=="); // 默认密码，实际应用中需要更安全的处理
+
+                user.setCreateTime(LocalDateTime.now());
+                user.setUpdateTime(LocalDateTime.now());
+                user.setCreater("SYSTEM");
+                user.setUpdater("SYSTEM");
+
+                // 新規ユーザーを保存
+                user = userRepository.save(user);
+            }
+
+            Device device = deviceRepository.findById(deviceId).orElse(null);
+            boolean isNewDevice = false;
+            if (device == null) {
+                isNewDevice = true;
+                hasNewRecords = true;
+
+                device = new Device();
+                device.setDeviceId(deviceId);
+            }
+
+            device.setDeviceModel(dto.getDeviceModel());
+            device.setComputerName(dto.getComputerName());
+            if (dto.getLoginUsername() != null && !dto.getLoginUsername().isEmpty()) {
+                device.setLoginUsername(dto.getLoginUsername());
+            } else {
+                device.setLoginUsername(dto.getUserName());
+            }
+            device.setUserId(userId);
+            device.setProject(dto.getProject());
+            device.setDevRoom(dto.getDevRoom());
+            device.setRemark(dto.getRemark());
+            device.setOsId(mapOsToId(dto.getOs()));
+            device.setMemoryId(mapMemoryToId(dto.getMemory()));
+            device.setSsdId(mapSsdToId(dto.getSsd()));
+            device.setHddId(mapHddToId(dto.getHdd()));
+            device.setSelfConfirmId(mapSelfConfirmToId(dto.getSelfConfirm()));
+            if (device.getCreateTime() == null) {
+                device.setCreateTime(LocalDateTime.now());
+                device.setCreater("SYSTEM");
+            }
+            device.setUpdateTime(LocalDateTime.now());
+            device.setUpdater("SYSTEM");
+            deviceRepository.save(device);
+
+            // ディスプレイ情報を保存（存在する場合）
+            if (StringUtils.hasText(dto.getMonitorDeviceId())) {
+                // 複数のディスプレイに対応処理（区切り文字が存在する場合）
+                String[] monitorNames = dto.getMonitorDeviceId().split("[\\n\\r,;]+");
+                for (String monitorName : monitorNames) {
+                    if (monitorName.trim().isEmpty()) continue;
+
+                    // ディスプレイの存在を確認器是否已存在
+                    if (!monitorRepository.existsByMonitorName(monitorName.trim())) {
+                        Monitor monitor = new Monitor();
+                        monitor.setMonitorName(monitorName.trim());
+                        monitor.setDeviceId(deviceId);
+                        monitor.setCreateTime(LocalDateTime.now());
+                        monitor.setUpdateTime(LocalDateTime.now());
+                        monitor.setCreater("SYSTEM");
+                        monitor.setUpdater("SYSTEM");
+
+                        monitorRepository.save(monitor);
+                    }
+                }
+            }
+
+            // IPアドレス情報を保存
+            if (dto.getIpAddress() != null && !dto.getIpAddress().isEmpty()) {
+                String[] ips = dto.getIpAddress().split("[\\n\\r,;]+");
+                for (String ip : ips) {
+                    if (ip.trim().isEmpty()) continue;
+                    DeviceIp deviceIp = new DeviceIp();
+                    deviceIp.setDeviceId(deviceId);
+                    deviceIp.setIpAddress(ip.trim());
+                    deviceIp.setCreateTime(LocalDateTime.now());
+                    deviceIp.setUpdateTime(LocalDateTime.now());
+                    deviceIp.setCreater("SYSTEM");
+                    deviceIp.setUpdater("SYSTEM");
+                    deviceIpRepository.save(deviceIp);
+                }
+            }
+        }
+
+        if (hasNewRecords) {
+            permissionService.batchImportPermissionFromExcel(list);
+            samplingCheckService.batchImport(list);
+        } else {
+            //log
+            log.info("No new records were imported.");
+        }
+    }
+
+
+    /**
+     * 文字列フィールドの処理：前後の空白を除去し、"-"を空値に変換する
+     */
+    private String processStringField(String value) {
+        if (value == null || value.isEmpty()) {
+            return null;
+        }
+        String trimmedValue = value.trim();
+        return "-".equals(trimmedValue) ? null : trimmedValue;
+    }
+
+
+    // 補助マッピングメソッド - DictEnumの定義に基づく
+    private Long mapOsToId(String osStr) {
+        if (osStr == null) return null;
+        String lower = osStr.trim().toLowerCase().replace(" ", "");
+        if (lower.contains("win") && lower.contains("10")) return DictEnum.OS_TYPE_WINDOWS_10.getDictId();
+        if (lower.contains("win") && lower.contains("11")) return DictEnum.OS_TYPE_WINDOWS_11.getDictId();
+        if (lower.contains("mac") || lower.contains("macos")) return DictEnum.OS_TYPE_MACOS_VENTURA.getDictId();
+        if (lower.contains("linux") || lower.contains("ubuntu")) return DictEnum.OS_TYPE_LINUX_UBUNTU_22_04.getDictId();
+        return null;
+    }
+
+    private Long mapMemoryToId(String memStr) {
+        if (memStr == null) return null;
+        String val = memStr.replaceAll("[^0-9]", "");
+        if ("8".equals(val)) return DictEnum.MEMORY_SIZE_8GB.getDictId();
+        if ("16".equals(val)) return DictEnum.MEMORY_SIZE_16GB.getDictId();
+        if ("32".equals(val)) return DictEnum.MEMORY_SIZE_32GB.getDictId();
+        if ("64".equals(val)) return DictEnum.MEMORY_SIZE_64GB.getDictId();
+        return null;
+    }
+
+    private Long mapSsdToId(String ssdStr) {
+        if (ssdStr == null) return null;
+        Integer max = extractMaxNumber(ssdStr);
+        if (max == null) return null;
+        if (max == 256) return DictEnum.SSD_SIZE_256GB.getDictId();
+        if (max == 500) return DictEnum.SSD_SIZE_512GB.getDictId();
+        if (max == 512) return DictEnum.SSD_SIZE_512GB.getDictId();
+        if (max == 1000 || max == 1024 || max == 1) return DictEnum.SSD_SIZE_1TB.getDictId();
+        if (max == 2000 || max == 2048 || max == 2) return DictEnum.SSD_SIZE_2TB.getDictId();
+        return null;
+    }
+
+    private Long mapHddToId(String hddStr) {
+        if (hddStr == null) return null;
+        Integer max = extractMaxNumber(hddStr);
+        if (max == null) return null;
+        if (max == 1000 || max == 1024 || max == 1) return DictEnum.HDD_SIZE_1TB.getDictId();
+        if (max == 2000 || max == 2048 || max == 2) return DictEnum.HDD_SIZE_2TB.getDictId();
+        if (max == 4000 || max == 4096 || max == 4) return DictEnum.HDD_SIZE_4TB.getDictId();
+        return null;
+    }
+
+    private Long mapSelfConfirmToId(String confirmStr) {
+        if (confirmStr == null) return null;
+        String s = confirmStr.trim().toLowerCase();
+        if ("1".equals(s) || "true".equals(s) || "yes".equals(s) || "y".equals(s) || s.contains("确认") || s.contains("已确认") || s.contains("確認") || s.contains("是")) {
+            return DictEnum.CONFIRM_STATUS_CONFIRMED.getDictId();
+        }
+        return DictEnum.CONFIRM_STATUS_UNCONFIRMED.getDictId();
+    }
+
+    private Integer extractMaxNumber(String text) {
+        String[] parts = text.trim().split("[^0-9]+");
+        Integer max = null;
+        for (String p : parts) {
+            if (p.isEmpty()) continue;
+            int n;
+            try {
+                n = Integer.parseInt(p);
+            } catch (NumberFormatException e) {
+                continue;
+            }
+            if (max == null || n > max) max = n;
+        }
+        return max;
     }
 }

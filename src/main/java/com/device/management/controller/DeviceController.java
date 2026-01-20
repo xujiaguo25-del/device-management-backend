@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * デバイス管理コントローラー
@@ -96,6 +97,20 @@ public class DeviceController {
     public ApiResponse<String> deleteDevice(@PathVariable String deviceId) {
         log.info("デバイス削除リクエスト: {}", deviceId);
         return deviceService.deleteDevice(deviceId);
+    }
+
+    @PostMapping("/import")
+    public ApiResponse<String> importExcel(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(name = "startRow", defaultValue = "3") int startRow) {
+     /*   try {
+            List<DeviceExcelDto> list = ExcelUtil.importExcel(file, DeviceExcelDto.class, startRow);
+            return ApiResponse.success("解析成功", list);
+        } catch (Exception e) {
+            return ApiResponse.error(500, "解析失败: " + e.getMessage());
+        }*/
+
+        return deviceService.importDeviceExcel(file, startRow);
     }
 
 }

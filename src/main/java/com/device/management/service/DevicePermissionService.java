@@ -33,6 +33,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.device.management.dto.DeviceExcelDto;
+import java.util.Set;
+import java.util.HashSet;
+
+
 @Slf4j
 @Service
 public class DevicePermissionService {
@@ -463,4 +468,110 @@ public class DevicePermissionService {
         }
         return null;
     }
+
+
+    // DevicePermissionServiceクラスに以下のメソッドを追加
+
+    /**
+     * デバイス権限情報をDeviceExcelDtoから一括インポート
+     * deviceIdのみ使用し、その他のフィールドはデフォルト値を設定
+     * @param excelDataList Excelデータリスト
+     * @return APIレスポンス結果
+     */
+    @Transactional
+    public ApiResponse<String> batchImportPermissionFromExcel(List<DeviceExcelDto> excelDataList) {
+        log.info("デバイス権限情報を一括インポート、総数：{}", excelDataList.size());
+
+        if (excelDataList == null || excelDataList.isEmpty()) {
+            return ApiResponse.error(400, "Excelデータは空であってはなりません");
+        }
+
+        int successCount = 0;
+        int failCount = 0;
+        Set<String> processedDeviceIds = new HashSet<>(); // 重複処理を防止
+        StringBuilder errorMessages = new StringBuilder();
+
+        for (int i = 0; i < excelDataList.size(); i++) {
+            DeviceExcelDto dto = excelDataList.get(i);
+
+            try {
+                // デバイスIDの存在を検証
+                if (!StringUtils.hasText(dto.getDeviceId())) {
+                    failCount++;
+                    errorMessages.append("第").append(i + 1).append("行：デバイスIDが空です\n");
+                    continue;
+                }
+
+                // 当該デバイスIDが既に処理済みか確認
+                if (processedDeviceIds.contains(dto.getDeviceId())) {
+                    continue; // 重複したデバイスIDをスキップ
+                }
+
+                // デバイスの存在を検証
+                Device device = deviceRepository.findDeviceByDeviceId(dto.getDeviceId());
+                if (device == null) {
+                    failCount++;
+                    errorMessages.append("第").append(i + 1).append("行、デバイスID：")
+                            .append(dto.getDeviceId()).append("- デバイスが存在しません");
+                    continue;
+                }
+
+                // デバイスに権限情報が既に存在するか確認
+                DevicePermission existingPermission = devicePermissionRepository.findDevicePermissionsByDevice(device);
+                if (existingPermission != null) {
+                    failCount++;
+                    errorMessages.append("第").append(i + 1).append("行、デバイスID：")
+                            .append(dto.getDeviceId()).append(" - デバイスには既に権限情報が存在します\n");
+                    continue;
+                }
+
+                // 権限レコードを作成
+                String permissionId = UUID.randomUUID().toString();
+
+                DevicePermission devicePermission = DevicePermission.builder()
+                        .permissionId(permissionId)
+                        .device(device)
+                        // その他のすべてのフィールドをデフォルト値またはnullに設定
+                        .domainStatusId(null)
+                        .domainGroup(null)
+                        .noDomainReason(null)
+                        .smartitStatusId(null)
+                        .noSmartitReason(null)
+                        .usbStatusId(null)
+                        .usbReason(null)
+                        .usbExpireDate(null)
+                        .antivirusStatusId(null)
+                        .noSymantecReason(null)
+                        .remark(null)
+                        .createTime(LocalDateTime.now())
+                        .creater("SYSTEM")
+                        .updateTime(LocalDateTime.now())
+                        .updater("SYSTEM")
+                        .build();
+
+                // その他のすべてのフィールドをデフォルト値またはnullに設定
+                devicePermissionRepository.save(devicePermission);
+
+                // 処理済みセットに追加
+                processedDeviceIds.add(dto.getDeviceId());
+                successCount++;
+
+            } catch (Exception e) {
+                failCount++;
+                errorMessages.append("第").append(i + 1).append("行、デバイスID：")
+                        .append(dto != null ? dto.getDeviceId() : "未知")
+                        .append(" - 異常: ").append(e.getMessage()).append("\n");
+                log.error("権限情報のインポート中に異常が発生しました", e);
+            }
+        }
+
+        String message = String.format("一括インポートが完了しました、成功：%d、失敗：%d", successCount, failCount);
+        if (failCount > 0) {
+            message += "\nエラーの詳細：\n" + errorMessages.toString();
+            return ApiResponse.error(200, message); // ステータスコードは200を使用するが、メッセージにエラー情報を含める
+        }
+
+        return ApiResponse.success(message);
+    }
+
 }
