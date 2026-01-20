@@ -691,7 +691,7 @@ public class DeviceServiceImpl implements DeviceService {
 
 
     private void saveDeviceData(List<DeviceExcelDto> list) {
-        boolean hasNewRecords = false; // 标记是否有新增记录
+        boolean hasNewRecords = false;
 
         for (DeviceExcelDto dto : list) {
             String deviceId = dto.getDeviceId() != null ? dto.getDeviceId().trim() : null;
@@ -704,8 +704,8 @@ public class DeviceServiceImpl implements DeviceService {
             User user = userRepository.findByUserId(userId).orElse(null);
             boolean isNewUser = false;
             if (user == null) {
-                isNewUser = true; // 标记为新用户
-                hasNewRecords = true; // 标记有新记录
+                isNewUser = true;
+                hasNewRecords = true;
 
                 // 新規ユーザーを作成
                 user = new User();
@@ -817,7 +817,6 @@ public class DeviceServiceImpl implements DeviceService {
             }
         }
 
-        // 仅当有新增记录时才执行权限和抽查的批量导入
         if (hasNewRecords) {
             permissionService.batchImportPermissionFromExcel(list);
             samplingCheckService.batchImport(list);
