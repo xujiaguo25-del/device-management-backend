@@ -6,19 +6,19 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Excel列映射注解
- * 用于标记DTO字段对应的Excel列索引
+ * Excelカラムマッピングアノテーション
+ * DTOフィールドに対応するExcelカラムインデックスをマークするために使用する
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ExcelColumn {
     /**
-     * 列索引 (从0开始)
+     * カラムインデックス (0から開始)
      */
     int index();
-    
+
     /**
-     * 列名 (可选，仅作描述)
+     * カラム名 (任意項目、説明用のみ)
      */
     String name() default "";
 }

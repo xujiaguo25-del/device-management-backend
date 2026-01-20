@@ -278,8 +278,8 @@ public class SamplingCheckService {
 
 
     /**
-     * 批量导入设备权限信息
-     * @param deviceExcelDtos 设备Excel DTO列表
+     * デバイス権限情報を一括インポート
+     * @param deviceExcelDtos デバイスExcel DTOリスト
      */
     public void batchImport(List<DeviceExcelDto> deviceExcelDtos) {
         if (deviceExcelDtos == null || deviceExcelDtos.isEmpty()) {
@@ -294,28 +294,28 @@ public class SamplingCheckService {
     }
 
     /**
-     * 将DeviceExcelDto转换为SamplingCheck实体，设置默认值
-     * @param deviceExcelDto 设备Excel DTO
-     * @return SamplingCheck实体
+     * DeviceExcelDtoをSamplingCheckエンティティに変換し、デフォルト値を設定
+     * @param deviceExcelDto デバイスExcel DTO
+     * @return SamplingCheckエンティティ
      */
     private SamplingCheck convertToDevicePermission(DeviceExcelDto deviceExcelDto) {
         SamplingCheck entity = new SamplingCheck();
 
-        // 设置核心字段
-        entity.setUserId(deviceExcelDto.getUserId());           // 工号
-        entity.setName(deviceExcelDto.getUserName());              // 姓名
-        entity.setDeviceId(deviceExcelDto.getDeviceId());      // 设备ID
+        // コアフィールドを設定
+        entity.setUserId(deviceExcelDto.getUserId());
+        entity.setName(deviceExcelDto.getUserName());
+        entity.setDeviceId(deviceExcelDto.getDeviceId());
 
-        // 设置默认值
+        // デフォルト値を設定
         entity.setSamplingId(UUID.randomUUID().toString().replace("-", ""));
-        entity.setReportId("");                                // 报告ID设为空字符串或根据业务需求
-        entity.setUpdateDate(LocalDate.now());                 // 更新日期为当前日期
-        entity.setUpdateTime(LocalDateTime.now());             // 更新时间为当前时间
-        entity.setCreateTime(LocalDateTime.now());             // 创建时间为当前时间
-        entity.setUpdater("");                                 // 更新人设为空字符串
-        entity.setCreater("");                                 // 创建人设为空字符串
+        entity.setReportId("");
+        entity.setUpdateDate(LocalDate.now());
+        entity.setUpdateTime(LocalDateTime.now());
+        entity.setCreateTime(LocalDateTime.now());
+        entity.setUpdater("");
+        entity.setCreater("");
 
-        // 安全相关字段设为默认值（false表示未满足安全要求）
+        // セキュリティ関連フィールドをデフォルト値に設定（falseはセキュリティ要件を満たしていないことを示す）
         entity.setInstalledSoftware(false);
         entity.setScreenSaverPwd(false);
         entity.setUsbInterface(false);
@@ -323,7 +323,7 @@ public class SamplingCheckService {
         entity.setAntivirusProtection(false);
         entity.setBootAuthentication(false);
 
-        // 处置措施设为空字符串
+        // 処置措置を空文字列に設定
         entity.setDisposalMeasures("");
 
         return entity;

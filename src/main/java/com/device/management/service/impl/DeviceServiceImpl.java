@@ -603,21 +603,21 @@ public class DeviceServiceImpl implements DeviceService {
     @org.springframework.transaction.annotation.Transactional(rollbackFor = Exception.class)
     public ApiResponse<String> importDeviceExcel(MultipartFile file, int startRow) {
         if (file.isEmpty()) {
-            return new ApiResponse<>(400, "文件为空", null);
+            return new ApiResponse<>(400, "ファイル内容が空です", null);
         }
 
                try {
-            // 使用通用工具类解析Excel
+                   // 汎用ユーティリティクラスを使用してExcelを解析する
             List<DeviceExcelDto> excelDataList = ExcelUtil.importExcel(file, DeviceExcelDto.class,startRow);
             List<DeviceExcelDto> normalizedList = preprocessExcelDtos(excelDataList);
 
-            log.info("Excel数据解析完成:"+normalizedList);
+            log.info("Excelデータの解析が完了しました："+normalizedList);
             saveDeviceData(normalizedList);
 
-            return new ApiResponse<>(200, "导入成功，共处理 " + normalizedList.size() + " 条数据", null);
+            return new ApiResponse<>(200, "インポートに成功しました、合計処理：" + normalizedList.size() + " 条数据", null);
         } catch (Exception e) {
-            log.error("Excel导入失败", e);
-            return new ApiResponse<>(500, "Excel导入失败: " + e.getMessage(), null);
+            log.error("Excelインポートに失敗しました", e);
+            return new ApiResponse<>(500, "Excelインポートに失敗しました：" + e.getMessage(), null);
         }
     }
 
@@ -630,7 +630,7 @@ public class DeviceServiceImpl implements DeviceService {
         for (DeviceExcelDto dto : input) {
             if (dto == null) continue;
 
-            // 处理 "-" 值并 trim
+            // "-"値を処理し、trimを実行する
             dto.setUserId(processStringField(dto.getUserId()));
             dto.setUserName(processStringField(dto.getUserName()));
             dto.setDepartment(processStringField(dto.getDepartment()));
@@ -660,11 +660,11 @@ public class DeviceServiceImpl implements DeviceService {
 
             if (!hasUser && !hasDevice) continue;
 
-            // 如果当前行有用户信息，则更新最后的用户信息
+            // 現在行にユーザー情報がある場合、最終ユーザー情報を更新
             if (hasUser) {
                 lastUserId = dto.getUserId();
             } else {
-                // 如果当前行没有用户信息，但之前有用户信息，则继承用户信息
+                // 現在行にユーザー情報なし、かつ前に存在する場合、ユーザー情報を継承
                 if (StringUtils.hasText(lastUserId)) {
                     if (!StringUtils.hasText(dto.getUserId())) dto.setUserId(lastUserId);
                     if (!StringUtils.hasText(dto.getUserName())) dto.setUserName(dto.getUserId()); // 使用用户ID作为用户名
@@ -673,14 +673,14 @@ public class DeviceServiceImpl implements DeviceService {
                 }
             }
 
-            // 设备ID继承逻辑：如果当前行没有设备ID但用户ID与上一行相同，则继承上一行的设备ID
+            // デバイスID継承ロジック：現在行にデバイスIDなし、かつユーザーIDが前行と同一の場合、前行のデバイスIDを継承
             if (!StringUtils.hasText(dto.getDeviceId()) &&
                 StringUtils.hasText(lastUserId) &&
                 lastUserId.equals(dto.getUserId()) &&
                 StringUtils.hasText(lastDeviceId)) {
                 dto.setDeviceId(lastDeviceId);
             } else if (StringUtils.hasText(dto.getDeviceId())) {
-                // 如果当前行有设备ID，则更新lastDeviceId
+                // 現在行にデバイスIDが存在する場合、lastDeviceIdを更新
                 lastDeviceId = dto.getDeviceId();
             }
 
@@ -691,6 +691,8 @@ public class DeviceServiceImpl implements DeviceService {
 
 
     private void saveDeviceData(List<DeviceExcelDto> list) {
+        boolean hasNewRecords = false; // 标记是否有新增记录
+
         for (DeviceExcelDto dto : list) {
             String deviceId = dto.getDeviceId() != null ? dto.getDeviceId().trim() : null;
             if (!StringUtils.hasText(deviceId)) continue;
@@ -698,36 +700,39 @@ public class DeviceServiceImpl implements DeviceService {
             String userId = dto.getUserId() != null ? dto.getUserId().trim() : null;
             if (!StringUtils.hasText(userId)) continue;
 
-            // 检查用户是否存在，如果不存在则创建新用户
+            // ユーザーの存在を確認、存在しない場合は新規作成
             User user = userRepository.findByUserId(userId).orElse(null);
+            boolean isNewUser = false;
             if (user == null) {
-                // 创建新用户
+                isNewUser = true; // 标记为新用户
+                hasNewRecords = true; // 标记有新记录
+
+                // 新規ユーザーを作成
                 user = new User();
                 user.setUserId(userId);
 
-                // 设置用户名，优先使用userName，如果没有则使用loginUsername
+                // ユーザー名を設定、優先的にuserNameを使用、ない場合はloginUsernameを使用
                 if (StringUtils.hasText(dto.getUserName())) {
                     user.setName(dto.getUserName().trim());
                 } else if (StringUtils.hasText(dto.getLoginUsername())) {
-                    // 如果没有提供用户名，尝试从登录用户名中提取
+                    // ユーザー名が指定されていない場合、ログインユーザー名から抽出を試みる
                     user.setName(dto.getLoginUsername().trim());
                 } else {
-                    // 如果都没有，使用默认名称或设备ID相关信息
-                    user.setName("Imported User"); // 或者可以设置为其他默认值
+                    // いずれもない場合、デフォルト名またはデバイスID関連情報を使用
+                    user.setName("Imported User"); // またはその他のデフォルト値を設定可能
                 }
 
-                // 设置部门信息
+                // 部署情報を設定
                 if (StringUtils.hasText(dto.getDepartment())) {
                     user.setDeptId(dto.getDepartment().trim());
                 } else {
-                    user.setDeptId("UNKNOWN"); // 默认部门
+                    user.setDeptId("UNKNOWN"); // デフォルト部署
                 }
 
-                // 设置为普通用户类型（根据您的业务需求调整）
-                user.setUserTypeId(DictEnum.USER_TYPE_USER.getDictId()); // 假设这是普通用户类型
+                // 一般ユーザータイプに設定
+                user.setUserTypeId(DictEnum.USER_TYPE_USER.getDictId());
 
-                // 设置默认密码或其他必要字段
-                // 注意：实际应用中应该设置一个临时密码并强制用户更改
+                // デフォルトパスワードまたはその他の必須フィールドを設定
                 user.setPassword("5npjufQ0AT0RkEDe6Rcnsw=="); // 默认密码，实际应用中需要更安全的处理
 
                 user.setCreateTime(LocalDateTime.now());
@@ -735,15 +740,20 @@ public class DeviceServiceImpl implements DeviceService {
                 user.setCreater("SYSTEM");
                 user.setUpdater("SYSTEM");
 
-                // 保存新用户
+                // 新規ユーザーを保存
                 user = userRepository.save(user);
             }
 
             Device device = deviceRepository.findById(deviceId).orElse(null);
+            boolean isNewDevice = false;
             if (device == null) {
+                isNewDevice = true; // 标记为新设备
+                hasNewRecords = true; // 标记有新记录
+
                 device = new Device();
                 device.setDeviceId(deviceId);
             }
+
             device.setDeviceModel(dto.getDeviceModel());
             device.setComputerName(dto.getComputerName());
             if (dto.getLoginUsername() != null && !dto.getLoginUsername().isEmpty()) {
@@ -767,14 +777,15 @@ public class DeviceServiceImpl implements DeviceService {
             device.setUpdateTime(LocalDateTime.now());
             device.setUpdater("SYSTEM");
             deviceRepository.save(device);
-            // 保存显示器信息（如果存在）
+
+            // ディスプレイ情報を保存（存在する場合）
             if (StringUtils.hasText(dto.getMonitorDeviceId())) {
-                // 处理可能的多个显示器（如果有分隔符的话）
+                // 複数のディスプレイに対応処理（区切り文字が存在する場合）
                 String[] monitorNames = dto.getMonitorDeviceId().split("[\\n\\r,;]+");
                 for (String monitorName : monitorNames) {
                     if (monitorName.trim().isEmpty()) continue;
 
-                    // 检查显示器是否已存在
+                    // ディスプレイの存在を確認器是否已存在
                     if (!monitorRepository.existsByMonitorName(monitorName.trim())) {
                         Monitor monitor = new Monitor();
                         monitor.setMonitorName(monitorName.trim());
@@ -789,7 +800,7 @@ public class DeviceServiceImpl implements DeviceService {
                 }
             }
 
-            // 保存IP地址信息
+            // IPアドレス情報を保存
             if (dto.getIpAddress() != null && !dto.getIpAddress().isEmpty()) {
                 String[] ips = dto.getIpAddress().split("[\\n\\r,;]+");
                 for (String ip : ips) {
@@ -804,14 +815,21 @@ public class DeviceServiceImpl implements DeviceService {
                     deviceIpRepository.save(deviceIp);
                 }
             }
-
         }
-        permissionService.batchImportPermissionFromExcel(list);
-        samplingCheckService.batchImport( list);
+
+        // 仅当有新增记录时才执行权限和抽查的批量导入
+        if (hasNewRecords) {
+            permissionService.batchImportPermissionFromExcel(list);
+            samplingCheckService.batchImport(list);
+        } else {
+            //log
+            log.info("No new records were imported.");
+        }
     }
 
+
     /**
-     * 处理字符串字段：去除首尾空白并将"-"转换为空值
+     * 文字列フィールドの処理：前後の空白を除去し、"-"を空値に変換する
      */
     private String processStringField(String value) {
         if (value == null || value.isEmpty()) {
@@ -822,7 +840,7 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
 
-    // 辅助映射方法 - 根据 DictEnum 定义
+    // 補助マッピングメソッド - DictEnumの定義に基づく
     private Long mapOsToId(String osStr) {
         if (osStr == null) return null;
         String lower = osStr.trim().toLowerCase().replace(" ", "");

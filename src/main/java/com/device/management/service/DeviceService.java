@@ -64,10 +64,10 @@ public interface DeviceService {
     ApiResponse<DeviceFullDTO> detail(String deviceId);
 
     /**
-     * 导入设备Excel数据
-     * @param file Excel文件
-     * @param startRow 开始行
-     * @return 导入结果
+     * デバイスExcelデータをインポート
+     * @param file Excelファイル
+     * @param startRow 開始行
+     * @return インポート結果
      */
     ApiResponse<String> importDeviceExcel(MultipartFile file, int startRow);
 
