@@ -843,20 +843,29 @@ public class DeviceServiceImpl implements DeviceService {
     private Long mapOsToId(String osStr) {
         if (osStr == null) return null;
         String lower = osStr.trim().toLowerCase().replace(" ", "");
+        if (lower.contains("win") && lower.contains("7")) return DictEnum.OS_TYPE_WINDOWS_7.getDictId();
         if (lower.contains("win") && lower.contains("10")) return DictEnum.OS_TYPE_WINDOWS_10.getDictId();
         if (lower.contains("win") && lower.contains("11")) return DictEnum.OS_TYPE_WINDOWS_11.getDictId();
-        if (lower.contains("mac") || lower.contains("macos")) return DictEnum.OS_TYPE_MACOS_VENTURA.getDictId();
-        if (lower.contains("linux") || lower.contains("ubuntu")) return DictEnum.OS_TYPE_LINUX_UBUNTU_22_04.getDictId();
+        if (lower.contains("win") && lower.contains("2008")) return DictEnum.OS_TYPE_WINDOWS_SERVER_2008.getDictId();
+        if (lower.contains("win") && lower.contains("2016")) return DictEnum.OS_TYPE_WINDOWS_SERVER_2016.getDictId();
+        if (lower.contains("win") && lower.contains("2019")) return DictEnum.OS_TYPE_WINDOWS_SERVER_2019.getDictId();
+        if (lower.contains("win") && lower.contains("2022")) return DictEnum.OS_TYPE_WINDOWS_SERVER_2022.getDictId();
+        if (lower.contains("mac") || lower.contains("macos")) return DictEnum.OS_TYPE_MAC_OS.getDictId();
+        if (lower.contains("ubuntu")) return DictEnum.OS_TYPE_UBUNTU.getDictId();
+        if (lower.contains("centos")) return DictEnum.OS_TYPE_CENTOS.getDictId();
         return null;
     }
 
     private Long mapMemoryToId(String memStr) {
         if (memStr == null) return null;
         String val = memStr.replaceAll("[^0-9]", "");
+        if ("4".equals(val)) return DictEnum.MEMORY_SIZE_4GB.getDictId();
         if ("8".equals(val)) return DictEnum.MEMORY_SIZE_8GB.getDictId();
         if ("16".equals(val)) return DictEnum.MEMORY_SIZE_16GB.getDictId();
+        if ("24".equals(val)) return DictEnum.MEMORY_SIZE_24GB.getDictId();
         if ("32".equals(val)) return DictEnum.MEMORY_SIZE_32GB.getDictId();
         if ("64".equals(val)) return DictEnum.MEMORY_SIZE_64GB.getDictId();
+        if ("128".equals(val)) return DictEnum.MEMORY_SIZE_128GB.getDictId();
         return null;
     }
 
@@ -868,7 +877,6 @@ public class DeviceServiceImpl implements DeviceService {
         if (max == 500) return DictEnum.SSD_SIZE_512GB.getDictId();
         if (max == 512) return DictEnum.SSD_SIZE_512GB.getDictId();
         if (max == 1000 || max == 1024 || max == 1) return DictEnum.SSD_SIZE_1TB.getDictId();
-        if (max == 2000 || max == 2048 || max == 2) return DictEnum.SSD_SIZE_2TB.getDictId();
         return null;
     }
 
@@ -876,9 +884,9 @@ public class DeviceServiceImpl implements DeviceService {
         if (hddStr == null) return null;
         Integer max = extractMaxNumber(hddStr);
         if (max == null) return null;
+        if (max == 500 || max == 512 || max == 0.5) return DictEnum.HDD_SIZE_500GB.getDictId();
         if (max == 1000 || max == 1024 || max == 1) return DictEnum.HDD_SIZE_1TB.getDictId();
         if (max == 2000 || max == 2048 || max == 2) return DictEnum.HDD_SIZE_2TB.getDictId();
-        if (max == 4000 || max == 4096 || max == 4) return DictEnum.HDD_SIZE_4TB.getDictId();
         return null;
     }
 
