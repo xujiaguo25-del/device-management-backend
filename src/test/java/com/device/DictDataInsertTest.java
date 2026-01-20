@@ -212,7 +212,7 @@ public class DictDataInsertTest {
                 "2026-01-04 23:43:32.503189", "admin",
                 "2026-01-04 23:46:00.037374", "admin"));
 
-        // 执行插入
+       
         dictRepository.saveAll(dictList);
     }
     /**

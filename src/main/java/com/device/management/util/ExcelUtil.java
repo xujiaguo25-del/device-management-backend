@@ -17,113 +17,113 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 通用Excel导入工具类
- * 支持 .xls 和 .xlsx 格式自动检测
+ * 汎用Excelインポートユーティリティクラス
+ * .xls および .xlsx 形式の自動検出に対応
  */
 @Slf4j
 public class ExcelUtil {
 
     /**
-     * 解析Excel文件为对象列表 (默认从第2行/索引1开始读取，跳过表头)
+     * Excelファイルをオブジェクトリストに解析 (デフォルトで2行目/インデックス1から読み取り、ヘッダー行をスキップ)
      *
-     * @param file  上传的文件
-     * @param clazz 目标类的Class对象
-     * @param <T>   目标类型
-     * @return 解析后的对象列表
+     * @param file  アップロードされたファイル
+     * @param clazz 対象クラスのClassオブジェクト
+     * @param <T>   対象タイプ
+     * @return 解析後のオブジェクトリスト
      */
     public static <T> List<T> importExcel(MultipartFile file, Class<T> clazz) {
         return importExcel(file, clazz, 1);
     }
 
     /**
-     * 解析Excel文件为对象列表 (指定起始行)
+     * Excelファイルをオブジェクトリストに解析 (開始行を指定)
      *
-     * @param file          上传的文件
-     * @param clazz         目标类的Class对象
-     * @param startRowIndex 起始行索引 (0表示第一行)
-     * @param <T>           目标类型
-     * @return 解析后的对象列表
+     * @param file          アップロードされたファイル
+     * @param clazz         対象クラスのClassオブジェクト
+     * @param startRowIndex 開始行インデックス (0は1行目を示す)
+     * @param <T>           対象タイプ
+     * @return 解析後のオブジェクトリスト
      */
     public static <T> List<T> importExcel(MultipartFile file, Class<T> clazz, int startRowIndex) {
         if (file == null || file.isEmpty()) {
-            log.warn("上传的文件为空");
+            log.warn("アップロードされたファイルは空です");
             return new ArrayList<>();
         }
 
         String originalFilename = file.getOriginalFilename();
         if (originalFilename == null || !originalFilename.matches("^.+\\.(xls|xlsx|XLS|XLSX)$")) {
-            log.error("文件格式不支持: {}", originalFilename);
-            throw new RuntimeException("只支持 .xls 和 .xlsx 格式的Excel文件");
+            log.error("サポートされていないファイル形式: {}", originalFilename);
+            throw new RuntimeException(".xls および .xlsx 形式のExcelファイルのみサポートしています");
         }
 
         try (InputStream is = file.getInputStream()) {
-            // 自动检测文件格式并选择合适的解析器
+            // ファイル形式を自動検出し、適切なパーサーを選択
             Workbook workbook = createWorkbook(is, originalFilename);
 
-            // 默认读取第一个Sheet
+            // デフォルトで最初のSheetを読み取り
             return parseSheet(workbook.getSheetAt(0), clazz, startRowIndex);
         } catch (Exception e) {
-            log.error("Excel解析异常", e);
-            throw new RuntimeException("Excel解析失败: " + e.getMessage());
+            log.error("Excel解析例外", e);
+            throw new RuntimeException("Excel解析に失敗しました: " + e.getMessage());
         }
     }
 
     /**
-     * 根据文件扩展名和内容自动检测并创建合适的Workbook实例
+     * ファイル拡張子と内容に基づいて自動検出し、適切なWorkbookインスタンスを作成
      *
-     * @param is               文件输入流
-     * @param originalFilename 原始文件名
-     * @return Workbook实例
-     * @throws Exception 文件格式不匹配或其他IO异常
+     * @param is               ファイル入力ストリーム
+     * @param originalFilename 元のファイル名
+     * @return Workbookインスタンス
+     * @throws Exception ファイル形式が一致しないまたはその他のIO例外
      */
     private static Workbook createWorkbook(InputStream is, String originalFilename) throws Exception {
-        // 首先根据文件扩展名判断
+        // まずファイル拡張子に基づいて判断
         boolean isXLSX = originalFilename.toLowerCase().endsWith(".xlsx");
         boolean isXLS = originalFilename.toLowerCase().endsWith(".xls");
 
         if (isXLSX) {
             try {
-                log.debug("根据扩展名判断为.xlsx格式，使用XSSFWorkbook解析");
+                log.debug("拡張子に基づいて.xlsx形式と判断し、XSSFWorkbookで解析");
                 return new XSSFWorkbook(is);
             } catch (Exception e) {
-                log.warn("使用XSSFWorkbook解析失败，尝试自动检测格式", e);
-                // 如果按扩展名解析失败，尝试自动检测
+                log.warn("XSSFWorkbookでの解析に失敗し、形式を自動検出します", e);
+                // 拡張子に基づく解析が失敗した場合、自動検出を試行
                 return WorkbookFactory.create(is);
             }
         } else if (isXLS) {
             try {
-                log.debug("根据扩展名判断为.xls格式，使用HSSFWorkbook解析");
+                log.debug("拡張子に基づいて.xls形式と判断し、HSSFWorkbookで解析");
                 return new HSSFWorkbook(is);
             } catch (Exception e) {
-                log.warn("使用HSSFWorkbook解析失败，尝试自动检测格式", e);
-                // 如果按扩展名解析失败，尝试自动检测
+                log.warn("HSSFWorkbookでの解析に失敗し、形式を自動検出します", e);
+                // 拡張子に基づく解析が失敗した場合、自動検出を試行
                 return WorkbookFactory.create(is);
             }
         } else {
-            // 未知扩展名，使用POI的自动检测
-            log.debug("未知文件扩展名，使用WorkbookFactory自动检测");
+            // 未知の拡張子、POIの自動検出を使用
+            log.debug("未知のファイル拡張子、WorkbookFactoryで自動検出");
             return WorkbookFactory.create(is);
         }
     }
 
     /**
-     * 使用WorkbookFactory自动检测文件格式（最安全的方式）
-     * 注意：此方法会消耗更多内存，但对于未知格式文件最可靠
+     * WorkbookFactoryを使用してファイル形式を自動検出（最も安全な方法）
+     * 注意：このメソッドはより多くのメモリを消費しますが、未知の形式のファイルに対して最も信頼性が高い
      */
     private static Workbook createWorkbookAutoDetect(InputStream is) throws Exception {
         try {
-            // WorkbookFactory会自动检测文件格式并创建合适的Workbook实例
-            // 它能够处理.xls (HSSF) 和 .xlsx (XSSF) 格式
+            // WorkbookFactoryはファイル形式を自動検出し、適切なWorkbookインスタンスを作成
+            // .xls (HSSF) および .xlsx (XSSF) 形式に対応
             return WorkbookFactory.create(is);
         } catch (Exception e) {
-            log.error("无法识别Excel文件格式", e);
-            throw new RuntimeException("无法识别的Excel文件格式，请确保文件是有效的.xls或.xlsx格式");
+            log.error("Excelファイル形式を識別できません", e);
+            throw new RuntimeException("識別できないExcelファイル形式です。ファイルが有効な.xlsまたは.xlsx形式であることを確認してください");
         }
     }
 
     private static <T> List<T> parseSheet(Sheet sheet, Class<T> clazz, int startRowIndex) throws Exception {
         List<T> list = new ArrayList<>();
-        // 获取类中所有带有 @ExcelColumn 注解的字段
+        // クラス内の @ExcelColumn アノテーションが付与されたすべてのフィールドを取得
         Field[] fields = clazz.getDeclaredFields();
         List<Field> mappedFields = new ArrayList<>();
         for (Field field : fields) {
@@ -133,16 +133,16 @@ public class ExcelUtil {
             }
         }
 
-        // 记录总行数和实际处理行数
+        // 総行数と実際に処理された行数を記録
         int totalRows = sheet.getPhysicalNumberOfRows();
         int processedRows = 0;
         int skippedRows = 0;
 
-        log.debug("开始解析Excel，总行数: {}，起始行索引: {}", totalRows, startRowIndex);
+        log.debug("Excel解析を開始、総行数: {}、開始行インデックス: {}", totalRows, startRowIndex);
 
-        // 遍历行
+        // 行をループ処理
         for (Row row : sheet) {
-            // 使用传入的 startRowIndex 控制起始行
+            // 渡された startRowIndex を使用して開始行を制御
             if (row.getRowNum() < startRowIndex) {
                 skippedRows++;
                 continue;
@@ -165,17 +165,17 @@ public class ExcelUtil {
                 }
             }
 
-            // 如果整行都没有有效数据，则忽略
+            // 行全体に有効なデータがない場合は無視
             if (hasData) {
                 list.add(instance);
                 processedRows++;
             } else {
                 skippedRows++;
-                log.debug("第{}行没有有效数据，已跳过", row.getRowNum() + 1);
+                log.debug("{}行目に有効なデータがないため、スキップしました", row.getRowNum() + 1);
             }
         }
 
-        log.info("Excel解析完成：总行数={}，有效数据行={}，跳过行={}",
+        log.info("Excel解析完了：総行数={}、有効データ行数={}、スキップ行数={}",
                 totalRows, processedRows, skippedRows);
         return list;
     }
@@ -183,17 +183,17 @@ public class ExcelUtil {
     private static Object getCellValue(Cell cell, Class<?> fieldType) {
         if (cell == null) return null;
 
-        // 获取单元格类型（兼容新旧POI版本）
+        // セルタイプを取得（新旧POIバージョンに対応）
         CellType cellType;
         try {
-            // POI 3.17+ 使用枚举方式
+            // POI 3.17+ は列挙型方式を使用
             cellType = cell.getCellType();
         } catch (NoSuchMethodError e) {
-            // POI 4.0+ 使用新的API
+            // POI 4.0+ は新しいAPIを使用
             cellType = cell.getCellType();
         }
 
-        // 根据单元格类型获取基础值
+        // セルタイプに基づいて基本値を取得
         Object value = null;
         switch (cellType) {
             case STRING:
@@ -220,18 +220,18 @@ public class ExcelUtil {
                 value = "";
                 break;
             case ERROR:
-                log.warn("单元格包含错误值，行{}列{}",
+                log.warn("セルにエラー値が含まれています、行{}列{}",
                         cell.getRowIndex() + 1, cell.getColumnIndex() + 1);
                 value = null;
                 break;
             default:
-                log.debug("未知的单元格类型: {}", cellType);
+                log.debug("未知のセルタイプ: {}", cellType);
                 break;
         }
 
         if (value == null) return null;
 
-        // 类型转换：将Excel读取的值转换为字段需要的类型
+        // 型変換：Excelから読み取った値をフィールドに必要な型に変換
         return convertType(value, fieldType);
     }
 
@@ -239,14 +239,14 @@ public class ExcelUtil {
         String strVal = String.valueOf(value);
 
         if (targetType == String.class) {
-            // 如果是数字转字符串，去掉可能的 .0
+            // 数値を文字列に変換する場合、不要な .0 を削除
             if (value instanceof Double) {
                 Double doubleValue = (Double) value;
-                // 检查是否为整数
+                // 整数かどうかを確認
                 if (doubleValue == doubleValue.longValue()) {
                     return String.valueOf(doubleValue.longValue());
                 } else {
-                    // 使用BigDecimal避免科学计数法
+                    // BigDecimalを使用して指数表記を回避
                     BigDecimal bd = new BigDecimal(doubleValue.toString());
                     return bd.stripTrailingZeros().toPlainString();
                 }
@@ -257,7 +257,7 @@ public class ExcelUtil {
             try {
                 return Integer.parseInt(strVal.replaceAll("[^0-9-]", ""));
             } catch (Exception e) {
-                log.debug("无法将值 '{}' 转换为 Integer", strVal);
+                log.debug("値 '{}' を Integer に変換できません", strVal);
                 return null;
             }
         } else if (targetType == Long.class || targetType == long.class) {
@@ -265,7 +265,7 @@ public class ExcelUtil {
             try {
                 return Long.parseLong(strVal.replaceAll("[^0-9-]", ""));
             } catch (Exception e) {
-                log.debug("无法将值 '{}' 转换为 Long", strVal);
+                log.debug("値 '{}' を Long に変換できません", strVal);
                 return null;
             }
         } else if (targetType == Double.class || targetType == double.class) {
@@ -273,7 +273,7 @@ public class ExcelUtil {
             try {
                 return Double.parseDouble(strVal);
             } catch (Exception e) {
-                log.debug("无法将值 '{}' 转换为 Double", strVal);
+                log.debug("値 '{}' を Double に変換できません", strVal);
                 return null;
             }
         } else if (targetType == LocalDateTime.class) {
@@ -286,25 +286,25 @@ public class ExcelUtil {
             if (strVal.equalsIgnoreCase("false") || strVal.equals("0")) return false;
         }
 
-        log.debug("不支持的类型转换: {} -> {}", value.getClass().getSimpleName(), targetType.getSimpleName());
+        log.debug("サポートされていない型変換: {} -> {}", value.getClass().getSimpleName(), targetType.getSimpleName());
         return null;
     }
 
     /**
-     * 获取Workbook实例的详细信息（用于调试）
+     * Workbookインスタンスの詳細情報を取得（デバッグ用）
      */
     public static String getWorkbookInfo(Workbook workbook) {
         StringBuilder info = new StringBuilder();
 
         if (workbook instanceof HSSFWorkbook) {
-            info.append("Excel格式: .xls (HSSF - Excel 97-2003)");
+            info.append("Excel形式: .xls (HSSF - Excel 97-2003)");
         } else if (workbook instanceof XSSFWorkbook) {
-            info.append("Excel格式: .xlsx (XSSF - Excel 2007+)");
+            info.append("Excel形式: .xlsx (XSSF - Excel 2007+)");
         } else {
-            info.append("Excel格式: 未知类型 (").append(workbook.getClass().getSimpleName()).append(")");
+            info.append("Excel形式: 未知のタイプ (").append(workbook.getClass().getSimpleName()).append(")");
         }
 
-        info.append("\nSheet数量: ").append(workbook.getNumberOfSheets());
+        info.append("\nSheet数: ").append(workbook.getNumberOfSheets());
 
         for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
             Sheet sheet = workbook.getSheetAt(i);
